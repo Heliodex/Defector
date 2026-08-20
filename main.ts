@@ -55,3 +55,5 @@ export async function reconnect() {
 await reconnect()
 
 console.log("connected")
+
+console.log(await db.query("SELECT * FROM bot"))
