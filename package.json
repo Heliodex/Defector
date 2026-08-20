@@ -1,0 +1,14 @@
+{
+	"dependencies": {
+		"@types/bun": "^1.4.0",
+		"surrealdb": "^2.0.8"
+	},
+	"name": "ysws3",
+	"private": true,
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	}
+}
