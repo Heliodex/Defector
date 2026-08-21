@@ -46,7 +46,7 @@ export async function reconnect() {
 				console.log("Multiple connection attempts failed")
 
 			console.log("Retrying connection in 1 second...")
-			await new Promise(resolve => setTimeout(resolve, 1000))
+			await Bun.sleep(1000)
 		}
 
 	await db.query(initQuery)
@@ -56,20 +56,26 @@ await reconnect()
 
 console.log("connected")
 
-console.log(
-	await db.query(`
-		IF count(SELECT 1 FROM bot) = 0 {
-			CREATE bot CONTENT {
-				name: "test",
-				description: "test",
-				code: "test()",
-			};
+await db.query(`
+	IF count(SELECT 1 FROM bot) = 0 {
+		CREATE bot CONTENT {
+			name: "test",
+			description: "test",
+			code: [{ content: "Hello, world!" }],
 		};
-	`)
-)
+	};
+`)
 
-console.log(
-	await db.query(`
-		SELECT * FROM bot;
-	`)
-)
+const [bots1] = await db.query(`
+	SELECT * FROM bot;
+`)
+console.log(bots1)
+
+await db.query(`
+	UPDATE bot SET code += { content: "" }
+`)
+
+const [bots2] = await db.query(`
+	SELECT * FROM bot;
+`)
+console.log(bots2)

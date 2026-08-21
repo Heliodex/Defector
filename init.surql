@@ -1,23 +1,31 @@
 DEFINE TABLE OVERWRITE created SCHEMAFULL TYPE RELATION FROM user TO bot ENFORCED;
 	DEFINE FIELD OVERWRITE id ON created TYPE string;
 
+REMOVE TABLE bot;
+
+
 DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON bot TYPE string;
 	DEFINE FIELD OVERWRITE name ON bot TYPE string;
 	DEFINE FIELD OVERWRITE description ON bot TYPE string;
-	DEFINE FIELD OVERWRITE code ON bot TYPE string; # normalised source (transpiled JS)
-	DEFINE FIELD OVERWRITE codeHash ON bot TYPE string COMPUTED
-		crypto::sha256($this.code);
+	DEFINE FIELD OVERWRITE code ON bot TYPE array<object> DEFAULT ALWAYS []
+			ASSERT array::len($value) >= 1;
+		DEFINE FIELD OVERWRITE code.*.content ON bot TYPE string; # transpiled JS
+		DEFINE FIELD OVERWRITE code.*.updated ON bot TYPE datetime DEFAULT ALWAYS time::now();
+	DEFINE FIELD OVERWRITE codeHash ON bot TYPE string VALUE
+		crypto::sha256((SELECT VALUE content FROM $this.code ORDER BY updated)[$]);
+	DEFINE FIELD OVERWRITE latestCode ON bot TYPE string VALUE
+		(SELECT VALUE content FROM $this.code ORDER BY updated)[$];
 	DEFINE FIELD OVERWRITE active ON bot TYPE bool DEFAULT ALWAYS false;
 	DEFINE FIELD OVERWRITE created ON bot TYPE datetime DEFAULT ALWAYS time::now();
 	DEFINE FIELD OVERWRITE elo ON bot TYPE int COMPUTED
 		(1000
-			+ math::sum(SELECT VALUE eloGainWinner FROM $self->wonAgainst)
-			- math::sum(SELECT VALUE eloLossLoser FROM $self<-wonAgainst));
-	DEFINE FIELD OVERWRITE wins ON bot TYPE int DEFAULT ALWAYS 0;
-	DEFINE FIELD OVERWRITE losses ON bot TYPE int DEFAULT ALWAYS 0;
-	DEFINE FIELD OVERWRITE draws ON bot TYPE int DEFAULT ALWAYS 0;
-	DEFINE FIELD OVERWRITE battles ON bot TYPE int DEFAULT ALWAYS 0; # total matches
+			+ math::sum(SELECT VALUE eloDelta FROM $self->wonAgainst)
+			- math::sum(SELECT VALUE eloDelta FROM $self<-wonAgainst));
+	# wins/losses/battles are derivable from edges - no stored counter needed
+	DEFINE FIELD OVERWRITE wins ON bot TYPE int COMPUTED count($self->wonAgainst);
+	DEFINE FIELD OVERWRITE losses ON bot TYPE int COMPUTED count($self<-wonAgainst);
+	-- DEFINE FIELD OVERWRITE battles ON bot TYPE int COMPUTED $self.wins + $self.losses;
 
 DEFINE TABLE OVERWRITE wonAgainst SCHEMAFULL TYPE RELATION FROM bot TO bot ENFORCED;
 	DEFINE FIELD OVERWRITE id ON wonAgainst TYPE string;
@@ -26,10 +34,7 @@ DEFINE TABLE OVERWRITE wonAgainst SCHEMAFULL TYPE RELATION FROM bot TO bot ENFOR
 		DEFINE FIELD OVERWRITE rounds.*.moveLoser ON wonAgainst TYPE string;
 	-- DEFINE FIELD OVERWRITE scoreWinner ON wonAgainst COMPUTED
 	-- DEFINE FIELD OVERWRITE scoreLoser ON wonAgainst COMPUTED
-	DEFINE FIELD OVERWRITE eloWinner ON wonAgainst TYPE int;
-	DEFINE FIELD OVERWRITE eloLoser ON wonAgainst TYPE int;
-	DEFINE FIELD OVERWRITE eloGainWinner ON wonAgainst TYPE int; # for sparkline
-	DEFINE FIELD OVERWRITE eloLossLoser ON wonAgainst TYPE int;
+	DEFINE FIELD OVERWRITE eloDelta ON wonAgainst TYPE int; # + for winner, - for loser (symmetric)
 	DEFINE FIELD OVERWRITE created ON wonAgainst TYPE datetime DEFAULT ALWAYS time::now();
 
 DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
