@@ -4,7 +4,7 @@
   "workspaces": {
     "": {
       "dependencies": {
-        "@absolutejs/isolated-jsc": "^0.12.5",
+        "@isolated-vm/experimental": "^0.0.12",
         "@types/bun": "^1.4.0",
         "surrealdb": "^2.0.8",
       },
@@ -17,15 +17,21 @@
     },
   },
   "packages": {
-    "@absolutejs/handoff": ["@absolutejs/handoff@0.1.0", "", { "dependencies": { "@absolutejs/manifest": "0.7.2", "@sinclair/typebox": "0.34.52" } }, "sha512-P9Wr2oyYBcj7mriCV4h9zRlLGijee/7DW8USVkl/m4ovql7zpITy547jy6j8+HC5v5Ocs+TVcMYmrROEEBupNg=="],
+    "@isolated-vm/experimental": ["@isolated-vm/experimental@0.0.12", "", { "dependencies": { "tslib": "^2.7.0" }, "optionalDependencies": { "@isolated-vm/experimental-darwin-arm64": "0.0.12", "@isolated-vm/experimental-darwin-x64": "0.0.12", "@isolated-vm/experimental-linux-arm64-gnu": "0.0.12", "@isolated-vm/experimental-linux-arm64-musl": "0.0.12", "@isolated-vm/experimental-linux-x64-gnu": "0.0.12", "@isolated-vm/experimental-linux-x64-musl": "0.0.12", "@isolated-vm/experimental-win32-x64": "0.0.12" } }, "sha512-smxaFkvBE5SKBfO5OZQXATTBj0066DdAKcSdxvZFcBury7Vwi+FC2pYkg+bkelrEzU8FttUBEbau0lzxWprAlw=="],
 
-    "@absolutejs/isolated-jsc": ["@absolutejs/isolated-jsc@0.12.5", "", { "dependencies": { "@absolutejs/telemetry": "^0.3.0" }, "bin": { "isolated-jsc": "dist/doctor.js", "isolated-jsc-doctor": "dist/doctor.js" } }, "sha512-swdfOe4bHkWIEURCzw9PX8J2YWx6zu/e57L7QfLyvb6i/TASm6blKXi7nGLVPFxiXGevVjMSFrbrgB33JHXLOg=="],
+    "@isolated-vm/experimental-darwin-arm64": ["@isolated-vm/experimental-darwin-arm64@0.0.12", "", { "os": "darwin", "cpu": "arm64" }, "sha512-rC+rC4KeQU6HeFCNzMFQRY1k7uY64whQjCVMQwLUpLrStQkuQxf7WCVzofaWylXqSZRwRMl6/jw719r34jrmiA=="],
 
-    "@absolutejs/manifest": ["@absolutejs/manifest@0.7.2", "", { "peerDependencies": { "@sinclair/typebox": ">=0.34.0 <0.35.0" }, "bin": { "absolute-manifest": "dist/cli.js" } }, "sha512-NSVzC4yHbH+n+WCNdWYrpbc+3k5rOfO4X85Ku9VCP8teRaa2VEibp29Cyvg9rQARUGaQjGGTz+l+APqM0+odxg=="],
+    "@isolated-vm/experimental-darwin-x64": ["@isolated-vm/experimental-darwin-x64@0.0.12", "", { "os": "darwin", "cpu": "x64" }, "sha512-bohLvdEkn41E4/vpE/1xf1lS/ofDlC6KzethI5l7QiCjshmMpk17qxlbOpMktbimdjZMbaKzbg8oeW66gqYgqA=="],
 
-    "@absolutejs/telemetry": ["@absolutejs/telemetry@0.3.1", "", { "dependencies": { "@absolutejs/handoff": "0.1.0" }, "peerDependencies": { "drizzle-orm": ">=1.0.0-rc.4 <2" }, "optionalPeers": ["drizzle-orm"] }, "sha512-Apd/FfS1BbDyeMDwoWsSx8ql5MeLjLY7MQn0yAHz1T1wxqpnQgFTdYKbvqcfAJ6/hpQLTHw4EY/QkihwtQuPjQ=="],
+    "@isolated-vm/experimental-linux-arm64-gnu": ["@isolated-vm/experimental-linux-arm64-gnu@0.0.12", "", { "os": "linux", "cpu": "arm64" }, "sha512-SJH1n+F0CxyJ9q05aGgbejYjetpsRIkrePTH73EBuiURP7MBpijQnif7tGwcDLWfglq7PLq+VmMHKNU4QuY5+g=="],
 
-    "@sinclair/typebox": ["@sinclair/typebox@0.34.52", "", {}, "sha512-XiMQh7qqVlxZzcVD+kkGMNGMzcTrDMLWI7S4x7z1MkCkbDPrekpZXEUK0eZqZFMuHQg2a2DZOcDIh9o5v3Gonw=="],
+    "@isolated-vm/experimental-linux-arm64-musl": ["@isolated-vm/experimental-linux-arm64-musl@0.0.12", "", { "os": "linux", "cpu": "arm64" }, "sha512-qG2Pw4Vh0XCuRvVhk+dNuTGsnujW1ygKg4UjfzeoJT4r8Jvy2g0WKE/sGY+W+Svf96Y98OOb4HTAnxvK2+9+NQ=="],
+
+    "@isolated-vm/experimental-linux-x64-gnu": ["@isolated-vm/experimental-linux-x64-gnu@0.0.12", "", { "os": "linux", "cpu": "x64" }, "sha512-xh3S2x3vtYW6S9qZgodNTZcXv1hyG5hdjDxJ9ivBkX/ZvJOyL3/NPTF1+SkJiA8ZP7doczOgVwzQP+wNZeuAtg=="],
+
+    "@isolated-vm/experimental-linux-x64-musl": ["@isolated-vm/experimental-linux-x64-musl@0.0.12", "", { "os": "linux", "cpu": "x64" }, "sha512-mHypkTx4sV8TRKmrY04w73apH2jj3nZn8rB77kCn+Ihg0DZwpZ/bocOZEn8bC3pIHuh/g4rBlY0xjRysdiUvAA=="],
+
+    "@isolated-vm/experimental-win32-x64": ["@isolated-vm/experimental-win32-x64@0.0.12", "", { "os": "win32", "cpu": "x64" }, "sha512-WeLJlV7SoFH0JXfWGv1EqcyL/80Nrk/QitNkeddsyChjdR7h0mxaGn3oFyI1ta9tnu2hhdYflUW6Kh5gteVWpA=="],
 
     "@surrealdb/cbor": ["@surrealdb/cbor@2.0.0-alpha.4", "", {}, "sha512-l/hNZ3ZCOJq8rzwx1y5ZV/8b2bYCWdhGqRVY33Pu50NAHyAW5qLsMn3ZBkZow77mAKwNCsbDsRGnyYEuU95mjw=="],
 

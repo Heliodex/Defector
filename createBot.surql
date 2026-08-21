@@ -1,6 +1,6 @@
 CREATE bot CONTENT {
 	name: $name,
 	description: "test",
-	code: [{ content: $code }],
+	code: [{ source: $source, transpiled: $transpiled }],
 	active: true,
 };

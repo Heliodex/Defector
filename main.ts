@@ -1,4 +1,4 @@
-import { createIsolate, Reference } from "@absolutejs/isolated-jsc"
+import { Agent, expect, expectComplete } from "@isolated-vm/experimental"
 import { Surreal } from "surrealdb"
 import alwaysCooperateBot from "./bots/alwaysCooperate?raw"
 import alwaysDefectBot from "./bots/alwaysDefect?raw"
@@ -60,22 +60,37 @@ async function reconnect() {
 
 await reconnect()
 
-const compile = (code: string) =>
-	new Bun.Transpiler({ loader: "ts" }).transformSync(code)
+async function transpile(code: string) {
+	// new Bun.Transpiler({ loader: "ts" }).transformSync(code)
+	const out = await Bun.build({
+		entrypoints: ["index.ts"],
+		files: {
+			"index.ts": code,
+		},
+	})
+	if (!out.success) throw new Error("Compilation failed")
+
+	const output = out.outputs[0]
+	if (!output) throw new Error("No output")
+
+	return await output.text()
+}
 
 console.log("connected")
 
 await db.query(createBotQuery, {
 	name: "alwaysCooperate",
-	code: compile(alwaysCooperateBot),
+	source: alwaysCooperateBot,
+	transpiled: await transpile(alwaysCooperateBot),
 })
 
 await db.query(createBotQuery, {
 	name: "alwaysDefect",
-	code: compile(alwaysDefectBot),
+	source: alwaysDefectBot,
+	transpiled: await transpile(alwaysDefectBot),
 })
 
-setInterval(async () => {
+async function battle() {
 	console.log("Battling...")
 
 	type DBBot = {
@@ -87,17 +102,25 @@ setInterval(async () => {
 	const [, , , bots] = await db.query<[DBBot, DBBot][]>(selectBotsQuery)
 	if (!bots) throw new Error("No bots found")
 
-	console.log(bots)
+	console.log(bots[1].latestCode)
 
 	const isolates = await Promise.all(
 		bots.map(async bot => {
-			const isolate = await createIsolate({ memoryLimit: 64 })
-			const [context, script] = await Promise.all([
-				isolate.createContext(),
-				isolate.compileScript(bot.latestCode),
-			])
+			// const isolate = await createIsolate({ memoryLimit: 64 })
+			// const [context, script] = await Promise.all([
+			// 	isolate.createContext(),
+			// 	isolate.compileScript(bot.latestCode),
+			// ])
+			const agent = await Agent.create()
+			const realm = await agent.createRealm()
 
-			return { bot, isolate, script, context }
+			const module = await agent.compileModule(bot.latestCode)
+			if (!module?.complete) throw new Error("Module not compiled")
+
+			const { result } = module
+			console.log(await result.evaluate(realm))
+
+			return { bot }
 		})
 	)
 
@@ -117,8 +140,6 @@ setInterval(async () => {
 	]
 	const history: MovePair[] = []
 
-	console.log(isolates)
-
 	// for (let i = 0; i < rounds; i++) {
 	for (let j = 0; j < isolates.length; j++) {
 		const isolate = isolates[j]
@@ -131,4 +152,7 @@ setInterval(async () => {
 		console.log(j, result)
 	}
 	// }
-}, 1000)
+}
+
+// setInterval(, 1000)
+battle()

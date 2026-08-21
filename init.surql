@@ -31,12 +31,13 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE description ON bot TYPE string;
 	DEFINE FIELD OVERWRITE code ON bot TYPE array<object> DEFAULT ALWAYS []
 			ASSERT array::len($value) >= 1;
-		DEFINE FIELD OVERWRITE code.*.content ON bot TYPE string; # transpiled JS
+		DEFINE FIELD OVERWRITE code.*.source ON bot TYPE string;
+		DEFINE FIELD OVERWRITE code.*.transpiled ON bot TYPE string;
 		DEFINE FIELD OVERWRITE code.*.updated ON bot TYPE datetime DEFAULT ALWAYS time::now();
 	DEFINE FIELD OVERWRITE codeHash ON bot TYPE string VALUE
-		crypto::sha256((SELECT VALUE content FROM $this.code ORDER BY updated)[$]);
+		crypto::sha256((SELECT VALUE transpiled FROM $this.code ORDER BY updated)[$]);
 	DEFINE FIELD OVERWRITE latestCode ON bot TYPE string VALUE
-		(SELECT VALUE content FROM $this.code ORDER BY updated)[$];
+		(SELECT VALUE transpiled FROM $this.code ORDER BY updated)[$];
 	DEFINE FIELD OVERWRITE active ON bot TYPE bool DEFAULT ALWAYS false;
 	DEFINE FIELD OVERWRITE created ON bot TYPE datetime DEFAULT ALWAYS time::now();
 	-- DEFINE FIELD OVERWRITE elo ON bot TYPE int COMPUTED
