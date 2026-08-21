@@ -3,10 +3,11 @@ DEFINE TABLE OVERWRITE created SCHEMAFULL TYPE RELATION FROM user TO bot ENFORCE
 
 REMOVE TABLE matrix;
 REMOVE TABLE bot;
+REMOVE TABLE battle;
 
 DEFINE TABLE OVERWRITE matrix SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON matrix TYPE string;
-	DEFINE FIELD OVERWRITE payoff ON matrix TYPE array<array<array<int, 2>, 2>, 2>;
+	DEFINE FIELD OVERWRITE payoff ON matrix TYPE array<array<int, 2>, 2>;
 	DEFINE FIELD OVERWRITE created ON matrix TYPE datetime DEFAULT ALWAYS time::now();
 
 # T > R > P > S
@@ -17,11 +18,9 @@ LET $R = 2;
 LET $P = 1;
 LET $S = 0;
 
+# 0: cooperate, 1: defect
 CREATE matrix CONTENT {
-	payoff: [
-		[[$R, $R], [$S, $T]],
-		[[$T, $S], [$P, $P]],
-	]
+	payoff: [[$R, $S], [$T, $P]]
 };
 
 DEFINE FUNCTION OVERWRITE fn::calculateScore() {};
@@ -48,23 +47,27 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE losses ON bot TYPE int COMPUTED count($self<-wonAgainst);
 	-- DEFINE FIELD OVERWRITE battles ON bot TYPE int COMPUTED $self.wins + $self.losses;
 
-DEFINE TABLE OVERWRITE wonAgainst SCHEMAFULL TYPE RELATION FROM bot TO bot ENFORCED;
-	DEFINE FIELD OVERWRITE id ON wonAgainst TYPE string;
-	DEFINE FIELD OVERWRITE rounds ON wonAgainst TYPE array<object>;
-		DEFINE FIELD OVERWRITE rounds.*.moveWinner ON wonAgainst TYPE string;
-		DEFINE FIELD OVERWRITE rounds.*.moveLoser ON wonAgainst TYPE string;
-	-- DEFINE FIELD OVERWRITE scoreWinner ON wonAgainst COMPUTED
-	-- DEFINE FIELD OVERWRITE scoreLoser ON wonAgainst COMPUTED
-	DEFINE FIELD OVERWRITE matrix ON wonAgainst TYPE record<matrix> DEFAULT ALWAYS
+DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
+	DEFINE FIELD OVERWRITE id ON battle TYPE string;
+	DEFINE FIELD OVERWRITE bots ON battle TYPE array<record<bot>, 2>;
+	DEFINE FIELD OVERWRITE matrix ON battle TYPE record<matrix> DEFAULT ALWAYS
 		(SELECT VALUE id FROM matrix ORDER BY created)[$];
-	DEFINE FIELD OVERWRITE created ON wonAgainst TYPE datetime DEFAULT ALWAYS time::now();
+	DEFINE FIELD OVERWRITE rounds ON battle TYPE array<array<int, 2>>;
+		DEFINE FIELD OVERWRITE rounds.*.* ON battle TYPE int
+			ASSERT $value IN [0, 1];
+	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> COMPUTED {
+		LET $matrix = $this.matrix;
+		LET $pointsEach = $this.rounds.map(|$round| [$matrix[$round[0]][$round[1]], $matrix[$round[1]][$round[0]]]);
+		LET $roundsCount = count($pointsEach);
+		$pointsEach.map(|$points| $points / $roundsCount);
+	};
+	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
 
-
-DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
-	DEFINE FIELD OVERWRITE id ON hourSubmission TYPE string;
-	DEFINE FIELD OVERWRITE owner ON hourSubmission TYPE record<user>;
-	DEFINE FIELD OVERWRITE lapseIds ON hourSubmission TYPE array<string>;
-	DEFINE FIELD OVERWRITE hours ON hourSubmission TYPE float; # computed at review
-	DEFINE FIELD OVERWRITE status ON hourSubmission TYPE string DEFAULT "pending"; # pending|approved|rejected
-	DEFINE FIELD OVERWRITE reviewedBy ON hourSubmission TYPE option<record<user>>;
-	DEFINE FIELD OVERWRITE created ON hourSubmission TYPE datetime DEFAULT ALWAYS time::now();
+-- DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
+-- 	DEFINE FIELD OVERWRITE id ON hourSubmission TYPE string;
+-- 	DEFINE FIELD OVERWRITE owner ON hourSubmission TYPE record<user>;
+-- 	DEFINE FIELD OVERWRITE lapseIds ON hourSubmission TYPE array<string>;
+-- 	DEFINE FIELD OVERWRITE hours ON hourSubmission TYPE float; # computed at review
+-- 	DEFINE FIELD OVERWRITE status ON hourSubmission TYPE string DEFAULT "pending"; # pending|approved|rejected
+-- 	DEFINE FIELD OVERWRITE reviewedBy ON hourSubmission TYPE option<record<user>>;
+-- 	DEFINE FIELD OVERWRITE created ON hourSubmission TYPE datetime DEFAULT ALWAYS time::now();

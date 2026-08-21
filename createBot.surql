@@ -1,5 +1,6 @@
 CREATE bot CONTENT {
-	name: "test",
+	name: $name,
 	description: "test",
-	code: [{ content: "Hello, world!" }],
+	code: [{ content: $code }],
+	active: true,
 };
