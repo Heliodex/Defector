@@ -6,13 +6,14 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE name ON bot TYPE string;
 	DEFINE FIELD OVERWRITE description ON bot TYPE string;
 	DEFINE FIELD OVERWRITE code ON bot TYPE string; # normalised source (transpiled JS)
-	DEFINE FIELD OVERWRITE codeHash ON bot TYPE string; # sha256 for dedup
+	DEFINE FIELD OVERWRITE codeHash ON bot TYPE string COMPUTED
+		crypto::sha256($this.code);
 	DEFINE FIELD OVERWRITE active ON bot TYPE bool DEFAULT ALWAYS false;
 	DEFINE FIELD OVERWRITE created ON bot TYPE datetime DEFAULT ALWAYS time::now();
-	DEFINE FIELD OVERWRITE elo ON bot COMPUTED
+	DEFINE FIELD OVERWRITE elo ON bot TYPE int COMPUTED
 		(1000
-			+ SELECT (eloGainWinner) FROM $self->wonAgainst
-			- SELECT (eloLossLoser) FROM $self<-wonAgainst);
+			+ math::sum(SELECT VALUE eloGainWinner FROM $self->wonAgainst)
+			- math::sum(SELECT VALUE eloLossLoser FROM $self<-wonAgainst));
 	DEFINE FIELD OVERWRITE wins ON bot TYPE int DEFAULT ALWAYS 0;
 	DEFINE FIELD OVERWRITE losses ON bot TYPE int DEFAULT ALWAYS 0;
 	DEFINE FIELD OVERWRITE draws ON bot TYPE int DEFAULT ALWAYS 0;

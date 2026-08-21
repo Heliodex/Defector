@@ -56,4 +56,20 @@ await reconnect()
 
 console.log("connected")
 
-console.log(await db.query("SELECT * FROM bot"))
+console.log(
+	await db.query(`
+		IF count(SELECT 1 FROM bot) = 0 {
+			CREATE bot CONTENT {
+				name: "test",
+				description: "test",
+				code: "test()",
+			};
+		};
+	`)
+)
+
+console.log(
+	await db.query(`
+		SELECT * FROM bot;
+	`)
+)
