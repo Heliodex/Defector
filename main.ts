@@ -1,4 +1,5 @@
 import { Surreal } from "surrealdb"
+import createBotQuery from "./createBot.surql?raw"
 import initQuery from "./init.surql?raw"
 
 console.log("starting")
@@ -56,26 +57,8 @@ await reconnect()
 
 console.log("connected")
 
-await db.query(`
-	IF count(SELECT 1 FROM bot) = 0 {
-		CREATE bot CONTENT {
-			name: "test",
-			description: "test",
-			code: [{ content: "Hello, world!" }],
-		};
-	};
-`)
+await db.query(createBotQuery)
 
-const [bots1] = await db.query(`
-	SELECT * FROM bot;
-`)
-console.log(bots1)
-
-await db.query(`
-	UPDATE bot SET code += { content: "" }
-`)
-
-const [bots2] = await db.query(`
-	SELECT * FROM bot;
-`)
-console.log(bots2)
+setInterval(() => {
+	console.log("Battling...")
+}, 1000)

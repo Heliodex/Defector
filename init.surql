@@ -1,8 +1,30 @@
 DEFINE TABLE OVERWRITE created SCHEMAFULL TYPE RELATION FROM user TO bot ENFORCED;
 	DEFINE FIELD OVERWRITE id ON created TYPE string;
 
+REMOVE TABLE matrix;
 REMOVE TABLE bot;
 
+DEFINE TABLE OVERWRITE matrix SCHEMAFULL TYPE NORMAL;
+	DEFINE FIELD OVERWRITE id ON matrix TYPE string;
+	DEFINE FIELD OVERWRITE payoff ON matrix TYPE array<array<array<int, 2>, 2>, 2>;
+	DEFINE FIELD OVERWRITE created ON matrix TYPE datetime DEFAULT ALWAYS time::now();
+
+# T > R > P > S
+# 2R > T + S
+
+LET $T = 3;
+LET $R = 2;
+LET $P = 1;
+LET $S = 0;
+
+CREATE matrix CONTENT {
+	payoff: [
+		[[$R, $R], [$S, $T]],
+		[[$T, $S], [$P, $P]],
+	]
+};
+
+DEFINE FUNCTION OVERWRITE fn::calculateScore() {};
 
 DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON bot TYPE string;
@@ -18,11 +40,10 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 		(SELECT VALUE content FROM $this.code ORDER BY updated)[$];
 	DEFINE FIELD OVERWRITE active ON bot TYPE bool DEFAULT ALWAYS false;
 	DEFINE FIELD OVERWRITE created ON bot TYPE datetime DEFAULT ALWAYS time::now();
-	DEFINE FIELD OVERWRITE elo ON bot TYPE int COMPUTED
-		(1000
-			+ math::sum(SELECT VALUE eloDelta FROM $self->wonAgainst)
-			- math::sum(SELECT VALUE eloDelta FROM $self<-wonAgainst));
-	# wins/losses/battles are derivable from edges - no stored counter needed
+	-- DEFINE FIELD OVERWRITE elo ON bot TYPE int COMPUTED
+	-- 	(1000
+	-- 		+ math::sum(SELECT VALUE eloDelta FROM $self->wonAgainst)
+	-- 		- math::sum(SELECT VALUE eloDelta FROM $self<-wonAgainst));
 	DEFINE FIELD OVERWRITE wins ON bot TYPE int COMPUTED count($self->wonAgainst);
 	DEFINE FIELD OVERWRITE losses ON bot TYPE int COMPUTED count($self<-wonAgainst);
 	-- DEFINE FIELD OVERWRITE battles ON bot TYPE int COMPUTED $self.wins + $self.losses;
@@ -34,8 +55,10 @@ DEFINE TABLE OVERWRITE wonAgainst SCHEMAFULL TYPE RELATION FROM bot TO bot ENFOR
 		DEFINE FIELD OVERWRITE rounds.*.moveLoser ON wonAgainst TYPE string;
 	-- DEFINE FIELD OVERWRITE scoreWinner ON wonAgainst COMPUTED
 	-- DEFINE FIELD OVERWRITE scoreLoser ON wonAgainst COMPUTED
-	DEFINE FIELD OVERWRITE eloDelta ON wonAgainst TYPE int; # + for winner, - for loser (symmetric)
+	DEFINE FIELD OVERWRITE matrix ON wonAgainst TYPE record<matrix> DEFAULT ALWAYS
+		(SELECT VALUE id FROM matrix ORDER BY created)[$];
 	DEFINE FIELD OVERWRITE created ON wonAgainst TYPE datetime DEFAULT ALWAYS time::now();
+
 
 DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON hourSubmission TYPE string;
