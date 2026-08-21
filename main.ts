@@ -1,3 +1,4 @@
+import { createIsolate, Reference } from "@absolutejs/isolated-jsc"
 import { Surreal } from "surrealdb"
 import alwaysCooperateBot from "./bots/alwaysCooperate?raw"
 import alwaysDefectBot from "./bots/alwaysDefect?raw"
@@ -25,7 +26,7 @@ console.log("started")
 const db = new Surreal()
 const url = "ws://localhost:8003"
 
-export async function reconnect() {
+async function reconnect() {
 	for (let attempt = 0; ; attempt++)
 		try {
 			await db.close() // doesn't do anything if not connected
@@ -59,16 +60,19 @@ export async function reconnect() {
 
 await reconnect()
 
+const compile = (code: string) =>
+	new Bun.Transpiler({ loader: "ts" }).transformSync(code)
+
 console.log("connected")
 
 await db.query(createBotQuery, {
 	name: "alwaysCooperate",
-	code: alwaysCooperateBot,
+	code: compile(alwaysCooperateBot),
 })
 
 await db.query(createBotQuery, {
 	name: "alwaysDefect",
-	code: alwaysDefectBot,
+	code: compile(alwaysDefectBot),
 })
 
 setInterval(async () => {
@@ -85,10 +89,17 @@ setInterval(async () => {
 
 	console.log(bots)
 
-	const workers = bots
-		.map(bot => new Blob([bot.latestCode]))
-		.map(blob => URL.createObjectURL(blob))
-		.map(url => new Worker(url))
+	const isolates = await Promise.all(
+		bots.map(async bot => {
+			const isolate = await createIsolate({ memoryLimit: 64 })
+			const [context, script] = await Promise.all([
+				isolate.createContext(),
+				isolate.compileScript(bot.latestCode),
+			])
+
+			return { bot, isolate, script, context }
+		})
+	)
 
 	const rounds = 10
 
@@ -106,12 +117,18 @@ setInterval(async () => {
 	]
 	const history: MovePair[] = []
 
-	console.log(workers)
+	console.log(isolates)
 
-	for (let i = 0; i < rounds; i++) {
-		for (let j = 0; j < workers.length; j++) {
-			const worker = workers[j]
-			const state = states[j]
-		}
+	// for (let i = 0; i < rounds; i++) {
+	for (let j = 0; j < isolates.length; j++) {
+		const isolate = isolates[j]
+		if (!isolate) throw new Error("Isolate not found")
+
+		const state = states[j]
+		if (!state) throw new Error("State not found")
+
+		const result = await isolate.script.run(isolate.context)
+		console.log(j, result)
 	}
+	// }
 }, 1000)
