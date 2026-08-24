@@ -203,9 +203,10 @@ async function battle() {
 	const history: MovePair[] = []
 	const errors: [string?, string?] = [undefined, undefined]
 
-	roundsLoop: for (let i = 0; i < rounds; i++) {
+	for (let i = 0; i < rounds; i++) {
 		const moves: MovePair = ["C", "C"]
 		const memories: [Memory, Memory] = [null, null]
+		let roundErrored = false
 
 		for (let j = 0; j < bots.length; j++) {
 			const bot = bots[j]
@@ -222,12 +223,15 @@ async function battle() {
 					error instanceof Error
 						? error.message
 						: JSON.stringify(error)
-				break roundsLoop
+				roundErrored = true
+				continue
 			}
 			const [move, memory] = result
 			moves[j] = move
 			memories[j] = memory
 		}
+
+		if (roundErrored) break
 
 		states[0].memory = memories[0]
 		states[1].memory = memories[1]

@@ -62,6 +62,7 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		LET $e0 = $errors[0] != NONE;
 		LET $e1 = $errors[1] != NONE;
 
+		# Punish bots for errors
 		IF $e0 AND $e1 {
 			[$S, $S];
 		} ELSE IF $e0 {
