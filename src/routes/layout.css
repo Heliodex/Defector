@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+@font-face {
+	font-family: Lexend;
+	src:
+		url(/Lexend.woff2) format("woff2"),
+		url(/Lexend.ttf) format("truetype");
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Azeret Mono";
+	src:
+		url(/AzeretMono.woff2) format("woff2"),
+		url(/AzeretMono.ttf) format("truetype");
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Sofia Sans";
+	src:
+		url(/SofiaSans.woff2) format("woff2"),
+		url(/SofiaSans.ttf) format("truetype");
+	font-display: swap;
+}
+
+*:not(code) {
+	font-family: Lexend, sans-serif;
+}
+
+code {
+	font-family: "Azeret Mono", monospace;
+}
+
+body {
+	/* background: rgb(17, 19, 22); */
+	@apply bg-mist-900;
+	color: white;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	line-height: 1.5;
+}
+
+a:not(.btn) {
+	@apply underline text-yellow-300 hover:text-yellow-400 active:text-yellow-200 transition-colors;
+}
+
+.btn {
+	@apply cursor-pointer transition-colors no-underline rounded-lg px-4 py-2;
+}
+
+p {
+	@apply text-pretty;
+}
+
+form label {
+	display: flex;
+	flex-direction: column;
+	@apply pb-6;
+
+	& span {
+		@apply pb-2;
+	}
+
+	/* Only annotate the label's own field, not nested/composite labels. */
+	&:has(> input[required], > select[required], > textarea[required])
+		> span:first-child::after {
+		content: "*";
+		@apply text-red-500;
+	}
+	&:has(> input, > select, > textarea):not(
+			:has(> input[required], > select[required], > textarea[required])
+		)
+		> span:first-child::after {
+		content: " (optional)";
+		@apply text-sm text-neutral-400;
+	}
+}
+
+/* style file browse input "Browse..." section */
+
+input[type="file"]::file-selector-button {
+	@apply font-bold pr-4;
+}
+
+input[type="file"],
+select {
+	@apply w-100;
+}
+
+input,
+textarea,
+select {
+	@apply bg-stone-900 border border-neutral-500 rounded-lg px-4 py-2;
+}
+
+select,
+input[type="file"] {
+	cursor: pointer;
+}
+
+details:hover:not([open]) {
+	@apply bg-stone-800;
+}
+
+input[type="checkbox"] {
+	@apply w-4 h-4 cursor-pointer;
+}
+
+input[type="number"] {
+	@apply w-50;
+}
+
+h1,
+h2,
+h3 {
+	font-family: "Sofia Sans", Lexend, sans-serif;
+	font-weight: 1000;
+}
+
+h1 {
+	@apply text-5xl pb-4 text-[#f7df1e];
+}
+
+h2 {
+	@apply text-4xl pb-4 underline decoration-[#f7df1e];
+}
+
+h3 {
+	@apply text-3xl pb-4;
+}
+
+button[disabled] {
+	@apply opacity-50 pointer-events-none;
+}
+
+:not(nav) ul {
+	list-style-type: disc;
+	padding-left: 1.5rem;
+}
+
+hr {
+	@apply pb-6 border-t border-yellow-800;
+}
