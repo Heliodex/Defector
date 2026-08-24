@@ -190,12 +190,10 @@ function moveToInt(move: Move): number {
 }
 
 async function battle() {
-	console.log("Battling...")
-
 	const [, , , bots] = await db.query<[DBBot, DBBot][]>(selectBotsQuery)
 	if (!bots) throw new Error("No bots found")
 
-	console.log(bots)
+	console.log(bots[0].name, "vs", bots[1].name)
 
 	type MovePair = [Move, Move]
 
@@ -241,24 +239,42 @@ async function battle() {
 		states[0].history.push({ you: moves[0], opponent: moves[1] })
 		states[1].history.push({ you: moves[1], opponent: moves[0] })
 		history.push(moves)
-
-		console.log("round", i, moves)
 	}
-
-	console.log("battle complete", history)
 
 	await db.create(new Table("battle")).content({
 		bots: bots.map(bot => bot.id),
 		rounds: history.map(round => round.map(moveToInt)),
 		errors,
 	})
-
-	console.log("battle committed")
-
-	console.log(await db.query("SELECT * FROM battle"))
 }
 
-// setInterval(, 1000)
-await battle()
+const tournamentBattles = 100
+for (let i = 0; i < tournamentBattles; i++) {
+	console.log(`Battle ${i + 1}/${tournamentBattles}`)
+	await battle()
+}
+
+type LeaderboardEntry = {
+	name: string
+	elo: number
+	roundsWon: number
+	wins: number
+	losses: number
+	totalBattles: number
+}
+
+const [leaderboard] = await db.query<LeaderboardEntry[]>(
+	`SELECT
+		name,
+		elo,
+		wins,
+		losses,
+		totalBattles
+	FROM bot
+	WHERE active
+	ORDER BY elo DESC, name ASC`
+)
+console.log("Elo leaderboard")
+console.table(leaderboard ?? [])
 
 process.exit()
