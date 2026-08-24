@@ -22,7 +22,7 @@ const lapseData = $derived(await getLapseData())
 		Submit a bot
 	</a>
 	<a
-		href="/my-bots"
+		href="/your-bots"
 		class="btn bg-zinc-700 hover:bg-zinc-600 active:bg-zinc-500 font-bold text-center"
 	>
 		My bots

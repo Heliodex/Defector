@@ -11,7 +11,7 @@ import { newBotForm } from "./bot.remote"
 	Write a bot that plays the Iterated Prisoner's Dilemma against other bots
 	and fight for the top of the ladder. You can have up to 3 active bots at
 	once. Already have bots?
-	<a href="/my-bots">View your bots</a>.
+	<a href="/your-bots">View your bots</a>.
 </p>
 
 {#if newBotForm.result}
@@ -24,7 +24,7 @@ import { newBotForm } from "./bot.remote"
 			was created!
 		</p>
 		<p class="text-sm">
-			<a href="/my-bots" class="text-blue-400"
+			<a href="/your-bots" class="text-blue-400"
 				>Go to your bots to manage it</a
 			>.
 		</p>

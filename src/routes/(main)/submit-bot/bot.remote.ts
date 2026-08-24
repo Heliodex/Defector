@@ -1,4 +1,4 @@
-import { invalid, redirect } from "@sveltejs/kit"
+import { invalid } from "@sveltejs/kit"
 import { makeMessage, type } from "#lib/arktype.js"
 import { authorise } from "#lib/server/auth.js"
 import createBotQuery from "#lib/server/bot/createBot.surql?raw"

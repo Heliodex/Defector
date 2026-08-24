@@ -3,7 +3,7 @@ import Accordion from "#components/Accordion.svelte"
 import AccordionItem from "#components/AccordionItem.svelte"
 import Head from "#components/Head.svelte"
 import { programmeName } from "#lib/assets/config.js"
-import logo from "#lib/assets/powertools.svg"
+import logo from "#lib/assets/logo.svg"
 </script>
 
 <Head />

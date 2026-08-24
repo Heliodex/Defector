@@ -89,7 +89,7 @@ Reused: `+layout.svelte`, `+layout.server.ts` guard, `/`, `/guide` (rewrite), `/
 New:
 
 *   `/(main)/submit-bot` — `bot.remote.ts` `form`
-*   `/(main)/my-bots` — list + activate/deactivate (max 3)
+*   `/(main)/your-bots` — list + activate/deactivate (max 3)
 *   `/(main)/hours` — Lapse hour submission (anytime)
 *   `/(any)/leaderboard` — live `query.live` (public)
 *   `/(any)/bot/[id]` — `query` by id
@@ -106,7 +106,7 @@ Config: `src/lib/assets/config.ts:1` → new `programmeName` (name TBD) + `repoN
 4.  `src/routes/(main)/hours/hours.remote.ts` + `hourSubmission` surql (reuse Lapse logic).
 5.  `src/routes/(any)/leaderboard/leaderboard.remote.ts` — `query.live` + fallback polling.
 6.  `src/lib/server/tournament/scheduler.ts` + wire `hooks.server.ts:14` `init` + `BATTLE_INTERVAL_MS=10000`.
-7.  UI pages: `my-bots`, `leaderboard`, `bot/[id]`, `battle/[id]`, `hours`, admin extension.
+7.  UI pages: `your-bots`, `leaderboard`, `bot/[id]`, `battle/[id]`, `hours`, admin extension.
 8.  guide rewrite + landing copy + rename `config.ts:1`.
 
 ## 8. Env
@@ -116,7 +116,7 @@ Config: `src/lib/assets/config.ts:1` → new `programmeName` (name TBD) + `repoN
 ## 9. Verification
 
 *   `bun run build` + `svelte-check` — no new errors (pre-existing `db.ts:3 Query` warning ok).
-*   Manual: paste TFT bot → appears in `my-bots` → next 10s tick creates `battle` row → leaderboard Elo shifts → `/battle/[id]` replay shows 100 moves → `/hours` Lapse select count fixed (no `bind:group` bug) → live `connected` indicator toggles.
+*   Manual: paste TFT bot → appears in `your-bots` → next 10s tick creates `battle` row → leaderboard Elo shifts → `/battle/[id]` replay shows 100 moves → `/hours` Lapse select count fixed (no `bind:group` bug) → live `connected` indicator toggles.
 
 ## 10. Out of Scope (v2)
 

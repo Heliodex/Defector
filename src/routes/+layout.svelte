@@ -1,7 +1,7 @@
 <script lang="ts">
 import "./layout.css"
 import { repoName } from "#lib/assets/config.js"
-import favicon from "#lib/assets/powertools.svg"
+import favicon from "#lib/assets/logo.svg"
 import { getIsAdmin, getLoggedIn, login } from "./data.remote"
 
 let { children } = $props()
@@ -39,9 +39,9 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 			<li><a class="btn" href="/leaderboard">Leaderboard</a></li>
 			{#if await user}
 				<li><a class="btn" href="/home">Home</a></li>
-				<li><a class="btn" href="/my-bots">My Bots</a></li>
-				<li><a class="btn" href="/submit-bot">Submit Bot</a></li>
-				<li><a class="btn" href="/submit">Submit Work</a></li>
+				<li><a class="btn" href="/your-bots">Your bots</a></li>
+				<li><a class="btn" href="/submit-bot">Submit bot</a></li>
+				<li><a class="btn" href="/submit">Submit hours</a></li>
 				{#if await isAdmin}
 					<li><a class="btn" href="/admin">Admin</a></li>
 				{/if}
