@@ -1,6 +1,7 @@
 import { readdirSync } from "node:fs"
 import quickjsVariant from "@jitl/quickjs-ng-wasmfile-release-sync"
 import { loadQuickJs } from "@sebastianwessel/quickjs"
+import type { QuickJSContext } from "quickjs-emscripten-core"
 import { type RecordId, Surreal } from "surrealdb"
 import type { Memory, Move, State } from "./bots/bot"
 import commitBattleQuery from "./commitBattle.surql?raw"
@@ -110,14 +111,29 @@ const { runSandboxed } = await loadQuickJs(quickjsVariant)
 
 const callBot = (bot: DBBot, state: State): Promise<[Move, Memory]> =>
 	runSandboxed(
-		async ({ evalCode }) => {
-			const result = await evalCode(
-				`${bot.latestCode.replace(/export \{[\s\S]*?\};?\s*$/, "")}\nexport default await bot(${JSON.stringify(state)})`,
-				"bot.js"
+		async ({ ctx }: { ctx: QuickJSContext }) => {
+			const moduleHandle = ctx.unwrapResult(
+				ctx.evalCode(bot.latestCode, "bot.js", { type: "module" })
+			)
+			const botHandle = ctx.getProp(moduleHandle, "default")
+			const stateHandle = ctx.unwrapResult(
+				ctx.evalCode(`(${JSON.stringify(state)})`, "state.js")
 			)
 
-			if (!result.ok) throw new Error(JSON.stringify(result.error))
-			return result.data
+			try {
+				const outputHandle = ctx.unwrapResult(
+					ctx.callFunction(botHandle, ctx.undefined, stateHandle)
+				)
+				try {
+					return ctx.dump(outputHandle)
+				} finally {
+					outputHandle.dispose()
+				}
+			} finally {
+				stateHandle.dispose()
+				botHandle.dispose()
+				moduleHandle.dispose()
+			}
 		},
 		{
 			executionTimeout: timeout,
