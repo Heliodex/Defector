@@ -108,8 +108,8 @@ const timeout = 100 // ms
 
 const { runSandboxed } = await loadQuickJs(quickjsVariant)
 
-async function callBot(bot: DBBot, state: State): Promise<[Move, Memory]> {
-	return (await runSandboxed(
+const callBot = (bot: DBBot, state: State): Promise<[Move, Memory]> =>
+	runSandboxed(
 		async ({ evalCode }) => {
 			const result = await evalCode(
 				`${bot.latestCode.replace(/export \{[\s\S]*?\};?\s*$/, "")}\nexport default await bot(${JSON.stringify(state)})`,
@@ -125,8 +125,7 @@ async function callBot(bot: DBBot, state: State): Promise<[Move, Memory]> {
 			maxStackSize: 1024 * 1024,
 			mountFs: { "bot.js": bot.latestCode },
 		}
-	)) as unknown as [Move, Memory]
-}
+	) as Promise<[Move, Memory]>
 
 function moveToInt(move: Move): number {
 	if (move === "C") return 0
