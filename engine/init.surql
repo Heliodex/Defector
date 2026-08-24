@@ -13,14 +13,18 @@ DEFINE TABLE OVERWRITE matrix SCHEMAFULL TYPE NORMAL;
 # T > R > P > S
 # 2R > T + S
 
-LET $T = <float> 3;
-LET $R = <float> 2;
-LET $P = <float> 1;
-LET $S = <float> 0;
+DEFINE FUNCTION OVERWRITE fn::initialMatrix() {
+	LET $T = <float> 3;
+	LET $R = <float> 2;
+	LET $P = <float> 1;
+	LET $S = <float> 0;
+
+	RETURN [[$R, $S], [$T, $P]];
+};
 
 # 0: cooperate, 1: defect
 CREATE matrix CONTENT {
-	payoff: [[$R, $S], [$T, $P]]
+	payoff: fn::initialMatrix()
 };
 
 DEFINE FUNCTION OVERWRITE fn::calculateScore() {};
@@ -58,6 +62,10 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 			ASSERT $value IN [0, 1];
 	DEFINE FIELD OVERWRITE errors ON battle TYPE array<option<string>, 2>;
 	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> COMPUTED {
+		LET $initialMatrix = fn::initialMatrix();
+		LET $R = $initialMatrix[0][0];
+		LET $S = $initialMatrix[0][1];
+
 		LET $errors = $this.errors;
 		LET $e0 = $errors[0] != NONE;
 		LET $e1 = $errors[1] != NONE;
