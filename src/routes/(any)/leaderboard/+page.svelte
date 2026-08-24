@@ -67,14 +67,14 @@ onMount(() => {
 				<table class="w-full min-w-200 border-collapse text-sm">
 					<thead>
 						<tr class="text-left text-neutral-400">
-							<th class="border-b border-neutral-600 p-3">#</th>
-							<th class="border-b border-neutral-600 p-3">Bot</th>
-							<th class="border-b border-neutral-600 p-3">
+							<th class="border-b border-neutral-200 p-3">#</th>
+							<th class="border-b border-neutral-200 p-3">Bot</th>
+							<th class="border-b border-neutral-200 p-3">
 								Owner
 							</th>
-							<th class="border-b border-neutral-600 p-3">Elo</th>
-							<th class="border-b border-neutral-600 p-3">W-L</th>
-							<th class="border-b border-neutral-600 p-3">
+							<th class="border-b border-neutral-200 p-3">Elo</th>
+							<th class="border-b border-neutral-200 p-3">W-L</th>
+							<th class="border-b border-neutral-200 p-3">
 								Battles
 							</th>
 						</tr>
@@ -83,31 +83,31 @@ onMount(() => {
 						{#each data.bots as bot, i (bot.id)}
 							<tr class="align-top">
 								<td
-									class="border-b border-neutral-700 p-3 font-semibold"
+									class="border-b border-neutral-300 p-3 font-semibold"
 								>
 									{i + 1}
 								</td>
-								<td class="border-b border-neutral-700 p-3">
+								<td class="border-b border-neutral-300 p-3">
 									<a
 										href="/bot/{bot.id}"
-										class="font-semibold text-yellow-300 hover:text-yellow-400"
+										class="font-semibold text-blue-600 hover:text-blue-700"
 										>{bot.name}</a
 									>
 								</td>
 								<td
-									class="border-b border-neutral-700 p-3 text-neutral-300"
+									class="border-b border-neutral-300 p-3 text-neutral-600"
 								>
 									{bot.ownerName ?? "—"}
 								</td>
 								<td
-									class="border-b border-neutral-700 p-3 font-bold"
+									class="border-b border-neutral-300 p-3 font-bold"
 								>
 									{Math.round(bot.elo)}
 								</td>
-								<td class="border-b border-neutral-700 p-3">
+								<td class="border-b border-neutral-300 p-3">
 									{bot.wins}-{bot.losses}
 								</td>
-								<td class="border-b border-neutral-700 p-3">
+								<td class="border-b border-neutral-300 p-3">
 									{bot.totalBattles}
 								</td>
 							</tr>
@@ -128,7 +128,7 @@ onMount(() => {
 				<li>
 					<a
 						href="/battle/{battle.id}"
-						class="flex items-center justify-between rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 hover:border-yellow-600"
+						class="flex items-center justify-between rounded-lg border border-neutral-300 bg-white px-4 py-2 hover:border-blue-600"
 					>
 						<span>
 							<span class="font-semibold">{battle.bot0}</span>

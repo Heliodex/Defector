@@ -33,9 +33,8 @@ code {
 }
 
 body {
-	/* background: rgb(17, 19, 22); */
-	@apply bg-mist-900;
-	color: white;
+	@apply bg-neutral-50;
+	color: #1a1a1a;
 	margin: 0;
 	display: flex;
 	flex-direction: column;
@@ -44,7 +43,7 @@ body {
 }
 
 a:not(.btn) {
-	@apply underline text-yellow-300 hover:text-yellow-400 active:text-yellow-200 transition-colors;
+	@apply underline text-blue-600 hover:text-blue-700 active:text-blue-500 transition-colors;
 }
 
 .btn {
@@ -75,7 +74,7 @@ form label {
 		)
 		> span:first-child::after {
 		content: " (optional)";
-		@apply text-sm text-neutral-400;
+		@apply text-sm text-neutral-500;
 	}
 }
 
@@ -93,7 +92,7 @@ select {
 input,
 textarea,
 select {
-	@apply bg-stone-900 border border-neutral-500 rounded-lg px-4 py-2;
+	@apply bg-white border border-neutral-300 rounded-lg px-4 py-2;
 }
 
 select,
@@ -102,7 +101,7 @@ input[type="file"] {
 }
 
 details:hover:not([open]) {
-	@apply bg-stone-800;
+	@apply bg-neutral-100;
 }
 
 input[type="checkbox"] {
@@ -121,11 +120,11 @@ h3 {
 }
 
 h1 {
-	@apply text-5xl pb-4 text-[#f7df1e];
+	@apply text-5xl pb-4 text-blue-600;
 }
 
 h2 {
-	@apply text-4xl pb-4 underline decoration-[#f7df1e];
+	@apply text-4xl pb-4 underline decoration-blue-600;
 }
 
 h3 {
@@ -142,5 +141,5 @@ button[disabled] {
 }
 
 hr {
-	@apply pb-6 border-t border-yellow-800;
+	@apply pb-6 border-t border-blue-200;
 }

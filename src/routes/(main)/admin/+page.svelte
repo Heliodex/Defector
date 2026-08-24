@@ -21,24 +21,24 @@ let battles = $derived(await getBattles())
 			<table class="w-full min-w-250 border-collapse text-sm">
 				<thead>
 					<tr class="text-left text-neutral-400">
-						<th class="border-b border-neutral-600 p-3">Submission</th>
-						<th class="border-b border-neutral-600 p-3">Owner</th>
-						<th class="border-b border-neutral-600 p-3">AI</th>
-						<th class="border-b border-neutral-600 p-3">Timelapses</th>
-						<th class="border-b border-neutral-600 p-3">Status</th>
-						<th class="border-b border-neutral-600 p-3">Review</th>
+						<th class="border-b border-neutral-200 p-3">Submission</th>
+						<th class="border-b border-neutral-200 p-3">Owner</th>
+						<th class="border-b border-neutral-200 p-3">AI</th>
+						<th class="border-b border-neutral-200 p-3">Timelapses</th>
+						<th class="border-b border-neutral-200 p-3">Status</th>
+						<th class="border-b border-neutral-200 p-3">Review</th>
 					</tr>
 				</thead>
 				<tbody>
 					{#each submissions as sub (sub.id)}
 						<tr class="align-top">
-							<td class="border-b border-neutral-700 p-3">
+							<td class="border-b border-neutral-300 p-3">
 								<h3
-									class="text-lg! pb-0! font-semibold text-yellow-300"
+									class="text-lg! pb-0! font-semibold text-blue-600"
 								>
 									{sub.name}
 								</h3>
-								<p class="pt-1 text-neutral-300">
+								<p class="pt-1 text-neutral-600">
 									{sub.description}
 								</p>
 								{#if sub.image?.hash}
@@ -74,15 +74,15 @@ let battles = $derived(await getBattles())
 								</p>
 							</td>
 
-							<td class="border-b border-neutral-700 p-3">
+							<td class="border-b border-neutral-300 p-3">
 								{sub.ownerEmail ?? "—"}
 							</td>
 
-							<td class="border-b border-neutral-700 p-3">
+							<td class="border-b border-neutral-300 p-3">
 								{sub.ai ? "Yes" : "No"}
 							</td>
 
-							<td class="border-b border-neutral-700 p-3">
+							<td class="border-b border-neutral-300 p-3">
 								{#if sub.lapseTimelapses?.length}
 									<ul class="flex flex-col gap-1">
 										{#each sub.lapseTimelapses as id}
@@ -103,9 +103,9 @@ let battles = $derived(await getBattles())
 								{/if}
 							</td>
 
-							<td class="border-b border-neutral-700 p-3">
+							<td class="border-b border-neutral-300 p-3">
 								<span
-									class="font-bold {sub.status === "approved" ? '' : sub.status === "rejected" ? 'text-red-400' : 'text-yellow-400'}"
+									class="font-bold {sub.status === "approved" ? '' : sub.status === "rejected" ? 'text-red-400' : 'text-blue-600'}"
 								>{sub.status}</span
 								>
 								{#if sub.review?.notes}
@@ -115,7 +115,7 @@ let battles = $derived(await getBattles())
 								{/if}
 							</td>
 
-							<td class="border-b border-neutral-700 p-3">
+							<td class="border-b border-neutral-300 p-3">
 								{#if sub.status === "pending"}
 									<form {...reviewForm}>
 										<input
@@ -177,29 +177,29 @@ let battles = $derived(await getBattles())
 	<table class="w-full border-collapse text-sm">
 		<thead>
 			<tr class="text-left text-neutral-400">
-				<th class="border-b border-neutral-600 p-3">Bot</th>
-				<th class="border-b border-neutral-600 p-3">Owner</th>
-				<th class="border-b border-neutral-600 p-3">Active</th>
-				<th class="border-b border-neutral-600 p-3">Elo</th>
-				<th class="border-b border-neutral-600 p-3">W-L</th>
+				<th class="border-b border-neutral-200 p-3">Bot</th>
+				<th class="border-b border-neutral-200 p-3">Owner</th>
+				<th class="border-b border-neutral-200 p-3">Active</th>
+				<th class="border-b border-neutral-200 p-3">Elo</th>
+				<th class="border-b border-neutral-200 p-3">W-L</th>
 			</tr>
 		</thead>
 		<tbody>
 			{#each bots as bot (bot.id)}
 				<tr class="align-top">
-					<td class="border-b border-neutral-700 p-3 font-semibold">
+					<td class="border-b border-neutral-300 p-3 font-semibold">
 						<a href="/bot/{bot.id}">{bot.name}</a>
 					</td>
-					<td class="border-b border-neutral-700 p-3">
+					<td class="border-b border-neutral-300 p-3">
 						{bot.ownerEmail ?? "—"}
 					</td>
-					<td class="border-b border-neutral-700 p-3">
+					<td class="border-b border-neutral-300 p-3">
 						{bot.active ? "Yes" : "No"}
 					</td>
-					<td class="border-b border-neutral-700 p-3">
+					<td class="border-b border-neutral-300 p-3">
 						{Math.round(bot.elo)}
 					</td>
-					<td class="border-b border-neutral-700 p-3">
+					<td class="border-b border-neutral-300 p-3">
 						{bot.wins}-{bot.losses}
 					</td>
 				</tr>
@@ -216,23 +216,23 @@ let battles = $derived(await getBattles())
 	<table class="w-full border-collapse text-sm">
 		<thead>
 			<tr class="text-left text-neutral-400">
-				<th class="border-b border-neutral-600 p-3">Battle</th>
-				<th class="border-b border-neutral-600 p-3">Scores</th>
-				<th class="border-b border-neutral-600 p-3">When</th>
+				<th class="border-b border-neutral-200 p-3">Battle</th>
+				<th class="border-b border-neutral-200 p-3">Scores</th>
+				<th class="border-b border-neutral-200 p-3">When</th>
 			</tr>
 		</thead>
 		<tbody>
 			{#each battles as battle (battle.id)}
 				<tr class="align-top">
-					<td class="border-b border-neutral-700 p-3">
+					<td class="border-b border-neutral-300 p-3">
 						<a href="/battle/{battle.id}">
 							{battle.bot0} vs {battle.bot1}
 						</a>
 					</td>
-					<td class="border-b border-neutral-700 p-3">
+					<td class="border-b border-neutral-300 p-3">
 						{battle.scores[0]?.toFixed(2)} – {battle.scores[1]?.toFixed(2)}
 					</td>
-					<td class="border-b border-neutral-700 p-3 whitespace-nowrap">
+					<td class="border-b border-neutral-300 p-3 whitespace-nowrap">
 						{battle.created}
 					</td>
 				</tr>

@@ -42,11 +42,11 @@ function formatDuration(seconds: number) {
 			<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
 				{#each timelapseData.timelapses as t (t.id)}
 					<label
-						class="relative flex cursor-pointer flex-col overflow-hidden rounded-lg border border-zinc-700 bg-zinc-900 p-2 transition-colors hover:border-yellow-600 has-checked:border-yellow-400"
+						class="relative flex cursor-pointer flex-col overflow-hidden rounded-lg border border-neutral-300 bg-white p-2 transition-colors hover:border-blue-600 has-checked:border-blue-400"
 					>
 						<input
 							{...newSubmissionForm.fields.timelapseIds.as("checkbox", t.id)}
-							class="absolute top-2 left-2 z-10 size-5 accent-yellow-400"
+							class="absolute top-2 left-2 z-10 size-5 accent-blue-600"
 						>
 						{#if t.thumbnailUrl}
 							<img
@@ -56,7 +56,7 @@ function formatDuration(seconds: number) {
 							>
 						{:else}
 							<div
-								class="flex aspect-video w-full items-center justify-center rounded bg-zinc-800 text-sm text-zinc-500"
+								class="flex aspect-video w-full items-center justify-center rounded bg-neutral-200 text-sm text-neutral-500"
 							>
 								Processing…
 							</div>
@@ -273,7 +273,7 @@ function formatDuration(seconds: number) {
 	<button
 		disabled={!!timelapseData.error || newSubmissionForm.pending > 0}
 		type="submit"
-		class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 font-bold {newSubmissionForm.pending > 0 ? 'bg-neutral-600 hover:bg-neutral-600 active:bg-neutral-600 opacity-60' : ''}"
+		class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 font-bold {newSubmissionForm.pending > 0 ? 'bg-neutral-300 hover:bg-neutral-300 active:bg-neutral-300 opacity-60' : ''}"
 	>
 		{newSubmissionForm.pending > 0 ? "Submitting..." : "Submit"}
 	</button>

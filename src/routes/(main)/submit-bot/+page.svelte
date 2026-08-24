@@ -143,7 +143,7 @@ import { newBotForm } from "./bot.remote"
 	<button
 		disabled={newBotForm.pending > 0}
 		type="submit"
-		class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 font-bold {newBotForm.pending > 0 ? 'bg-neutral-600 hover:bg-neutral-600 active:bg-neutral-600 opacity-60' : ''}"
+		class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 font-bold {newBotForm.pending > 0 ? 'bg-neutral-300 hover:bg-neutral-300 active:bg-neutral-300 opacity-60' : ''}"
 	>
 		{newBotForm.pending > 0 ? "Submitting..." : "Submit"}
 	</button>

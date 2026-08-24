@@ -63,7 +63,7 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 	{@render children()}
 </main>
 
-<footer class="bg-stone-950 px-8 py-4 text-center">
+<footer class="bg-neutral-200 px-8 py-4 text-center">
 	<p class="pb-4">
 		A programme by
 		<a
@@ -100,7 +100,7 @@ li {
 
 	a,
 	button {
-		@apply text-black bg-[#f7df1e] hover:bg-yellow-600 active:bg-yellow-400 shadow-amber-500;
+		@apply text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-500 shadow-blue-300;
 
 		box-shadow: 0.1rem 0.1rem 0 var(--tw-shadow-color);
 	}

@@ -13,8 +13,8 @@ const lines = $derived(
 )
 </script>
 
-<div class="pt-2 pb-6 bg-stone-900">
-	<div class="w-full px-4 py-2 flex-col border border-neutral-400 rounded-xl">
+<div class="pt-2 pb-6 bg-neutral-100">
+	<div class="w-full px-4 py-2 flex-col border border-neutral-300 rounded-xl">
 		<p class="pb-2 font-bold"><u>{filename}</u></p>
 
 		<div>
@@ -22,11 +22,11 @@ const lines = $derived(
 				{let padding = `padding-left: ${indent + 0.5}rem`}
 
 				{#if line.startsWith("+")}
-					<code class="bg-blue-900" style={padding}>
+					<code class="bg-blue-100" style={padding}>
 						{line.substring(1)}
 					</code>
 				{:else if line.startsWith("-")}
-					<code class="bg-red-900" style={padding}>
+					<code class="bg-red-100" style={padding}>
 						{line.substring(1)}
 					</code>
 				{:else}

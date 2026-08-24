@@ -16,7 +16,7 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 </p>
 
 {#if activeCount >= 3}
-	<p class="pb-4 text-sm font-bold text-yellow-500">
+	<p class="pb-4 text-sm font-bold text-blue-600">
 		You've hit the 3-active-bot limit. Deactivate one before activating
 		another.
 	</p>
@@ -46,7 +46,7 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 {:else}
 	<ul class="grid gap-4 pt-4 sm:grid-cols-2">
 		{#each bots as bot (bot.id)}
-			<li class="rounded-lg border border-zinc-700 bg-zinc-900 p-4">
+			<li class="rounded-lg border border-neutral-300 bg-white p-4">
 				<div class="flex items-start justify-between gap-4">
 					<div>
 						<h2 class="font-semibold">
@@ -65,7 +65,7 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 						>
 					{:else}
 						<span
-							class="rounded bg-zinc-700 px-2 py-0.5 text-xs font-bold"
+							class="rounded bg-zinc-300 px-2 py-0.5 text-xs font-bold"
 							>Inactive</span
 						>
 					{/if}
