@@ -2,7 +2,6 @@
 	"dependencies": {
 		"@jitl/quickjs-ng-wasmfile-release-sync": "^0.32.0",
 		"@sebastianwessel/quickjs": "npm:@jsr/sebastianwessel__quickjs@^3.1.0",
-		"quickjs-emscripten": "^0.32.0",
 		"surrealdb": "^2.0.8"
 	},
 	"name": "ysws3",
