@@ -63,7 +63,7 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE errors ON battle TYPE array<option<string>, 2>;
 	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> COMPUTED {
 		LET $initialMatrix = fn::initialMatrix();
-		LET $R = $initialMatrix[0][0];
+		LET $T = $initialMatrix[1][0];
 		LET $S = $initialMatrix[0][1];
 
 		LET $errors = $this.errors;
@@ -72,17 +72,17 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 
 		# Punish bots for errors
 		IF $e0 AND $e1 {
-			[$S, $S];
+			RETURN [$S, $S];
 		} ELSE IF $e0 {
-			[$S, $R];
+			RETURN [$S, $T];
 		} ELSE IF $e1 {
-			[$R, $S];
-		} ELSE {
-			LET $payoff = (SELECT VALUE payoff FROM ONLY $this.matrix);
-			LET $pts = $this.rounds.map(|$r| [$payoff[$r[0]][$r[1]], $payoff[$r[1]][$r[0]]]);
-			LET $c = <float> count($pts);
-			[math::sum($pts.map(|$p| $p[0])) / $c, math::sum($pts.map(|$p| $p[1])) / $c];
-		}
+			RETURN [$T, $S];
+		};
+
+		LET $payoff = (SELECT VALUE payoff FROM ONLY $this.matrix);
+		LET $pts = $this.rounds.map(|$r| [$payoff[$r[0]][$r[1]], $payoff[$r[1]][$r[0]]]);
+		LET $c = <float> count($pts);
+		[math::sum($pts.map(|$p| $p[0])) / $c, math::sum($pts.map(|$p| $p[1])) / $c];
 	};
 	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
 
