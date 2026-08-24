@@ -36,18 +36,17 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 <header class="max-w-280 mx-auto flex">
 	<nav>
 		<ul class="list-none p-0 m-0 flex gap-8 py-6">
+			<li><a class="btn" href="/leaderboard">Leaderboard</a></li>
 			{#if await user}
 				<li><a class="btn" href="/home">Home</a></li>
-			{:else}
-				<li><a class="btn" href="/">Landing</a></li>
-			{/if}
-			<li><a class="btn" href="/guide">Guide</a></li>
-			{#if await user}
-				<li><a class="btn" href="/submit">Submit</a></li>
+				<li><a class="btn" href="/my-bots">My Bots</a></li>
+				<li><a class="btn" href="/submit-bot">Submit Bot</a></li>
+				<li><a class="btn" href="/hours">Hours</a></li>
 				{#if await isAdmin}
 					<li><a class="btn" href="/admin">Admin</a></li>
 				{/if}
 			{:else}
+				<li><a class="btn" href="/">Landing</a></li>
 				<li>
 					<form {...login} class="-mt-1.5">
 						<!-- why wrong paddingg ggggg -->
@@ -55,6 +54,7 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 					</form>
 				</li>
 			{/if}
+			<li><a class="btn" href="/guide">Guide</a></li>
 		</ul>
 	</nav>
 </header>

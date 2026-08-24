@@ -29,55 +29,59 @@ import logo from "#lib/assets/powertools.svg"
 			rel="noreferrer"
 			>@Heliodex</a
 		>
+		at
+		<a href="https://hackclub.com" target="_blank" rel="noreferrer">Hack Club</a>
 	</p>
 	<p class="max-w-120">
-		Spend 1 hour building a mini JS framework or tool,<br>
-		win $5 in cloud credits to host a demo
+		Write a bot that plays the Iterated Prisoner's Dilemma, and watch it
+		climb a live Elo ladder.<br>
+		Every few seconds two bots battle — 100 rounds of cooperation or
+		betrayal — and the leaderboard updates in real time.
 	</p>
 </div>
 
-<p>You could build something like:</p>
+<p class="text-center">
+	<a href="/leaderboard" class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 font-bold">
+		Live leaderboard
+	</a>
+</p>
+
+<h2 class="pt-12 text-center">How it works</h2>
+<p class="pb-4">
+	You write a tiny pure function that, given your history with an opponent,
+	picks a move: <b>cooperate (C)</b> or <b>defect (D)</b>. Your bot gets a
+	fresh opponent every battle and earns points per round (the classic
+	3/2/1/0 payoff). Better bots win more battles and climb the Elo ladder.
+</p>
+
 <ul>
-	<li>
-		A tiny JS framework (think
-		<a href="https://mithril.js.org/" target="_blank" rel="noreferrer"
-			>Mithril.js</a
-		>)
-	</li>
-	<li>
-		A utility library like
-		<a href="https://lodash.com/" target="_blank" rel="noreferrer"
-			>lodash</a
-		>
-		or
-		<a href="https://jquery.com/" target="_blank" rel="noreferrer"
-			>jQuery</a
-		>
-	</li>
-	<li>
-		Something for easily enhancing your HTML with scripting, like
-		<a href="https://alpinejs.dev/" target="_blank" rel="noreferrer"
-			>Alpine.js</a
-		>
-	</li>
-	<li>A reactivity system to automatically update your HTML from data</li>
+	<li>Write a bot in TypeScript or JavaScript — no frameworks needed.</li>
+	<li>Bots run fully sandboxed: no network, no files, pure functions only.</li>
+	<li>You may have up to 3 active bots in the live tournament at once.</li>
+	<li>Your Elo starts at 1000 and updates automatically after each battle.</li>
 </ul>
 
-<p class="pb-4">
-	See the <a href="/guide">Guide</a>, showing how to build an example project,
-	for more inspiration.
+<p class="pb-4 pt-4">
+	See the <a href="/guide">Guide</a> for bot examples (tit-for-tat, and more).
 </p>
 
 <p>
-	Refurbish your frontend experience and win a grant card spendable at various
-	vendors.
+	Want to know how it works under the hood? The tournament is an
+	<b>Iterated Prisoner's Dilemma</b>: in each round both you and your
+	opponent choose to cooperate or defect. If you both cooperate you each get
+	2 points; if you defect while they cooperate you get 3 and they get 0; if
+	you both defect you each get 1. Over 100 rounds, the accumulated score
+	decides the winner — and Elo tracks who keeps winning.
+</p>
+
+<p class="pt-4">
 	<b
 		>Track your time spent with
 		<a href="https://lapse.hackclub.com/" target="_blank" rel="noreferrer"
 			>Lapse</a
 		>
-		so we can verify it!</b
-	>!
+		so we can verify it for your participation reward!</b
+	>
 </p>
 
 <div id="faq">
@@ -97,6 +101,18 @@ import logo from "#lib/assets/powertools.svg"
 				>
 					referring others!
 				</a>
+			</AccordionItem>
+
+			<AccordionItem title="Do I need to know game theory?">
+				Not at all. The simplest bots are just a few lines —
+				"always cooperate", "always defect", or "tit-for-tat" (do what
+				your opponent did last round). See the Guide for examples.
+			</AccordionItem>
+
+			<AccordionItem title="What are the prizes?">
+				Everyone who verifiably spends time gets a participation reward
+				per tracked hour, and the top 3 users by Elo at the end win video
+				game grants.
 			</AccordionItem>
 
 			<AccordionItem title="How much does it cost to join in?">
