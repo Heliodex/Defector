@@ -104,7 +104,7 @@ type DBBot = {
 	name: string
 }
 
-const rounds = 10
+const rounds = 100
 const timeout = 100 // ms
 
 const { runSandboxed } = await loadQuickJs(quickjsVariant)
@@ -113,7 +113,7 @@ const callBot = (bot: DBBot, state: State): Promise<[Move, Memory]> =>
 	runSandboxed(
 		async ({ ctx }: { ctx: QuickJSContext }) => {
 			const moduleHandle = ctx.unwrapResult(
-				ctx.evalCode(bot.latestCode, "bot.js", { type: "module" })
+				ctx.evalCode(bot.latestCode, `${bot.name}.js`, { type: "module" })
 			)
 			const botHandle = ctx.getProp(moduleHandle, "default")
 			const stateHandle = ctx.unwrapResult(
@@ -139,7 +139,6 @@ const callBot = (bot: DBBot, state: State): Promise<[Move, Memory]> =>
 			executionTimeout: timeout,
 			memoryLimit: 1024 * 1024,
 			maxStackSize: 1024 * 1024,
-			mountFs: { "bot.js": bot.latestCode },
 		}
 	) as Promise<[Move, Memory]>
 
