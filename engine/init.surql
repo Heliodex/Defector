@@ -56,7 +56,20 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE rounds ON battle TYPE array<array<int, 2>>;
 		DEFINE FIELD OVERWRITE rounds.*.* ON battle TYPE int
 			ASSERT $value IN [0, 1];
+	DEFINE FIELD OVERWRITE errors ON battle TYPE array<option<string>, 2>;
 	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> COMPUTED {
+		LET $errors = $this.errors;
+		LET $e0 = $errors[0] != NONE;
+		LET $e1 = $errors[1] != NONE;
+
+		IF $e0 AND $e1 {
+			RETURN [$S, $S];
+		} ELSE IF $e0 {
+			RETURN [$S, $R];
+		} ELSE IF $e1 {
+			RETURN [$R, $S];
+		};
+
 		LET $payoff = (SELECT VALUE payoff FROM ONLY $this.matrix);
 		LET $pts = $this.rounds.map(|$r| [$payoff[$r[0]][$r[1]], $payoff[$r[1]][$r[0]]]);
 		LET $c = <float> count($pts);
