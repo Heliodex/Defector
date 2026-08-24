@@ -1,9 +1,15 @@
 SELECT
 	record::id(id) AS id,
 	created,
-	hours,
+	name,
+	description,
+	codeUrl,
+	playableUrl,
+	ai,
+	image,
 	status,
-	lapseIds,
-	(SELECT VALUE email FROM ONLY $parent.owner)[0] AS ownerEmail
+	lapseTimelapses,
+	review,
+	(SELECT VALUE email FROM ONLY $parent<-submittedHours<-user)[0] AS ownerEmail
 FROM hourSubmission
 ORDER BY created DESC;

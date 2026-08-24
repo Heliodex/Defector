@@ -80,24 +80,22 @@ type RecordIdTypes = {
 	bot: string
 	battle: string
 	created: string
-	createdProject: string
 	hasSession: string
 	hourSubmission: string
 	matrix: string
-	project: string
 	session: string
+	submittedHours: string
 	user: string
 }
 
 export const Bot = new Table("bot")
 export const Battle = new Table("battle")
 export const Created = new Table("created")
-export const CreatedProject = new Table("createdProject")
 export const HasSession = new Table("hasSession")
 export const HourSubmission = new Table("hourSubmission")
 export const Matrix = new Table("matrix")
-export const Project = new Table("project")
 export const Session = new Table("session")
+export const SubmittedHours = new Table("submittedHours")
 export const User = new Table("user")
 
 // Ensure type safety when creating record ids

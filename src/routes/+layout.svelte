@@ -41,7 +41,7 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 				<li><a class="btn" href="/home">Home</a></li>
 				<li><a class="btn" href="/my-bots">My Bots</a></li>
 				<li><a class="btn" href="/submit-bot">Submit Bot</a></li>
-				<li><a class="btn" href="/hours">Hours</a></li>
+				<li><a class="btn" href="/submit">Submit Work</a></li>
 				{#if await isAdmin}
 					<li><a class="btn" href="/admin">Admin</a></li>
 				{/if}

@@ -28,10 +28,10 @@ const lapseData = $derived(await getLapseData())
 		My bots
 	</a>
 	<a
-		href="/hours"
+		href="/submit"
 		class="btn bg-zinc-700 hover:bg-zinc-600 active:bg-zinc-500 font-bold text-center"
 	>
-		Track my hours
+		Submit work & hours
 	</a>
 </div>
 

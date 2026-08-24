@@ -1,11 +1,10 @@
-LET $project = CREATE ONLY project CONTENT {
+LET $hourSubmission = CREATE ONLY hourSubmission CONTENT {
 	image: $image,
 	name: $name,
 	description: $description,
 	codeUrl: $codeUrl,
 	playableUrl: $playableUrl,
 	ai: $ai,
-	reviewerNotes: $reviewerNotes,
 	howHear: $howHear,
 	howDoingWell: $howDoingWell,
 	howImprove: $howImprove,
@@ -13,6 +12,6 @@ LET $project = CREATE ONLY project CONTENT {
 	lapseTimelapses: $timelapseIds
 } RETURN VALUE id;
 
-$project;
+$hourSubmission;
 
-RELATE $user->createdProject->$project;
+RELATE $user->submittedHours->$hourSubmission;
