@@ -33,7 +33,7 @@ code {
 }
 
 body {
-	@apply bg-neutral-50;
+	@apply bg-neutral-100;
 	color: #1a1a1a;
 	margin: 0;
 	display: flex;
@@ -42,12 +42,17 @@ body {
 	line-height: 1.5;
 }
 
-a:not(.btn) {
+a:not(.btn, .navbtn) {
 	@apply underline text-blue-600 hover:text-blue-700 active:text-blue-500 transition-colors;
 }
 
 .btn {
 	@apply cursor-pointer transition-colors no-underline rounded-lg px-4 py-2;
+}
+
+.navbtn {
+	@apply cursor-pointer transition-all font-bold border-b-2 border-solid pb-0 block text-blue-500 border-blue-200 hover:text-blue-600 hover:border-blue-600 duration-1000;
+	box-shadow: 0.1rem 0.1rem 0 var(--tw-shadow-color);
 }
 
 .btn-primary {
@@ -63,6 +68,11 @@ a:not(.btn) {
 .btn-danger {
 	@apply text-white font-bold bg-red-600 hover:bg-red-700 active:bg-red-500 shadow-red-300;
 	box-shadow: 0.1rem 0.1rem 0 var(--tw-shadow-color);
+}
+
+.sidebar a.btn,
+.sidebar button.btn {
+	@apply block w-full text-left;
 }
 
 p {
