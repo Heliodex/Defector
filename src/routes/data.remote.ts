@@ -6,8 +6,4 @@ export const getLoggedIn = query(() => getRequestEvent().locals.user != null)
 
 export const getIsAdmin = query(() => isAdmin(getRequestEvent().locals.user))
 
-export const login = form(() => {
-	const { cookies } = getRequestEvent()
-
-	startHackClubAuth(cookies)
-})
+export const login = form(startHackClubAuth)
