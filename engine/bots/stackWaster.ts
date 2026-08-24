@@ -5,7 +5,7 @@ const bot: Bot = state => {
 		test()
 	}
 
-	return ["D", state.memory]
+	test()
 }
 
 export default bot
