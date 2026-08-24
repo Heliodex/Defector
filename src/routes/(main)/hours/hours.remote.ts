@@ -14,7 +14,7 @@ const messageTimelapseIds = makeMessage(
 )
 
 const schema = type({
-	"timelapseIds": type("string[] >= 1").configure(messageTimelapseIds[0]),
+	timelapseIds: type("string[] >= 1").configure(messageTimelapseIds[0]),
 }).configure(...messageTimelapseIds)
 
 type LapseTimelapse = {
@@ -153,7 +153,10 @@ export const submitHours = form(schema, async ({ timelapseIds }) => {
 	}
 	if (timelapses.length === 0) invalid("Please select at least one timelapse")
 
-	const totalSeconds = timelapses.reduce((sum, t) => sum + (t.duration ?? 0), 0)
+	const totalSeconds = timelapses.reduce(
+		(sum, t) => sum + (t.duration ?? 0),
+		0
+	)
 	const hours = totalSeconds / 3600
 
 	await db.query(createHourSubmissionQuery, {

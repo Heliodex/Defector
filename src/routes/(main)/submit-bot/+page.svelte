@@ -18,11 +18,15 @@ import { newBotForm } from "./bot.remote"
 	<div class="pb-6" role="status">
 		<p class="font-bold">
 			Your bot
-			<a href="/bot/{newBotForm.result.id}" class="text-blue-400">{newBotForm.result.id}</a>
+			<a href="/bot/{newBotForm.result.id}" class="text-blue-400"
+				>{newBotForm.result.id}</a
+			>
 			was created!
 		</p>
 		<p class="text-sm">
-			<a href="/my-bots" class="text-blue-400">Go to your bots to manage it</a>.
+			<a href="/my-bots" class="text-blue-400"
+				>Go to your bots to manage it</a
+			>.
 		</p>
 	</div>
 {/if}
@@ -38,7 +42,10 @@ import { newBotForm } from "./bot.remote"
 
 	<label>
 		<span>Description</span>
-		<textarea {...newBotForm.fields.description.as("text")} required></textarea>
+		<textarea
+			{...newBotForm.fields.description.as("text")}
+			required
+		></textarea>
 		{#each newBotForm.fields.description.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
@@ -70,9 +77,7 @@ import { newBotForm } from "./bot.remote"
 				(defect).
 			</p>
 			<ul class="list-disc pl-6">
-				<li>
-					Battles last 100 rounds. Your bot plays one per battle.
-				</li>
+				<li>Battles last 100 rounds. Your bot plays one per battle.</li>
 				<li>
 					<code class="font-mono">state</code>
 					contains the round number, your previous memory, and your

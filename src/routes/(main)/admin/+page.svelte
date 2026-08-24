@@ -45,10 +45,12 @@ let hourSubmissions = $derived(await getHourSubmissions())
 					<td class="border-b border-neutral-700 p-3">
 						<span
 							class="font-bold {sub.status === "approved" ? '' : sub.status === "rejected" ? 'text-red-400' : 'text-yellow-400'}"
-						>{sub.status}</span
+							>{sub.status}</span
 						>
 					</td>
-					<td class="border-b border-neutral-700 p-3 whitespace-nowrap">
+					<td
+						class="border-b border-neutral-700 p-3 whitespace-nowrap"
+					>
 						{sub.created}
 					</td>
 					<td class="border-b border-neutral-700 p-3">
@@ -150,13 +152,17 @@ let hourSubmissions = $derived(await getHourSubmissions())
 				<tr class="align-top">
 					<td class="border-b border-neutral-700 p-3">
 						<a href="/battle/{battle.id}">
-							{battle.bot0} vs {battle.bot1}
+							{battle.bot0}
+							vs {battle.bot1}
 						</a>
 					</td>
 					<td class="border-b border-neutral-700 p-3">
-						{battle.scores[0]?.toFixed(2)} – {battle.scores[1]?.toFixed(2)}
+						{battle.scores[0]?.toFixed(2)}
+						– {battle.scores[1]?.toFixed(2)}
 					</td>
-					<td class="border-b border-neutral-700 p-3 whitespace-nowrap">
+					<td
+						class="border-b border-neutral-700 p-3 whitespace-nowrap"
+					>
 						{battle.created}
 					</td>
 				</tr>

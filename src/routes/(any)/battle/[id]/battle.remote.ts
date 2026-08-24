@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
-import { getRequestEvent, query } from "$app/server"
 import { db, Record } from "#lib/server/db.js"
+import { getRequestEvent, query } from "$app/server"
 import getBattleQuery from "./getBattle.surql?raw"
 
 type BattleRow = {
@@ -40,7 +40,11 @@ export const getBattle = query(async (): Promise<Battle> => {
 	])
 
 	const winnerIndex: 0 | 1 | null =
-		row.scores[0] > row.scores[1] ? 0 : row.scores[1] > row.scores[0] ? 1 : null
+		row.scores[0] > row.scores[1]
+			? 0
+			: row.scores[1] > row.scores[0]
+				? 1
+				: null
 
 	return {
 		id: row.id,

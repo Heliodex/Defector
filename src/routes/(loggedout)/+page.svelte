@@ -30,7 +30,9 @@ import logo from "#lib/assets/powertools.svg"
 			>@Heliodex</a
 		>
 		at
-		<a href="https://hackclub.com" target="_blank" rel="noreferrer">Hack Club</a>
+		<a href="https://hackclub.com" target="_blank" rel="noreferrer"
+			>Hack Club</a
+		>
 	</p>
 	<p class="max-w-120">
 		Write a bot that plays the Iterated Prisoner's Dilemma, and watch it
@@ -41,7 +43,10 @@ import logo from "#lib/assets/powertools.svg"
 </div>
 
 <p class="text-center">
-	<a href="/leaderboard" class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 font-bold">
+	<a
+		href="/leaderboard"
+		class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 font-bold"
+	>
 		Live leaderboard
 	</a>
 </p>
@@ -50,15 +55,19 @@ import logo from "#lib/assets/powertools.svg"
 <p class="pb-4">
 	You write a tiny pure function that, given your history with an opponent,
 	picks a move: <b>cooperate (C)</b> or <b>defect (D)</b>. Your bot gets a
-	fresh opponent every battle and earns points per round (the classic
-	3/2/1/0 payoff). Better bots win more battles and climb the Elo ladder.
+	fresh opponent every battle and earns points per round (the classic 3/2/1/0
+	payoff). Better bots win more battles and climb the Elo ladder.
 </p>
 
 <ul>
 	<li>Write a bot in TypeScript or JavaScript — no frameworks needed.</li>
-	<li>Bots run fully sandboxed: no network, no files, pure functions only.</li>
+	<li>
+		Bots run fully sandboxed: no network, no files, pure functions only.
+	</li>
 	<li>You may have up to 3 active bots in the live tournament at once.</li>
-	<li>Your Elo starts at 1000 and updates automatically after each battle.</li>
+	<li>
+		Your Elo starts at 1000 and updates automatically after each battle.
+	</li>
 </ul>
 
 <p class="pb-4 pt-4">
@@ -67,11 +76,11 @@ import logo from "#lib/assets/powertools.svg"
 
 <p>
 	Want to know how it works under the hood? The tournament is an
-	<b>Iterated Prisoner's Dilemma</b>: in each round both you and your
-	opponent choose to cooperate or defect. If you both cooperate you each get
-	2 points; if you defect while they cooperate you get 3 and they get 0; if
-	you both defect you each get 1. Over 100 rounds, the accumulated score
-	decides the winner — and Elo tracks who keeps winning.
+	<b>Iterated Prisoner's Dilemma</b>: in each round both you and your opponent
+	choose to cooperate or defect. If you both cooperate you each get 2 points;
+	if you defect while they cooperate you get 3 and they get 0; if you both
+	defect you each get 1. Over 100 rounds, the accumulated score decides the
+	winner — and Elo tracks who keeps winning.
 </p>
 
 <p class="pt-4">
@@ -104,15 +113,15 @@ import logo from "#lib/assets/powertools.svg"
 			</AccordionItem>
 
 			<AccordionItem title="Do I need to know game theory?">
-				Not at all. The simplest bots are just a few lines —
-				"always cooperate", "always defect", or "tit-for-tat" (do what
-				your opponent did last round). See the Guide for examples.
+				Not at all. The simplest bots are just a few lines — "always
+				cooperate", "always defect", or "tit-for-tat" (do what your
+				opponent did last round). See the Guide for examples.
 			</AccordionItem>
 
 			<AccordionItem title="What are the prizes?">
 				Everyone who verifiably spends time gets a participation reward
-				per tracked hour, and the top 3 users by Elo at the end win video
-				game grants.
+				per tracked hour, and the top 3 users by Elo at the end win
+				video game grants.
 			</AccordionItem>
 
 			<AccordionItem title="How much does it cost to join in?">

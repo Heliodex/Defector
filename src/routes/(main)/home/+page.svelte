@@ -60,7 +60,9 @@ const lapseData = $derived(await getLapseData())
 			this event.
 		</p>
 		<form {...lapseLogin}>
-			<button class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400">
+			<button
+				class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400"
+			>
 				Link Lapse account
 			</button>
 		</form>
