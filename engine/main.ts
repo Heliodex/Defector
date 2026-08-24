@@ -111,6 +111,8 @@ const stackLimitMb = 1
 
 const { runSandboxed } = await loadQuickJs(quickjsVariant)
 
+class InvalidResponseError extends Error {}
+
 const runBot =
 	(bot: DBBot, state: State) =>
 	async ({ ctx }: { ctx: QuickJSContext }) => {
@@ -131,9 +133,11 @@ const runBot =
 			try {
 				const output = ctx.dump(outputHandle)
 				if (!Array.isArray(output) || output.length !== 2)
-					throw new Error("must return a [move, memory] tuple")
+					throw new InvalidResponseError(
+						`must return a [move, memory] tuple, instead got ${JSON.stringify(output)}`
+					)
 				if (output[0] !== "C" && output[0] !== "D")
-					throw new Error(
+					throw new InvalidResponseError(
 						`returned invalid move ${JSON.stringify(output[0])}`
 					)
 
@@ -170,7 +174,10 @@ async function callBot(bot: DBBot, state: State): Promise<[Move, Memory]> {
 					`maximum execution time of ${timeout} ms exceeded`
 				)
 		}
-		throw error
+
+		if (error instanceof InvalidResponseError) throw error
+
+		throw new Error(`bot error: ${error.message}`)
 	}
 }
 
