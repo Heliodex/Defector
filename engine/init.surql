@@ -59,7 +59,7 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> COMPUTED {
 		LET $payoff = (SELECT VALUE payoff FROM ONLY $this.matrix);
 		LET $pts = $this.rounds.map(|$r| [$payoff[$r[0]][$r[1]], $payoff[$r[1]][$r[0]]]);
-		LET $c = count($pts);
+		LET $c = <float> count($pts);
 		[math::sum($pts.map(|$p| $p[0])) / $c, math::sum($pts.map(|$p| $p[1])) / $c]
 	};
 	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
