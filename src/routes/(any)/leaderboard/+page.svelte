@@ -10,17 +10,18 @@ onMount(() => {
 	const iterator = leaderboard()[Symbol.asyncIterator]()
 	let active = true
 
-	void (async () => {
+	async function iter() {
 		while (active) {
 			const { value, done } = await iterator.next()
 			if (done) break
 			data = value
 		}
-	})()
+	}
+	iter()
 
 	return () => {
 		active = false
-		void iterator.return?.(undefined)
+		iterator.return?.(undefined)
 	}
 })
 </script>
@@ -32,10 +33,10 @@ onMount(() => {
 
 	{#if data}
 		<span
-			class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold {data.connected ? 'bg-green-600' : 'bg-red-600'}"
+			class={["inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold text-white", data.connected ? 'bg-green-600' : 'bg-orange-600']}
 		>
 			<span
-				class="size-2 rounded-full {data.connected ? 'bg-green-200' : 'bg-red-200'}"
+				class={["size-2 rounded-full", data.connected ? 'bg-green-200' : 'bg-orange-200']}
 			></span>
 			{data.connected ? "Live" : "Connecting…"}
 		</span>
