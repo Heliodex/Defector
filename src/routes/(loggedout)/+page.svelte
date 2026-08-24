@@ -43,12 +43,7 @@ import logo from "#lib/assets/logo.svg"
 </div>
 
 <p class="text-center">
-	<a
-		href="/leaderboard"
-		class="btn btn-primary"
-	>
-		Live leaderboard
-	</a>
+	<a href="/leaderboard" class="btn btn-primary"> Live leaderboard </a>
 </p>
 
 <h2 class="pt-12 text-center">How it works</h2>
