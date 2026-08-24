@@ -24,6 +24,10 @@
 	font-display: swap;
 }
 
+* {
+	box-sizing: border-box;
+}
+
 *:not(code) {
 	font-family: Lexend, sans-serif;
 }
@@ -51,8 +55,23 @@ a:not(.btn, .navbtn) {
 }
 
 .navbtn {
-	@apply cursor-pointer transition-all font-bold border-b-2 border-solid pb-0 block text-blue-500 border-blue-200 hover:text-blue-600 hover:border-blue-600 duration-1000;
+	@apply cursor-pointer transition-colors font-bold border-b-2 border-solid pb-0 block text-blue-500 border-blue-200 hover:text-blue-600 hover:border-blue-600;
 	box-shadow: 0.1rem 0.1rem 0 var(--tw-shadow-color);
+}
+
+.navbtn::after {
+	content: "";
+	display: block;
+	height: 2px;
+	background-color: var(--color-blue-600);
+	transform: scaleX(0);
+	translate: 0 100%;
+	transform-origin: left;
+	transition: transform 300ms ease-out;
+}
+
+.navbtn:hover::after {
+	transform: scaleX(1);
 }
 
 .btn-primary {

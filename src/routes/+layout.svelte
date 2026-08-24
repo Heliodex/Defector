@@ -34,7 +34,7 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 </svelte:head>
 
 <nav class="sm:hidden px-4 py-3">
-	<ul class="list-none m-0 p-0 flex flex-wrap gap-2">
+	<ul class="flex flex-wrap gap-5">
 		<li><a class="navbtn" href="/leaderboard">Leaderboard</a></li>
 		{#if await user}
 			<li><a class="navbtn" href="/home">Home</a></li>
@@ -60,7 +60,7 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 	class="sidebar hidden sm:block fixed inset-y-0 left-0 w-40 overflow-y-auto border-r-2 border-neutral-200 bg-white"
 >
 	<nav class="p-4">
-		<ul class="list-none m-0 p-0 flex flex-col gap-4">
+		<ul class="flex flex-col gap-4">
 			<li>
 				<a class="navbtn" href="/leaderboard">Leaderboard</a>
 			</li>
