@@ -3,30 +3,8 @@
 DEFINE NAMESPACE OVERWRITE main;
 DEFINE DATABASE OVERWRITE main STRICT;
 
-DEFINE TABLE OVERWRITE createdProject SCHEMAFULL TYPE RELATION FROM user TO project ENFORCED;
-	DEFINE FIELD OVERWRITE id ON createdProject TYPE string;
-
 DEFINE TABLE OVERWRITE hasSession SCHEMAFULL TYPE RELATION FROM user TO session ENFORCED;
 	DEFINE FIELD OVERWRITE id ON hasSession TYPE string;
-
-DEFINE TABLE OVERWRITE project SCHEMAFULL TYPE NORMAL;
-	DEFINE FIELD OVERWRITE id ON project TYPE string;
-	DEFINE FIELD OVERWRITE created ON project TYPE datetime DEFAULT ALWAYS time::now();
-	DEFINE FIELD OVERWRITE image ON project TYPE option<object>;
-		DEFINE FIELD OVERWRITE image.hash ON project TYPE string;
-		DEFINE FIELD OVERWRITE image.updated ON project TYPE datetime DEFAULT ALWAYS time::now();
-	DEFINE FIELD OVERWRITE name ON project TYPE string;
-	DEFINE FIELD OVERWRITE description ON project TYPE string;
-	DEFINE FIELD OVERWRITE codeUrl ON project TYPE string;
-	DEFINE FIELD OVERWRITE playableUrl ON project TYPE string;
-	DEFINE FIELD OVERWRITE ai ON project TYPE bool;
-	DEFINE FIELD OVERWRITE reviewerNotes ON project TYPE option<string>;
-	DEFINE FIELD OVERWRITE howHear ON project TYPE option<string>;
-	DEFINE FIELD OVERWRITE howDoingWell ON project TYPE option<string>;
-	DEFINE FIELD OVERWRITE howImprove ON project TYPE option<string>;
-	DEFINE FIELD OVERWRITE howLikelyRecommend ON project TYPE option<int>
-		ASSERT 1 <= $value AND $value <= 10;
-	DEFINE FIELD OVERWRITE lapseTimelapses ON project TYPE array<string>;
 
 DEFINE TABLE OVERWRITE session SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON session TYPE string;
@@ -66,10 +44,6 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL TYPE NORMAL;
 		DEFINE FIELD OVERWRITE lapseData.refreshToken ON user TYPE option<string>;
 	DEFINE INDEX IF NOT EXISTS uniqueLapseId ON user COLUMNS lapseData.id UNIQUE;
 
-# ============================================================
-# Game Theory Tournament — Iterated Prisoner's Dilemma (IPD)
-# ============================================================
-
 # Relation linking a bot to its owner (the user who submitted it).
 DEFINE TABLE OVERWRITE created SCHEMAFULL TYPE RELATION FROM user TO bot ENFORCED;
 	DEFINE FIELD OVERWRITE id ON created TYPE string;
@@ -79,8 +53,10 @@ DEFINE TABLE OVERWRITE matrix SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE payoff ON matrix TYPE array<array<float, 2>, 2>;
 	DEFINE FIELD OVERWRITE created ON matrix TYPE datetime DEFAULT ALWAYS time::now();
 
-# Classic 3/2/1/0 payoff matrix. 0: cooperate, 1: defect.
-# T > R > P > S ; 2R > T + S
+# 3/2/1/0 payoff matrix. 0: cooperate, 1: defect.
+
+# T > R > P > S
+# 2R > T + S
 DEFINE FUNCTION OVERWRITE fn::initialMatrix() {
 	LET $T = <float> 3;
 	LET $R = <float> 2;
@@ -220,12 +196,29 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	};
 	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
 
+DEFINE TABLE OVERWRITE submittedHours SCHEMAFULL TYPE RELATION FROM user TO hourSubmission ENFORCED;
+	DEFINE FIELD OVERWRITE id ON submittedHours TYPE string;
+
 DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON hourSubmission TYPE string;
-	DEFINE FIELD OVERWRITE owner ON hourSubmission TYPE record<user>;
-	DEFINE FIELD OVERWRITE lapseIds ON hourSubmission TYPE array<string>;
-	DEFINE FIELD OVERWRITE hours ON hourSubmission TYPE float; # computed at review
+	DEFINE FIELD OVERWRITE created ON hourSubmission TYPE datetime DEFAULT ALWAYS time::now();
+	DEFINE FIELD OVERWRITE image ON hourSubmission TYPE option<object>;
+	DEFINE FIELD OVERWRITE image.hash ON hourSubmission TYPE string;
+	DEFINE FIELD OVERWRITE image.updated ON hourSubmission TYPE datetime DEFAULT ALWAYS time::now();
+	DEFINE FIELD OVERWRITE name ON hourSubmission TYPE string;
+	DEFINE FIELD OVERWRITE description ON hourSubmission TYPE string;
+	DEFINE FIELD OVERWRITE codeUrl ON hourSubmission TYPE string;
+	DEFINE FIELD OVERWRITE playableUrl ON hourSubmission TYPE string;
+	DEFINE FIELD OVERWRITE ai ON hourSubmission TYPE bool;
+	DEFINE FIELD OVERWRITE review ON hourSubmission TYPE option<{
+		reviewer: record<user>,
+		notes: string,
+	}>;
+	DEFINE FIELD OVERWRITE howHear ON hourSubmission TYPE option<string>;
+	DEFINE FIELD OVERWRITE howDoingWell ON hourSubmission TYPE option<string>;
+	DEFINE FIELD OVERWRITE howImprove ON hourSubmission TYPE option<string>;
+	DEFINE FIELD OVERWRITE howLikelyRecommend ON hourSubmission TYPE option<int>
+		ASSERT 1 <= $value AND $value <= 10;
+	DEFINE FIELD OVERWRITE lapseTimelapses ON hourSubmission TYPE array<string>;
 	DEFINE FIELD OVERWRITE status ON hourSubmission TYPE string DEFAULT "pending"
 		ASSERT $value IN ["pending", "approved", "rejected"];
-	DEFINE FIELD OVERWRITE reviewedBy ON hourSubmission TYPE option<record<user>>;
-	DEFINE FIELD OVERWRITE created ON hourSubmission TYPE datetime DEFAULT ALWAYS time::now();
