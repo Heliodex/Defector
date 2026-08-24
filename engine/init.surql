@@ -106,15 +106,32 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		DEFINE FIELD OVERWRITE rounds.*.* ON battle TYPE int
 			ASSERT $value IN [0, 1];
 	DEFINE FIELD OVERWRITE errors ON battle TYPE array<option<string>, 2>;
-	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> COMPUTED fn::calculateScore($this, fn::initialMatrix());
+	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> COMPUTED
+		fn::calculateScore($this, (SELECT VALUE payoff FROM ONLY $this.matrix));
 	DEFINE FIELD OVERWRITE eloDelta ON battle TYPE array<float, 2> DEFAULT {
+		LET $initialMatrix = fn::initialMatrix();
+		LET $T = $initialMatrix[1][0];
+		LET $S = $initialMatrix[0][1];
+		LET $errors = $this.errors;
+		LET $e0 = $errors[0] != NONE;
+		LET $e1 = $errors[1] != NONE;
+		LET $scores = IF $e0 AND $e1 {
+			[$S, $S]
+		} ELSE IF $e0 {
+			[$S, $T]
+		} ELSE IF $e1 {
+			[$T, $S]
+		} ELSE {
+			LET $payoff = fn::initialMatrix();
+			LET $pts = $this.rounds.map(|$r| [$payoff[$r[0]][$r[1]], $payoff[$r[1]][$r[0]]]);
+			LET $c = <float> count($pts);
+			[math::sum($pts.map(|$p| $p[0])) / $c, math::sum($pts.map(|$p| $p[1])) / $c]
+		};
 		LET $K = <float> 32;
 		LET $rating0 = (SELECT VALUE elo FROM ONLY $this.bots[0]);
 		LET $rating1 = (SELECT VALUE elo FROM ONLY $this.bots[1]);
 		LET $expected0 = 1.0 / (1.0 + math::pow(10.0, ($rating1 - $rating0) / 400.0));
 		LET $expected1 = 1.0 - $expected0;
-
-		LET $scores = fn::calculateScore($this, fn::initialMatrix());
 		LET $actual0 = IF $scores[0] > $scores[1] {
 			1.0
 		} ELSE IF $scores[0] < $scores[1] {
