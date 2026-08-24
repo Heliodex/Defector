@@ -17,19 +17,19 @@ const lapseData = $derived(await getLapseData())
 <div class="grid gap-4 pt-2 sm:grid-cols-2">
 	<a
 		href="/submit-bot"
-		class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 font-bold text-center"
+		class="btn btn-primary text-center"
 	>
 		Submit a bot
 	</a>
 	<a
 		href="/your-bots"
-		class="btn bg-blue-600 hover:bg-blue-700 active:bg-blue-500 font-bold text-center"
+		class="btn btn-secondary text-center"
 	>
 		My bots
 	</a>
 	<a
 		href="/submit"
-		class="btn bg-blue-600 hover:bg-blue-700 active:bg-blue-500 font-bold text-center"
+		class="btn btn-secondary text-center"
 	>
 		Submit work & hours
 	</a>
@@ -61,7 +61,7 @@ const lapseData = $derived(await getLapseData())
 		</p>
 		<form {...lapseLogin}>
 			<button
-				class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400"
+				class="btn btn-primary"
 			>
 				Link Lapse account
 			</button>
@@ -70,7 +70,7 @@ const lapseData = $derived(await getLapseData())
 {/if}
 
 <form {...logout} class="pt-8">
-	<button class="btn bg-red-500 hover:bg-red-600 active:bg-red-400 font-bold">
+	<button class="btn btn-danger">
 		Log out
 	</button>
 </form>

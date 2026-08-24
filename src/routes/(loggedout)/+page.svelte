@@ -45,7 +45,7 @@ import logo from "#lib/assets/logo.svg"
 <p class="text-center">
 	<a
 		href="/leaderboard"
-		class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 font-bold"
+		class="btn btn-primary"
 	>
 		Live leaderboard
 	</a>

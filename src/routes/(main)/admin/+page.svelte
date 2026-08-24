@@ -151,7 +151,7 @@ let battles = $derived(await getBattles())
 											></textarea>
 										</label>
 										<button
-											class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 px-3 py-1 text-sm"
+											class="btn btn-primary px-3 py-1 text-sm"
 											type="submit"
 										>
 											Save

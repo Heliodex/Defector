@@ -36,25 +36,35 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 <header class="max-w-280 mx-auto flex">
 	<nav>
 		<ul class="list-none p-0 m-0 flex gap-8 py-6">
-			<li><a class="btn" href="/leaderboard">Leaderboard</a></li>
+			<li>
+				<a class="btn btn-primary" href="/leaderboard">Leaderboard</a>
+			</li>
 			{#if await user}
-				<li><a class="btn" href="/home">Home</a></li>
-				<li><a class="btn" href="/your-bots">Your bots</a></li>
-				<li><a class="btn" href="/submit-bot">Submit bot</a></li>
-				<li><a class="btn" href="/submit">Submit hours</a></li>
+				<li><a class="btn btn-primary" href="/home">Home</a></li>
+				<li>
+					<a class="btn btn-primary" href="/your-bots">Your bots</a>
+				</li>
+				<li>
+					<a class="btn btn-primary" href="/submit-bot">Submit bot</a>
+				</li>
+				<li>
+					<a class="btn btn-primary" href="/submit">Submit hours</a>
+				</li>
 				{#if await isAdmin}
-					<li><a class="btn" href="/admin">Admin</a></li>
+					<li><a class="btn btn-primary" href="/admin">Admin</a></li>
 				{/if}
 			{:else}
-				<li><a class="btn" href="/">Landing</a></li>
+				<li><a class="btn btn-primary" href="/">Landing</a></li>
 				<li>
 					<form {...login} class="-mt-1.5">
 						<!-- why wrong paddingg ggggg -->
-						<button class="btn" type="submit">Login</button>
+						<button class="btn btn-primary" type="submit">
+							Login
+						</button>
 					</form>
 				</li>
 			{/if}
-			<li><a class="btn" href="/guide">Guide</a></li>
+			<li><a class="btn btn-primary" href="/guide">Guide</a></li>
 		</ul>
 	</nav>
 </header>
@@ -86,23 +96,15 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 			>Privacy & Terms</a
 		>
 		|
+		<a
+			href="https://forms.hackclub.com/bounty"
+			target="_blank"
+			rel="noreferrer"
+			>Fulfilment bounty</a
+		>
+		|
 		<a href="https://github.com/{repoName}" target="_blank" rel="noreferrer"
 			>Source code</a
 		>
 	</p>
 </footer>
-
-<style>
-@import "tailwindcss";
-
-li {
-	@apply inline-block;
-
-	a,
-	button {
-		@apply text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-500 shadow-blue-300;
-
-		box-shadow: 0.1rem 0.1rem 0 var(--tw-shadow-color);
-	}
-}
-</style>

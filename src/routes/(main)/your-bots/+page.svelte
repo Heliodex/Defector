@@ -38,7 +38,7 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 		<p class="pb-2">You haven't submitted any bots yet.</p>
 		<a
 			href="/submit-bot"
-			class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400"
+			class="btn btn-primary"
 		>
 			Submit your first bot
 		</a>
@@ -115,7 +115,7 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 							>
 						</label>
 						<button
-							class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 text-sm px-3 py-1"
+							class="btn btn-primary text-sm px-3 py-1"
 							type="submit"
 						>
 							Save

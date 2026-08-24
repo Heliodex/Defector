@@ -273,7 +273,7 @@ function formatDuration(seconds: number) {
 	<button
 		disabled={!!timelapseData.error || newSubmissionForm.pending > 0}
 		type="submit"
-		class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 font-bold {newSubmissionForm.pending > 0 ? 'bg-neutral-300 hover:bg-neutral-300 active:bg-neutral-300 opacity-60' : ''}"
+		class="btn btn-primary {newSubmissionForm.pending > 0 ? 'bg-neutral-200 text-neutral-500 hover:bg-neutral-200 active:bg-neutral-200 opacity-60' : ''}"
 	>
 		{newSubmissionForm.pending > 0 ? "Submitting..." : "Submit"}
 	</button>
