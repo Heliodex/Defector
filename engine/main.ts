@@ -1,11 +1,17 @@
-import type { QuickJSContext, QuickJSHandle } from "quickjs-emscripten"
-import { getQuickJS, shouldInterruptAfterDeadline } from "quickjs-emscripten"
-import { Surreal } from "surrealdb"
-import alwaysCooperateBot from "./bots/alwaysCooperate?raw"
-import alwaysDefectBot from "./bots/alwaysDefect?raw"
+import { readdirSync } from "node:fs"
+import { type RecordId, Surreal } from "surrealdb"
 import type { Memory, Move, State } from "./bots/bot"
+import commitBattleQuery from "./commitBattle.surql?raw"
 import createBotQuery from "./createBot.surql?raw"
 import initQuery from "./init.surql?raw"
+import type {
+	QuickJSContext,
+	QuickJSHandle,
+} from "./node_modules/quickjs-emscripten/dist/index.d.mts"
+import {
+	getQuickJS,
+	shouldInterruptAfterDeadline,
+} from "./node_modules/quickjs-emscripten/dist/index.mjs"
 import selectBotsQuery from "./selectBots.surql?raw"
 
 console.log("starting")
@@ -79,19 +85,24 @@ async function transpile(code: string) {
 
 console.log("connected")
 
-await db.query(createBotQuery, {
-	name: "alwaysCooperate",
-	source: alwaysCooperateBot,
-	transpiled: await transpile(alwaysCooperateBot),
-})
 
-await db.query(createBotQuery, {
-	name: "alwaysDefect",
-	source: alwaysDefectBot,
-	transpiled: await transpile(alwaysDefectBot),
-})
+// load all bots from the bots directory
+const dir = "./bots"
+const files = readdirSync(dir)
+
+for (const file of files) {
+	const botName = file.replace(/\.ts$/, "")
+	const botCode = await Bun.file(`${dir}/${file}`).text()
+
+	await db.query(createBotQuery, {
+		name: botName,
+		source: botCode,
+		transpiled: await transpile(botCode),
+	})
+}
 
 type DBBot = {
+	id: RecordId<"bot">
 	codeHash: string
 	latestCode: string
 	name: string
@@ -145,10 +156,19 @@ function callBot(isolate: BotIsolate, state: State): [Move, Memory] {
 		} finally {
 			resultHandle.dispose()
 		}
+	} catch (e) {
+		console.error(e)
+		throw e
 	} finally {
 		stateHandle.dispose()
 		context.runtime.removeInterruptHandler()
 	}
+}
+
+function moveToInt(move: Move): number {
+	if (move === "C") return 0
+	if (move === "D") return 1
+	throw new Error("Invalid move")
 }
 
 async function battle() {
@@ -204,6 +224,16 @@ async function battle() {
 	}
 
 	console.log("battle complete", history)
+
+	// commit to database
+	await db.query(commitBattleQuery, {
+		bots: bots.map(bot => bot.id),
+		rounds: history.map(round => round.map(moveToInt)),
+	})
+
+	console.log("battle committed")
+
+	console.log(await db.query("SELECT * FROM battle"))
 }
 
 // setInterval(, 1000)
