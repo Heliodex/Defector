@@ -7,7 +7,7 @@ import { newBotForm } from "./bot.remote"
 
 <h1 class="text-2xl">Submit a bot</h1>
 
-<p class="pt-2 pb-8 text-sm text-neutral-400">
+<p class="pt-2 pb-8 text-sm text-neutral-600">
 	Write a bot that plays the Iterated Prisoner's Dilemma against other bots
 	and fight for the top of the ladder. You can have up to 3 active bots at
 	once. Already have bots?
@@ -66,7 +66,7 @@ import { newBotForm } from "./bot.remote"
 		{#each newBotForm.fields.code.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
-		<div class="pt-2 text-sm text-neutral-400">
+		<div class="pt-2 text-sm text-neutral-600">
 			<p class="pb-2">
 				Your bot is a function
 				<code class="font-mono">(state) =&gt; [move, memory]</code>
@@ -112,7 +112,7 @@ import { newBotForm } from "./bot.remote"
 		{#each newBotForm.fields.codeUrl.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
-		<p class="pt-2 text-sm text-neutral-400">
+		<p class="pt-2 text-sm text-neutral-600">
 			A link to your bot's source, if you'd like to share it.
 		</p>
 	</label>

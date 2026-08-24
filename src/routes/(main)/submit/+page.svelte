@@ -90,7 +90,7 @@ function formatDuration(seconds: number) {
 		{#each newSubmissionForm.fields.image.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
-		<p class="pt-2 text-sm text-neutral-400">
+		<p class="pt-2 text-sm text-neutral-600">
 			To clarify, a screenshot of the working output or a demo page made
 			with your tool/framework would be great!
 			<br>
@@ -129,7 +129,7 @@ function formatDuration(seconds: number) {
 		{#each newSubmissionForm.fields.codeUrl.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
-		<p class="pt-2 text-sm text-neutral-400">
+		<p class="pt-2 text-sm text-neutral-600">
 			A link to your project's code repository on GitHub or similar.
 		</p>
 	</label>
@@ -144,7 +144,7 @@ function formatDuration(seconds: number) {
 		{#each newSubmissionForm.fields.playableUrl.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
-		<div class="pt-2 text-sm text-neutral-400">
+		<div class="pt-2 text-sm text-neutral-600">
 			<p>
 				Somewhere where we can see the working output (not just the
 				code) of your project.
@@ -208,7 +208,7 @@ function formatDuration(seconds: number) {
 		{#each newSubmissionForm.fields.ai.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
-		<p class="text-sm text-neutral-400">
+		<p class="text-sm text-neutral-600">
 			Generally, up to 30% of the time spent on a project can be completed
 			with generative AI assistance. Projects with more than 30% of their
 			time attributed to AI code generation may have their rewarded hours

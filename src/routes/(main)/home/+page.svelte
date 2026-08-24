@@ -48,14 +48,14 @@ const lapseData = $derived(await getLapseData())
 			{/if}
 			<div>
 				<p class="font-semibold">{lapseData.displayName}</p>
-				<p class="text-sm text-neutral-400">@{lapseData.handle}</p>
+				<p class="text-sm text-neutral-600">@{lapseData.handle}</p>
 			</div>
 		</div>
 	</div>
 {:else}
 	<div class="pt-8">
 		<h2 class="text-2xl">Track your hours with Lapse</h2>
-		<p class="pb-2 text-sm text-neutral-400">
+		<p class="pb-2 text-sm text-neutral-600">
 			Connect your Lapse account so we can verify the time you spend on
 			this event.
 		</p>

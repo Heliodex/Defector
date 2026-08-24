@@ -20,7 +20,7 @@ let battles = $derived(await getBattles())
 		<div class="overflow-x-auto px-4 sm:px-6">
 			<table class="w-full min-w-250 border-collapse text-sm">
 				<thead>
-					<tr class="text-left text-neutral-400">
+					<tr class="text-left text-neutral-600">
 						<th class="border-b border-neutral-200 p-3">Submission</th>
 						<th class="border-b border-neutral-200 p-3">Owner</th>
 						<th class="border-b border-neutral-200 p-3">AI</th>
@@ -69,7 +69,7 @@ let battles = $derived(await getBattles())
 										>
 									{/if}
 								</div>
-								<p class="pt-2 text-xs text-neutral-400">
+								<p class="pt-2 text-xs text-neutral-600">
 									{sub.created}
 								</p>
 							</td>
@@ -109,7 +109,7 @@ let battles = $derived(await getBattles())
 								>{sub.status}</span
 								>
 								{#if sub.review?.notes}
-									<p class="pt-1 text-xs text-neutral-400">
+									<p class="pt-1 text-xs text-neutral-600">
 										{sub.review.notes}
 									</p>
 								{/if}
@@ -176,7 +176,7 @@ let battles = $derived(await getBattles())
 {:else}
 	<table class="w-full border-collapse text-sm">
 		<thead>
-			<tr class="text-left text-neutral-400">
+			<tr class="text-left text-neutral-600">
 				<th class="border-b border-neutral-200 p-3">Bot</th>
 				<th class="border-b border-neutral-200 p-3">Owner</th>
 				<th class="border-b border-neutral-200 p-3">Active</th>
@@ -215,7 +215,7 @@ let battles = $derived(await getBattles())
 {:else}
 	<table class="w-full border-collapse text-sm">
 		<thead>
-			<tr class="text-left text-neutral-400">
+			<tr class="text-left text-neutral-600">
 				<th class="border-b border-neutral-200 p-3">Battle</th>
 				<th class="border-b border-neutral-200 p-3">Scores</th>
 				<th class="border-b border-neutral-200 p-3">When</th>

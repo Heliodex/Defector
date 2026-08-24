@@ -43,9 +43,9 @@ onMount(() => {
 </div>
 
 {#if !data}
-	<p class="pt-4 text-neutral-400">Loading leaderboard…</p>
+	<p class="pt-4 text-neutral-600">Loading leaderboard…</p>
 {:else}
-	<p class="pt-2 text-sm text-neutral-400">
+	<p class="pt-2 text-sm text-neutral-600">
 		{data.activeBots}
 		active bot{data.activeBots === 1 ? "" : "s"}
 		·
@@ -66,7 +66,7 @@ onMount(() => {
 			<div class="overflow-x-auto px-4 sm:px-6">
 				<table class="w-full min-w-200 border-collapse text-sm">
 					<thead>
-						<tr class="text-left text-neutral-400">
+						<tr class="text-left text-neutral-600">
 							<th class="border-b border-neutral-200 p-3">#</th>
 							<th class="border-b border-neutral-200 p-3">Bot</th>
 							<th class="border-b border-neutral-200 p-3">
@@ -121,7 +121,7 @@ onMount(() => {
 	<h2 class="pt-10 text-2xl">Recent battles</h2>
 
 	{#if data.battles.length === 0}
-		<p class="pt-2 text-neutral-400">No battles yet.</p>
+		<p class="pt-2 text-neutral-600">No battles yet.</p>
 	{:else}
 		<ul class="grid gap-2 pt-4">
 			{#each data.battles as battle (battle.id)}
@@ -132,10 +132,10 @@ onMount(() => {
 					>
 						<span>
 							<span class="font-semibold">{battle.bot0}</span>
-							<span class="text-neutral-400"> vs </span>
+							<span class="text-neutral-600"> vs </span>
 							<span class="font-semibold">{battle.bot1}</span>
 						</span>
-						<span class="text-xs text-neutral-400"
+						<span class="text-xs text-neutral-600"
 							>{battle.created}</span
 						>
 					</a>

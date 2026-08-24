@@ -11,7 +11,7 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 
 <h1 class="text-2xl">My bots</h1>
 
-<p class="pt-2 pb-2 text-sm text-neutral-400">
+<p class="pt-2 pb-2 text-sm text-neutral-600">
 	You may have at most 3 active bots at once ({activeCount}/3 active).
 </p>
 
@@ -71,7 +71,7 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 					{/if}
 				</div>
 
-				<p class="pt-2 text-sm text-neutral-400">{bot.description}</p>
+				<p class="pt-2 text-sm text-neutral-600">{bot.description}</p>
 
 				<div class="pt-3 text-sm">
 					<p>
