@@ -4,8 +4,8 @@
   "workspaces": {
     "": {
       "dependencies": {
-        "@isolated-vm/experimental": "^0.0.12",
         "@types/bun": "^1.4.0",
+        "quickjs-emscripten": "^0.32.0",
         "surrealdb": "^2.0.8",
       },
       "devDependencies": {
@@ -17,21 +17,15 @@
     },
   },
   "packages": {
-    "@isolated-vm/experimental": ["@isolated-vm/experimental@0.0.12", "", { "dependencies": { "tslib": "^2.7.0" }, "optionalDependencies": { "@isolated-vm/experimental-darwin-arm64": "0.0.12", "@isolated-vm/experimental-darwin-x64": "0.0.12", "@isolated-vm/experimental-linux-arm64-gnu": "0.0.12", "@isolated-vm/experimental-linux-arm64-musl": "0.0.12", "@isolated-vm/experimental-linux-x64-gnu": "0.0.12", "@isolated-vm/experimental-linux-x64-musl": "0.0.12", "@isolated-vm/experimental-win32-x64": "0.0.12" } }, "sha512-smxaFkvBE5SKBfO5OZQXATTBj0066DdAKcSdxvZFcBury7Vwi+FC2pYkg+bkelrEzU8FttUBEbau0lzxWprAlw=="],
+    "@jitl/quickjs-ffi-types": ["@jitl/quickjs-ffi-types@0.32.0", "", {}, "sha512-v9T+GQpmk43VDJ7d72sf0Nexhk+ArvtUihW27dy7lqAl0zBObFKtSBBIm5RBjwIhE8VwsPPm9PNuvPvNqLWUEg=="],
 
-    "@isolated-vm/experimental-darwin-arm64": ["@isolated-vm/experimental-darwin-arm64@0.0.12", "", { "os": "darwin", "cpu": "arm64" }, "sha512-rC+rC4KeQU6HeFCNzMFQRY1k7uY64whQjCVMQwLUpLrStQkuQxf7WCVzofaWylXqSZRwRMl6/jw719r34jrmiA=="],
+    "@jitl/quickjs-wasmfile-debug-asyncify": ["@jitl/quickjs-wasmfile-debug-asyncify@0.32.0", "", { "dependencies": { "@jitl/quickjs-ffi-types": "0.32.0" } }, "sha512-EX8zbXwGqCgAE764M+qvkHtyXDi/FUoMBea0JnES7vCM3P7a2+EOZOjGv85wtZ2sJhI1oJ+nekmqpOODFDY+hw=="],
 
-    "@isolated-vm/experimental-darwin-x64": ["@isolated-vm/experimental-darwin-x64@0.0.12", "", { "os": "darwin", "cpu": "x64" }, "sha512-bohLvdEkn41E4/vpE/1xf1lS/ofDlC6KzethI5l7QiCjshmMpk17qxlbOpMktbimdjZMbaKzbg8oeW66gqYgqA=="],
+    "@jitl/quickjs-wasmfile-debug-sync": ["@jitl/quickjs-wasmfile-debug-sync@0.32.0", "", { "dependencies": { "@jitl/quickjs-ffi-types": "0.32.0" } }, "sha512-LeYWrPGC1uNCTBWvibo3ZLJj0CSVNYUXvJpXMCmuQ5Sap2cCACc3uvGvYV4homHHBAzfw5akoTqMMS4YFRtw+Q=="],
 
-    "@isolated-vm/experimental-linux-arm64-gnu": ["@isolated-vm/experimental-linux-arm64-gnu@0.0.12", "", { "os": "linux", "cpu": "arm64" }, "sha512-SJH1n+F0CxyJ9q05aGgbejYjetpsRIkrePTH73EBuiURP7MBpijQnif7tGwcDLWfglq7PLq+VmMHKNU4QuY5+g=="],
+    "@jitl/quickjs-wasmfile-release-asyncify": ["@jitl/quickjs-wasmfile-release-asyncify@0.32.0", "", { "dependencies": { "@jitl/quickjs-ffi-types": "0.32.0" } }, "sha512-3oSwPfja12ICz4aIblB58cuY8JlEq5Txt8Cut4VLo+LH47QN+mzCnSgnbB03hWzg1LBcc+VyyI9UOag7a1NF+Q=="],
 
-    "@isolated-vm/experimental-linux-arm64-musl": ["@isolated-vm/experimental-linux-arm64-musl@0.0.12", "", { "os": "linux", "cpu": "arm64" }, "sha512-qG2Pw4Vh0XCuRvVhk+dNuTGsnujW1ygKg4UjfzeoJT4r8Jvy2g0WKE/sGY+W+Svf96Y98OOb4HTAnxvK2+9+NQ=="],
-
-    "@isolated-vm/experimental-linux-x64-gnu": ["@isolated-vm/experimental-linux-x64-gnu@0.0.12", "", { "os": "linux", "cpu": "x64" }, "sha512-xh3S2x3vtYW6S9qZgodNTZcXv1hyG5hdjDxJ9ivBkX/ZvJOyL3/NPTF1+SkJiA8ZP7doczOgVwzQP+wNZeuAtg=="],
-
-    "@isolated-vm/experimental-linux-x64-musl": ["@isolated-vm/experimental-linux-x64-musl@0.0.12", "", { "os": "linux", "cpu": "x64" }, "sha512-mHypkTx4sV8TRKmrY04w73apH2jj3nZn8rB77kCn+Ihg0DZwpZ/bocOZEn8bC3pIHuh/g4rBlY0xjRysdiUvAA=="],
-
-    "@isolated-vm/experimental-win32-x64": ["@isolated-vm/experimental-win32-x64@0.0.12", "", { "os": "win32", "cpu": "x64" }, "sha512-WeLJlV7SoFH0JXfWGv1EqcyL/80Nrk/QitNkeddsyChjdR7h0mxaGn3oFyI1ta9tnu2hhdYflUW6Kh5gteVWpA=="],
+    "@jitl/quickjs-wasmfile-release-sync": ["@jitl/quickjs-wasmfile-release-sync@0.32.0", "", { "dependencies": { "@jitl/quickjs-ffi-types": "0.32.0" } }, "sha512-BKNDI/TPBfGlLNGYpLrhcDGXmIk4xHm4MRAisOBnOzpXVn9HZWsfmMAc9WMBrAHjvvds6HOikKeaOBKdPdpVrg=="],
 
     "@surrealdb/cbor": ["@surrealdb/cbor@2.0.0-alpha.4", "", {}, "sha512-l/hNZ3ZCOJq8rzwx1y5ZV/8b2bYCWdhGqRVY33Pu50NAHyAW5qLsMn3ZBkZow77mAKwNCsbDsRGnyYEuU95mjw=="],
 
@@ -42,6 +36,10 @@
     "@types/node": ["@types/node@26.2.0", "", { "dependencies": { "undici-types": "~8.3.0" } }, "sha512-5IviulTZeRNp2vAJ514cc/HUlY5nZ9fCbq9DMyC52BrhFZACo3nI0R7qBxhQmo/d27NFe96ur/b7Wwxklda+kg=="],
 
     "bun-types": ["bun-types@1.4.0", "", { "dependencies": { "@types/node": "*" } }, "sha512-iIKw23BspnQQYd3prITOBxeUsxBHnwzX6YJfGMuNOZzeNcMmVqzIIVGRm1l69ogaPQmb4wB6BN8mA5bE9YuC5Q=="],
+
+    "quickjs-emscripten": ["quickjs-emscripten@0.32.0", "", { "dependencies": { "@jitl/quickjs-wasmfile-debug-asyncify": "0.32.0", "@jitl/quickjs-wasmfile-debug-sync": "0.32.0", "@jitl/quickjs-wasmfile-release-asyncify": "0.32.0", "@jitl/quickjs-wasmfile-release-sync": "0.32.0", "quickjs-emscripten-core": "0.32.0" } }, "sha512-So0Sqw869y/S2oE3Nuc0uT3Dhqgvsj8FSrwBdsuTosVsG8ME5/OcudU1GxsrIFdFABgy17GHnTVO9TYV/bLQcA=="],
+
+    "quickjs-emscripten-core": ["quickjs-emscripten-core@0.32.0", "", { "dependencies": { "@jitl/quickjs-ffi-types": "0.32.0" } }, "sha512-QFnPfjFey8EqknSrSxe1hZrf1/8z7/6s1QzGOmKo6++02r7QRRX7ZoyNaZh7JuVjWsVW87KnQrbZqnHkOAzUyg=="],
 
     "surrealdb": ["surrealdb@2.0.8", "", { "dependencies": { "@surrealdb/sqon": "0.1.0" }, "peerDependencies": { "tslib": "^2.6.3", "typescript": "^5.0.0 || ^6.0.0" } }, "sha512-nkoTAdnfJYc0EvB2Hut0MET/UiWTOT6+TJODoubHzoC952gJvjEbHMx5TLrecUYo1vIN3/qBgwMIcLKK0WC7zQ=="],
 

@@ -1,7 +1,7 @@
 {
 	"dependencies": {
-		"@isolated-vm/experimental": "^0.0.12",
 		"@types/bun": "^1.4.0",
+		"quickjs-emscripten": "^0.32.0",
 		"surrealdb": "^2.0.8"
 	},
 	"name": "ysws3",
