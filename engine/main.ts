@@ -1,17 +1,11 @@
 import { readdirSync } from "node:fs"
+import quickjsVariant from "@jitl/quickjs-ng-wasmfile-release-sync"
+import { loadQuickJs } from "@sebastianwessel/quickjs"
 import { type RecordId, Surreal } from "surrealdb"
 import type { Memory, Move, State } from "./bots/bot"
 import commitBattleQuery from "./commitBattle.surql?raw"
 import createBotQuery from "./createBot.surql?raw"
 import initQuery from "./init.surql?raw"
-import type {
-	QuickJSContext,
-	QuickJSHandle,
-} from "./node_modules/quickjs-emscripten/dist/index.d.mts"
-import {
-	getQuickJS,
-	shouldInterruptAfterDeadline,
-} from "./node_modules/quickjs-emscripten/dist/index.mjs"
 import selectBotsQuery from "./selectBots.surql?raw"
 
 console.log("starting")
@@ -85,12 +79,13 @@ async function transpile(code: string) {
 
 console.log("connected")
 
-
 // load all bots from the bots directory
 const dir = "./bots"
 const files = readdirSync(dir)
 
 for (const file of files) {
+	if (file.endsWith(".d.ts")) continue
+
 	const botName = file.replace(/\.ts$/, "")
 	const botCode = await Bun.file(`${dir}/${file}`).text()
 
@@ -110,59 +105,37 @@ type DBBot = {
 
 type BotIsolate = {
 	bot: DBBot
-	context: QuickJSContext
-	botFunction: QuickJSHandle
 }
 
 const rounds = 10
 const timeout = 100 // ms
 
-function createIsolate(
-	QuickJS: Awaited<ReturnType<typeof getQuickJS>>,
-	bot: DBBot
-): BotIsolate {
-	const runtime = QuickJS.newRuntime({
-		memoryLimitBytes: 64 * 1024 * 1024,
-		maxStackSizeBytes: 1024 * 1024,
-	})
-	const context = runtime.newContext()
-
-	const moduleHandle = context
-		.evalCode(bot.latestCode, "bot.js", { type: "module" })
-		.unwrap()
-	const botFunction = context.getProp(moduleHandle, "default")
-	moduleHandle.dispose()
-
-	return { bot, context, botFunction }
+function createIsolate(bot: DBBot): BotIsolate {
+	return { bot }
 }
 
-function callBot(isolate: BotIsolate, state: State): [Move, Memory] {
-	const { context, botFunction } = isolate
+async function callBot(
+	runSandboxed: Awaited<ReturnType<typeof loadQuickJs>>["runSandboxed"],
+	isolate: BotIsolate,
+	state: State
+): Promise<[Move, Memory]> {
+	return (await runSandboxed(
+		async ({ evalCode }) => {
+			const result = await evalCode(
+				`${isolate.bot.latestCode.replace(/export \{[\s\S]*?\};?\s*$/, "")}\nexport default await bot(${JSON.stringify(state)})`,
+				"bot.js"
+			)
 
-	context.runtime.setInterruptHandler(
-		shouldInterruptAfterDeadline(Date.now() + timeout)
-	)
-
-	const stateHandle = context
-		.evalCode(`(${JSON.stringify(state)})`, "state.js", { type: "global" })
-		.unwrap()
-
-	try {
-		const resultHandle = context
-			.callFunction(botFunction, context.undefined, stateHandle)
-			.unwrap()
-		try {
-			return context.dump(resultHandle) as [Move, Memory]
-		} finally {
-			resultHandle.dispose()
+			if (!result.ok) throw new Error(JSON.stringify(result.error))
+			return result.data
+		},
+		{
+			executionTimeout: timeout,
+			memoryLimit: 64 * 1024 * 1024,
+			maxStackSize: 1024 * 1024,
+			mountFs: { "bot.js": isolate.bot.latestCode },
 		}
-	} catch (e) {
-		console.error(e)
-		throw e
-	} finally {
-		stateHandle.dispose()
-		context.runtime.removeInterruptHandler()
-	}
+	)) as unknown as [Move, Memory]
 }
 
 function moveToInt(move: Move): number {
@@ -179,9 +152,8 @@ async function battle() {
 
 	console.log(bots)
 
-	const QuickJS = await getQuickJS()
-
-	const isolates = bots.map(bot => createIsolate(QuickJS, bot))
+	const { runSandboxed } = await loadQuickJs(quickjsVariant)
+	const isolates = bots.map(createIsolate)
 
 	type MovePair = [Move, Move]
 
@@ -203,7 +175,11 @@ async function battle() {
 				const state = states[j]
 				if (!state) throw new Error("State not found")
 
-				const [move, memory] = callBot(isolate, state)
+				const [move, memory] = await callBot(
+					runSandboxed,
+					isolate,
+					state
+				)
 				moves[j] = move
 				memories[j] = memory
 			}
@@ -216,11 +192,9 @@ async function battle() {
 
 			console.log("round", i, moves)
 		}
-	} finally {
-		for (const isolate of isolates) {
-			isolate.botFunction.dispose()
-			isolate.context.dispose()
-		}
+	} catch (e) {
+		console.error(e)
+		throw e
 	}
 
 	console.log("battle complete", history)
