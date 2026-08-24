@@ -27,30 +27,6 @@ CREATE matrix CONTENT {
 	payoff: fn::initialMatrix()
 };
 
-DEFINE FUNCTION OVERWRITE fn::calculateScore($battle: object) {
-	LET $initialMatrix = fn::initialMatrix();
-	LET $T = $initialMatrix[1][0];
-	LET $S = $initialMatrix[0][1];
-
-	LET $errors = $battle.errors;
-	LET $e0 = $errors[0] != NONE;
-	LET $e1 = $errors[1] != NONE;
-
-	# Punish bots for errors
-	IF $e0 AND $e1 {
-		RETURN [$S, $S];
-	} ELSE IF $e0 {
-		RETURN [$S, $T];
-	} ELSE IF $e1 {
-		RETURN [$T, $S];
-	};
-
-	LET $payoff = $battle.matrix.payoff;
-	LET $pts = $battle.rounds.map(|$r| [$payoff[$r[0]][$r[1]], $payoff[$r[1]][$r[0]]]);
-	LET $c = <float> count($pts);
-	[math::sum($pts.map(|$p| $p[0])) / $c, math::sum($pts.map(|$p| $p[1])) / $c];
-};
-
 DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON bot TYPE string;
 	DEFINE FIELD OVERWRITE name ON bot TYPE string;
@@ -77,22 +53,18 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 	};
 	DEFINE FIELD OVERWRITE wins ON bot TYPE int COMPUTED {
 		LET $results = SELECT VALUE IF bots[0] = $parent.id {
-			LET $score = fn::calculateScore($this);
-			$score[0] > $score[1]
+			$this.scores[0] > $this.scores[1]
 		} ELSE {
-			LET $score = fn::calculateScore($this);
-			$score[1] > $score[0]
+			$this.scores[1] > $this.scores[0]
 		} FROM battle WHERE $parent.id IN bots;
 
 		count($results.filter(|$w| $w == true))
 	};
 	DEFINE FIELD OVERWRITE losses ON bot TYPE int COMPUTED {
 		LET $results = SELECT VALUE IF bots[0] = $parent.id {
-			LET $score = fn::calculateScore($this);
-			$score[0] < $score[1]
+			$this.scores[0] < $this.scores[1]
 		} ELSE {
-			LET $score = fn::calculateScore($this);
-			$score[1] < $score[0]
+			$this.scores[1] < $this.scores[0]
 		} FROM battle WHERE $parent.id IN bots;
 
 		count($results.filter(|$w| $w == true))
