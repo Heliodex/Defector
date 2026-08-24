@@ -1,13 +1,13 @@
-type Move = "C" | "D"
+export type Move = "C" | "D"
 
-type Match = {
+export type Match = {
 	you: Move
 	opponent: Move
 }
 
-type Memory = unknown
+export type Memory = unknown
 
-type State = {
+export type State = {
 	// history being empty signifies that this is the first move
 	history: Match[]
 	memory: Memory
