@@ -163,6 +163,9 @@ async function callBot(bot: DBBot, state: State): Promise<[Move, Memory]> {
 	} catch (error) {
 		if (!(error instanceof Error)) throw error
 
+		if (error.message.includes("list_empty(&rt->gc_obj_list)"))
+			throw new Error(`maximum stack size of ${stackLimitMb} MB exceeded`)
+
 		switch (error.message) {
 			case "out of memory":
 				throw new Error(
