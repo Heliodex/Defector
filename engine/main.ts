@@ -106,41 +106,73 @@ type DBBot = {
 
 const rounds = 100
 const timeout = 100 // ms
+const memoryLimitMb = 1
+const stackLimitMb = 1
 
 const { runSandboxed } = await loadQuickJs(quickjsVariant)
 
-const callBot = (bot: DBBot, state: State): Promise<[Move, Memory]> =>
-	runSandboxed(
-		async ({ ctx }: { ctx: QuickJSContext }) => {
-			const moduleHandle = ctx.unwrapResult(
-				ctx.evalCode(bot.latestCode, `${bot.name}.js`, { type: "module" })
-			)
-			const botHandle = ctx.getProp(moduleHandle, "default")
-			const stateHandle = ctx.unwrapResult(
-				ctx.evalCode(`(${JSON.stringify(state)})`, "state.js")
-			)
+const runBot =
+	(bot: DBBot, state: State) =>
+	async ({ ctx }: { ctx: QuickJSContext }) => {
+		const moduleHandle = ctx.unwrapResult(
+			ctx.evalCode(bot.latestCode, `${bot.name}.js`, {
+				type: "module",
+			})
+		)
+		const botHandle = ctx.getProp(moduleHandle, "default")
+		const stateHandle = ctx.unwrapResult(
+			ctx.evalCode(`(${JSON.stringify(state)})`, "state.js")
+		)
 
+		try {
+			const outputHandle = ctx.unwrapResult(
+				ctx.callFunction(botHandle, ctx.undefined, stateHandle)
+			)
 			try {
-				const outputHandle = ctx.unwrapResult(
-					ctx.callFunction(botHandle, ctx.undefined, stateHandle)
-				)
-				try {
-					return ctx.dump(outputHandle)
-				} finally {
-					outputHandle.dispose()
-				}
+				const output = ctx.dump(outputHandle)
+				if (!Array.isArray(output) || output.length !== 2)
+					throw new Error("must return a [move, memory] tuple")
+				if (output[0] !== "C" && output[0] !== "D")
+					throw new Error(
+						`returned invalid move ${JSON.stringify(output[0])}`
+					)
+
+				return output as [Move, Memory]
 			} finally {
-				stateHandle.dispose()
-				botHandle.dispose()
-				moduleHandle.dispose()
+				outputHandle.dispose()
 			}
-		},
-		{
-			executionTimeout: timeout,
-			memoryLimit: 1024 * 1024,
-			maxStackSize: 1024 * 1024,
+		} finally {
+			stateHandle.dispose()
+			botHandle.dispose()
+			moduleHandle.dispose()
 		}
-	) as Promise<[Move, Memory]>
+	}
+
+async function callBot(bot: DBBot, state: State): Promise<[Move, Memory]> {
+	try {
+		const res = await runSandboxed(runBot(bot, state), {
+			executionTimeout: timeout,
+			memoryLimit: memoryLimitMb * 1e6,
+			maxStackSize: stackLimitMb * 1e6,
+		})
+
+		return res
+	} catch (error) {
+		if (!(error instanceof Error)) throw error
+
+		switch (error.message) {
+			case "out of memory":
+				throw new Error(
+					`maximum memory limit of ${memoryLimitMb} MB exceeded`
+				)
+			case "interrupted":
+				throw new Error(
+					`maximum execution time of ${timeout} ms exceeded`
+				)
+		}
+		throw error
+	}
+}
 
 function moveToInt(move: Move): number {
 	if (move === "C") return 0
@@ -164,8 +196,8 @@ async function battle() {
 	]
 	const history: MovePair[] = []
 
-	try {
-		for (let i = 0; i < rounds; i++) {
+	for (let i = 0; i < rounds; i++) {
+		try {
 			const moves: MovePair = ["C", "C"]
 			const memories: [Memory, Memory] = [null, null]
 
@@ -176,7 +208,15 @@ async function battle() {
 				const state = states[j]
 				if (!state) throw new Error("State not found")
 
-				const [move, memory] = await callBot(bot, state)
+				let result: [Move, Memory]
+				try {
+					result = await callBot(bot, state)
+				} catch (error) {
+					throw new Error(
+						`Bot "${bot.name}" failed: ${error instanceof Error ? error.message : JSON.stringify(error)}`
+					)
+				}
+				const [move, memory] = result
 				moves[j] = move
 				memories[j] = memory
 			}
@@ -188,10 +228,11 @@ async function battle() {
 			history.push(moves)
 
 			console.log("round", i, moves)
+		} catch (e) {
+			throw new Error(
+				`Round ${i} failed: ${e instanceof Error ? e.message : JSON.stringify(e)}`
+			)
 		}
-	} catch (e) {
-		console.error(e)
-		throw e
 	}
 
 	console.log("battle complete", history)
@@ -208,4 +249,6 @@ async function battle() {
 }
 
 // setInterval(, 1000)
-battle()
+await battle()
+
+process.exit()
