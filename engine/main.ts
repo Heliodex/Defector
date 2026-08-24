@@ -103,26 +103,16 @@ type DBBot = {
 	name: string
 }
 
-type BotIsolate = {
-	bot: DBBot
-}
-
 const rounds = 10
 const timeout = 100 // ms
 
-function createIsolate(bot: DBBot): BotIsolate {
-	return { bot }
-}
+const { runSandboxed } = await loadQuickJs(quickjsVariant)
 
-async function callBot(
-	runSandboxed: Awaited<ReturnType<typeof loadQuickJs>>["runSandboxed"],
-	isolate: BotIsolate,
-	state: State
-): Promise<[Move, Memory]> {
+async function callBot(bot: DBBot, state: State): Promise<[Move, Memory]> {
 	return (await runSandboxed(
 		async ({ evalCode }) => {
 			const result = await evalCode(
-				`${isolate.bot.latestCode.replace(/export \{[\s\S]*?\};?\s*$/, "")}\nexport default await bot(${JSON.stringify(state)})`,
+				`${bot.latestCode.replace(/export \{[\s\S]*?\};?\s*$/, "")}\nexport default await bot(${JSON.stringify(state)})`,
 				"bot.js"
 			)
 
@@ -131,9 +121,9 @@ async function callBot(
 		},
 		{
 			executionTimeout: timeout,
-			memoryLimit: 64 * 1024 * 1024,
+			memoryLimit: 1024 * 1024,
 			maxStackSize: 1024 * 1024,
-			mountFs: { "bot.js": isolate.bot.latestCode },
+			mountFs: { "bot.js": bot.latestCode },
 		}
 	)) as unknown as [Move, Memory]
 }
@@ -152,9 +142,6 @@ async function battle() {
 
 	console.log(bots)
 
-	const { runSandboxed } = await loadQuickJs(quickjsVariant)
-	const isolates = bots.map(createIsolate)
-
 	type MovePair = [Move, Move]
 
 	const states: [State, State] = [
@@ -168,18 +155,14 @@ async function battle() {
 			const moves: MovePair = ["C", "C"]
 			const memories: [Memory, Memory] = [null, null]
 
-			for (let j = 0; j < isolates.length; j++) {
-				const isolate = isolates[j]
-				if (!isolate) throw new Error("Isolate not found")
+			for (let j = 0; j < bots.length; j++) {
+				const bot = bots[j]
+				if (!bot) throw new Error("Bot not found")
 
 				const state = states[j]
 				if (!state) throw new Error("State not found")
 
-				const [move, memory] = await callBot(
-					runSandboxed,
-					isolate,
-					state
-				)
+				const [move, memory] = await callBot(bot, state)
 				moves[j] = move
 				memories[j] = memory
 			}
