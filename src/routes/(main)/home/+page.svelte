@@ -15,22 +15,9 @@ const lapseData = $derived(await getLapseData())
 </p>
 
 <div class="grid gap-4 pt-2 sm:grid-cols-2">
-	<a
-		href="/submit-bot"
-		class="btn btn-primary text-center"
-	>
-		Submit a bot
-	</a>
-	<a
-		href="/your-bots"
-		class="btn btn-secondary text-center"
-	>
-		My bots
-	</a>
-	<a
-		href="/submit"
-		class="btn btn-secondary text-center"
-	>
+	<a href="/submit-bot" class="btn btn-primary text-center"> Submit a bot </a>
+	<a href="/your-bots" class="btn btn-secondary text-center"> My bots </a>
+	<a href="/submit" class="btn btn-secondary text-center">
 		Submit work & hours
 	</a>
 </div>
@@ -60,17 +47,11 @@ const lapseData = $derived(await getLapseData())
 			this event.
 		</p>
 		<form {...lapseLogin}>
-			<button
-				class="btn btn-primary"
-			>
-				Link Lapse account
-			</button>
+			<button class="btn btn-primary">Link Lapse account</button>
 		</form>
 	</div>
 {/if}
 
 <form {...logout} class="pt-8">
-	<button class="btn btn-danger">
-		Log out
-	</button>
+	<button class="btn btn-danger">Log out</button>
 </form>

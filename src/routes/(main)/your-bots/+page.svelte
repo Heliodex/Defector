@@ -35,7 +35,7 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 
 {#if !bots || bots.length === 0}
 	<div class="pt-4">
-		<p class="pb-2">You haven't submitted any bots yet.</p>
+		<p class="pb-4">You haven't submitted any bots yet.</p>
 		<a
 			href="/submit-bot"
 			class="btn btn-primary"

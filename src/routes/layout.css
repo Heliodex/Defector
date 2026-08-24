@@ -51,7 +51,7 @@ a:not(.btn, .navbtn) {
 }
 
 .btn {
-	@apply cursor-pointer transition-colors no-underline rounded-lg px-4 py-2;
+	@apply cursor-pointer transition-all no-underline rounded-lg px-4 py-2 active:scale-98;
 }
 
 .navbtn {
@@ -75,18 +75,15 @@ a:not(.btn, .navbtn) {
 }
 
 .btn-primary {
-	@apply text-white font-bold bg-blue-600 hover:bg-blue-700 active:bg-blue-500 shadow-blue-300;
-	box-shadow: 0.1rem 0.1rem 0 var(--tw-shadow-color);
+	@apply text-white font-bold bg-blue-600 hover:bg-blue-700 active:bg-blue-500 shadow-blue-300 shadow-md hover:shadow-sm inset-shadow-blue-800 inset-shadow-sm hover:inset-shadow-xs;
 }
 
 .btn-secondary {
-	@apply text-black font-bold bg-blue-100 hover:bg-blue-200 active:bg-blue-300 shadow-blue-200;
-	box-shadow: 0.1rem 0.1rem 0 var(--tw-shadow-color);
+	@apply text-black font-bold bg-blue-100 hover:bg-blue-200 active:bg-blue-300 shadow-blue-200 shadow-md hover:shadow-sm inset-shadow-blue-100 inset-shadow-sm hover:inset-shadow-xs;
 }
 
 .btn-danger {
-	@apply text-white font-bold bg-red-600 hover:bg-red-700 active:bg-red-500 shadow-red-300;
-	box-shadow: 0.1rem 0.1rem 0 var(--tw-shadow-color);
+	@apply text-white font-bold bg-red-600 hover:bg-red-700 active:bg-red-500 shadow-red-300 shadow-md hover:shadow-sm inset-shadow-red-800 inset-shadow-sm hover:inset-shadow-xs;
 }
 
 .sidebar a.btn,
