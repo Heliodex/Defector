@@ -2,9 +2,8 @@ import { readdirSync } from "node:fs"
 import quickjsVariant from "@jitl/quickjs-ng-wasmfile-release-sync"
 import { loadQuickJs } from "@sebastianwessel/quickjs"
 import type { QuickJSContext } from "quickjs-emscripten-core"
-import { type RecordId, Surreal } from "surrealdb"
+import { type RecordId, Surreal, Table } from "surrealdb"
 import type { Memory, Move, State } from "./bots/bot"
-import commitBattleQuery from "./commitBattle.surql?raw"
 import createBotQuery from "./createBot.surql?raw"
 import initQuery from "./init.surql?raw"
 import selectBotsQuery from "./selectBots.surql?raw"
@@ -105,7 +104,7 @@ type DBBot = {
 }
 
 const rounds = 100
-const timeout = 100 // ms
+const timeout = 10 // ms
 const memoryLimitMb = 1
 const stackLimitMb = 1
 
@@ -202,52 +201,49 @@ async function battle() {
 		{ history: [], memory: null },
 	]
 	const history: MovePair[] = []
+	const errors: [string?, string?] = [undefined, undefined]
 
-	for (let i = 0; i < rounds; i++) {
-		try {
-			const moves: MovePair = ["C", "C"]
-			const memories: [Memory, Memory] = [null, null]
+	roundsLoop: for (let i = 0; i < rounds; i++) {
+		const moves: MovePair = ["C", "C"]
+		const memories: [Memory, Memory] = [null, null]
 
-			for (let j = 0; j < bots.length; j++) {
-				const bot = bots[j]
-				if (!bot) throw new Error("Bot not found")
+		for (let j = 0; j < bots.length; j++) {
+			const bot = bots[j]
+			if (!bot) throw new Error("Bot not found")
 
-				const state = states[j]
-				if (!state) throw new Error("State not found")
+			const state = states[j]
+			if (!state) throw new Error("State not found")
 
-				let result: [Move, Memory]
-				try {
-					result = await callBot(bot, state)
-				} catch (error) {
-					throw new Error(
-						`Bot "${bot.name}" failed: ${error instanceof Error ? error.message : JSON.stringify(error)}`
-					)
-				}
-				const [move, memory] = result
-				moves[j] = move
-				memories[j] = memory
+			let result: [Move, Memory]
+			try {
+				result = await callBot(bot, state)
+			} catch (error) {
+				errors[j] =
+					error instanceof Error
+						? error.message
+						: JSON.stringify(error)
+				break roundsLoop
 			}
-
-			states[0].memory = memories[0]
-			states[1].memory = memories[1]
-			states[0].history.push({ you: moves[0], opponent: moves[1] })
-			states[1].history.push({ you: moves[1], opponent: moves[0] })
-			history.push(moves)
-
-			console.log("round", i, moves)
-		} catch (e) {
-			throw new Error(
-				`Round ${i} failed: ${e instanceof Error ? e.message : JSON.stringify(e)}`
-			)
+			const [move, memory] = result
+			moves[j] = move
+			memories[j] = memory
 		}
+
+		states[0].memory = memories[0]
+		states[1].memory = memories[1]
+		states[0].history.push({ you: moves[0], opponent: moves[1] })
+		states[1].history.push({ you: moves[1], opponent: moves[0] })
+		history.push(moves)
+
+		console.log("round", i, moves)
 	}
 
 	console.log("battle complete", history)
 
-	// commit to database
-	await db.query(commitBattleQuery, {
+	await db.create(new Table("battle")).content({
 		bots: bots.map(bot => bot.id),
 		rounds: history.map(round => round.map(moveToInt)),
+		errors,
 	})
 
 	console.log("battle committed")

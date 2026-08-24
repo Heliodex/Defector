@@ -7,16 +7,16 @@ REMOVE TABLE battle;
 
 DEFINE TABLE OVERWRITE matrix SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON matrix TYPE string;
-	DEFINE FIELD OVERWRITE payoff ON matrix TYPE array<array<int, 2>, 2>;
+	DEFINE FIELD OVERWRITE payoff ON matrix TYPE array<array<float, 2>, 2>;
 	DEFINE FIELD OVERWRITE created ON matrix TYPE datetime DEFAULT ALWAYS time::now();
 
 # T > R > P > S
 # 2R > T + S
 
-LET $T = 3;
-LET $R = 2;
-LET $P = 1;
-LET $S = 0;
+LET $T = <float> 3;
+LET $R = <float> 2;
+LET $P = <float> 1;
+LET $S = <float> 0;
 
 # 0: cooperate, 1: defect
 CREATE matrix CONTENT {
@@ -63,17 +63,17 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		LET $e1 = $errors[1] != NONE;
 
 		IF $e0 AND $e1 {
-			RETURN [$S, $S];
+			[$S, $S];
 		} ELSE IF $e0 {
-			RETURN [$S, $R];
+			[$S, $R];
 		} ELSE IF $e1 {
-			RETURN [$R, $S];
-		};
-
-		LET $payoff = (SELECT VALUE payoff FROM ONLY $this.matrix);
-		LET $pts = $this.rounds.map(|$r| [$payoff[$r[0]][$r[1]], $payoff[$r[1]][$r[0]]]);
-		LET $c = <float> count($pts);
-		[math::sum($pts.map(|$p| $p[0])) / $c, math::sum($pts.map(|$p| $p[1])) / $c]
+			[$R, $S];
+		} ELSE {
+			LET $payoff = (SELECT VALUE payoff FROM ONLY $this.matrix);
+			LET $pts = $this.rounds.map(|$r| [$payoff[$r[0]][$r[1]], $payoff[$r[1]][$r[0]]]);
+			LET $c = <float> count($pts);
+			[math::sum($pts.map(|$p| $p[0])) / $c, math::sum($pts.map(|$p| $p[1])) / $c];
+		}
 	};
 	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
 
