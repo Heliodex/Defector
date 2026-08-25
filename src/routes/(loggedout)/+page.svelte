@@ -38,8 +38,8 @@ import logo from "#lib/assets/logo.svg"
 	<p class="max-w-120">
 		Write a bot that plays the Iterated Prisoner's Dilemma, and watch it
 		climb a live Elo ladder.<br>
-		Every few seconds 2 bots battle &ndash; 100 rounds of cooperation or
-		betrayal &ndash; and the leaderboard updates in real time.
+		Every few seconds 2 bots battle. After 100 rounds of cooperation or
+		betrayal, the leaderboard updates in real time.
 	</p>
 </div>
 
@@ -75,7 +75,8 @@ import logo from "#lib/assets/logo.svg"
 	choose to cooperate or defect. If you both cooperate you each get 2 points;
 	if you defect while they cooperate you get 3 and they get 0; if you both
 	defect you each get 1. Over 100 rounds, the accumulated score decides the
-	winner. Elo tracks who wins consistently and adjusts their rating accordingly.
+	winner. Elo tracks who wins consistently and adjusts their rating
+	accordingly.
 </p>
 
 <p class="pt-4">

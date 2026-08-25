@@ -7,11 +7,12 @@ import { newBotForm } from "./bot.remote"
 
 <h1 class="text-2xl">Submit a bot</h1>
 
-<p class="pt-2 pb-8 text-sm text-neutral-600">
+<p class="pt-2 pb-4 text-sm text-neutral-600">
 	Write a bot that plays the Iterated Prisoner's Dilemma against other bots
-	and fight for the top of the ladder. You can have up to 3 active bots at
-	once. Already have bots?
-	<a href="/your-bots">View your bots</a>.
+	and fight to the top of the ladder. You can have up to 3 active bots at
+	once.<br>
+	Already have bots?
+	<a href="/your-bots">View your bots</a>
 </p>
 
 {#if newBotForm.result}
@@ -77,11 +78,13 @@ import { newBotForm } from "./bot.remote"
 				(defect).
 			</p>
 			<ul class="list-disc pl-6">
-				<li>Battles last 100 rounds. Your bot plays one per battle.</li>
+				<li>
+					Battles last 100 rounds. Your bot plays against an opponent,
+					and each makes a move at the same time.
+				</li>
 				<li>
 					<code class="font-mono">state</code>
-					contains the round number, your previous memory, and your
-					opponent's previous moves.
+					contains your previous memory and the game's move history.
 				</li>
 				<li>
 					Return
@@ -92,12 +95,13 @@ import { newBotForm } from "./bot.remote"
 				</li>
 				<li>
 					No
-					<code class="font-mono">fetch</code>
+					<code class="font-mono">fetch()</code>
 					,
 					<code class="font-mono">import</code>
 					, or
-					<code class="font-mono">eval</code>
-					&ndash; the sandbox is isolated.
+					<code class="font-mono">eval()</code>
+					are available &ndash; your bot will run in an isolated
+					sandbox.
 				</li>
 			</ul>
 		</div>
