@@ -7,7 +7,7 @@ export const db: Surreal = new SurrealClient({
 	},
 })
 
-const url = new URL(process.env.SURREAL_URL ?? "ws://localhost:8002")
+const url = new URL(process.env.SURREAL_URL ?? "ws://localhost:8003")
 
 /**
  * Connects to the database started by the site, retrying indefinitely so the
