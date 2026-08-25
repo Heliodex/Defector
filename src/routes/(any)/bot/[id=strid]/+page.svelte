@@ -4,9 +4,6 @@ import { page } from "$app/state"
 import { getBot } from "./bot.remote"
 
 const bot = $derived(await getBot(page.params.id ?? ""))
-
-const cardStyle =
-	"rounded-lg border border-neutral-400 px-4 py-3 bg-white inset-shadow-sm"
 </script>
 
 {#if bot}
@@ -57,19 +54,19 @@ const cardStyle =
 	{/if}
 
 	<div class="pt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-xl">
-		<div class={cardStyle}>
+		<div class="shadowcard">
 			<p class="text-xs text-gray-500">Elo</p>
 			<p class="text-xl font-semibold">{Math.round(bot.elo)}</p>
 		</div>
-		<div class={cardStyle}>
+		<div class="shadowcard">
 			<p class="text-xs text-gray-500">Wins</p>
 			<p class="text-xl font-semibold">{bot.wins}</p>
 		</div>
-		<div class={cardStyle}>
+		<div class="shadowcard">
 			<p class="text-xs text-gray-500">Losses</p>
 			<p class="text-xl font-semibold">{bot.losses}</p>
 		</div>
-		<div class={cardStyle}>
+		<div class="shadowcard">
 			<p class="text-xs text-gray-500">Win rate</p>
 			<p class="text-xl font-semibold">
 				{bot.totalBattles > 0 ? ((bot.wins / bot.totalBattles) * 100).toFixed(1) : "0.0"}%
@@ -96,7 +93,7 @@ const cardStyle =
 					return `${x},${y}`
 				})
 				.join(" ")}
-			<div class={cardStyle}>
+			<div class="shadowcard">
 				<svg
 					aria-label="Elo history"
 					viewBox="0 0 100 30"
@@ -122,7 +119,7 @@ const cardStyle =
 	<div class="pt-6 max-w-xl">
 		<h2 class="font-semibold pb-2">Source</h2>
 		<pre
-			class={[cardStyle, "overflow-auto text-xs leading-6"]}
+			class="shadowcard overflow-auto text-xs leading-6"
 		><code>{bot.source}</code></pre>
 	</div>
 {/if}
