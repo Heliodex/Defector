@@ -4,12 +4,6 @@ SELECT
 	scores,
 	errors,
 	rounds,
-	botNames: [
-		(SELECT VALUE name FROM ONLY $parent.bots[0])[0],
-		(SELECT VALUE name FROM ONLY $parent.bots[1])[0]
-	],
-	botIds: [
-		(SELECT VALUE record::id($parent.bots[0]))[0],
-		(SELECT VALUE record::id($parent.bots[1]))[0]
-	]
+	$parent.bots.map(|$bot| SELECT VALUE name FROM ONLY $bot) AS botNames,
+	$parent.bots.map(|$bot| record::id($bot)) AS botIds
 FROM ONLY $battle;
