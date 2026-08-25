@@ -17,10 +17,8 @@
 }
 
 @font-face {
-	font-family: "Sofia Sans";
-	src:
-		url(/SofiaSans.woff2) format("woff2"),
-		url(/SofiaSans.ttf) format("truetype");
+	font-family: PolySans;
+	src: url(/PolySans.woff2) format("woff2");
 	font-display: swap;
 }
 
@@ -156,7 +154,7 @@ input[type="number"] {
 h1,
 h2,
 h3 {
-	font-family: "Sofia Sans", Lexend, sans-serif;
+	font-family: PolySans, Lexend, sans-serif;
 	font-weight: 1000;
 }
 
