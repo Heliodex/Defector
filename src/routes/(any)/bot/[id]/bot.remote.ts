@@ -1,6 +1,7 @@
 import { error } from "@sveltejs/kit"
+import { type } from "#lib/arktype.js"
 import { db, Record } from "#lib/server/db.js"
-import { getRequestEvent, query } from "$app/server"
+import { query } from "$app/server"
 import getBotQuery from "./getBot.surql?raw"
 import getBotHistoryQuery from "./getBotHistory.surql?raw"
 
@@ -29,13 +30,10 @@ type HistoryRow = {
 
 export type Bot = BotRow & { eloHistory: { index: number; elo: number }[] }
 
-export const getBot = query(async (): Promise<Bot> => {
-	const id = getRequestEvent().params.id
-	if (!id) error(404, "Bot not found")
+export const getBot = query(type.string, async (id: string): Promise<Bot> => {
 	const bot = Record("bot", id)
 
-	const [rows] = await db.query<[BotRow[]]>(getBotQuery, { bot })
-	const row = rows?.[0]
+	const [row] = await db.query<[BotRow]>(getBotQuery, { bot })
 	if (!row) error(404, "Bot not found")
 
 	const [historyRows] = await db.query<[HistoryRow[]]>(getBotHistoryQuery, {

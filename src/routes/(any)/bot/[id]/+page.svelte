@@ -1,8 +1,9 @@
 <script lang="ts">
 import Head from "#lib/components/Head.svelte"
+import { page } from "$app/state"
 import { getBot } from "./bot.remote"
 
-const bot = $derived(await getBot())
+const bot = $derived(await getBot(page.params.id))
 </script>
 
 {#if bot}
