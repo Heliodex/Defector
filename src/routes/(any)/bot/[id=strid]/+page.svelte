@@ -92,11 +92,11 @@ const cardStyle =
 			{let points = bot.eloHistory
 				.map(p => {
 					const x = (p.index / (bot.eloHistory.length - 1)) * 100
-					const y = 30 - ((p.elo - min) / span) * 30
+					const y = 29 - ((p.elo - min) / span) * 28
 					return `${x},${y}`
 				})
 				.join(" ")}
-			<div class="rounded border p-3">
+			<div class={cardStyle}>
 				<svg
 					aria-label="Elo history"
 					viewBox="0 0 100 30"
