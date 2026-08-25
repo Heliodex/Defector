@@ -1,2 +1,2 @@
-export const programmeName = "Prisoner's Dilemma"
+export const programmeName = "Defector"
 export const repoName = "Heliodex/ysws3"
