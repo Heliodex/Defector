@@ -1,17 +1,8 @@
-import type { LiveMessage } from "surrealdb"
-import { Battle, Bot, db } from "#lib/server/db.js"
+import type { Uuid } from "surrealdb"
+import { db } from "#lib/server/db.js"
 import { query } from "$app/server"
-import leaderboardQuery from "./leaderboard.surql?raw"
-
-type BotRow = {
-	id: string
-	name: string
-	elo: number
-	wins: number
-	losses: number
-	totalBattles: number
-	ownerName: string | null
-}
+import leaderboardBattlesQuery from "./leaderboardBattles.surql?raw"
+import leaderboardBotsQuery from "./leaderboardBots.surql?raw"
 
 type BattleRow = {
 	id: string
@@ -23,97 +14,81 @@ type BattleRow = {
 	botIds: [string, string]
 }
 
-export type Leaderboard = {
-	connected: boolean
-	bots: BotRow[]
-	battles: (Omit<BattleRow, "created"> & { created: string })[]
+type BotRow = {
+	id: string
+	name: string
+	elo: number
+	wins: number
+	losses: number
 	totalBattles: number
+	ownerName: string | null
+}
+
+export type LeaderboardBattles = {
+	battles: BattleRow[]
+	totalBattles: number
+}
+
+export type LeaderboardBots = {
+	bots: BotRow[]
 	activeBots: number
 }
 
-const disconnected: Leaderboard = {
-	connected: false,
-	bots: [],
-	battles: [],
-	totalBattles: 0,
-	activeBots: 0,
-}
-
-async function readSnapshot(): Promise<Leaderboard> {
+async function battlesSnapshot(): Promise<LeaderboardBattles> {
 	console.log("ss1")
-	const [bots, battles, botCount, battleCount] =
-		await db.query<[BotRow[], BattleRow[], number, number]>(
-			leaderboardQuery
-		)
+	const [battles, battleCount] = await db.query<[BattleRow[], number]>(
+		leaderboardBattlesQuery
+	)
 
 	console.log("ss2")
 	return {
-		connected: true,
-		bots: (bots ?? []).map(bot => ({
-			...bot,
-			// Format dates server-side so SSR and live values match
-			// (this snapshot's date fields only appear on `battles`).
-		})),
-		battles: (battles ?? []).map(battle => ({
-			...battle,
-			created: new Date(battle.created).toLocaleString(),
-		})),
+		battles,
 		totalBattles: battleCount ?? 0,
+	}
+}
+
+async function botsSnapshot(): Promise<LeaderboardBots> {
+	console.log("ss1")
+	const [bots, botCount] =
+		await db.query<[BotRow[], number]>(leaderboardBotsQuery)
+
+	console.log("ss2")
+	return {
+		bots,
 		activeBots: botCount ?? 0,
 	}
 }
 
-/**
- * Live leaderboard. The client subscribes to this async generator; SurrealDB live queries on the `bot` and `battle` tables act as invalidation signals — whenever either table changes we re-read the database and yield a fresh snapshot, which is streamed to subscribers. If a refresh fails we yield a "disconnected" snapshot.
- */
-export const leaderboard = query.live(
-	async function* (): AsyncGenerator<Leaderboard> {
-		console.log("leaderboard live query started")
+export const leaderboardBattles = query.live(
+	async function* (): AsyncGenerator<BattleRow> {
+		const battles = await battlesSnapshot()
+		for (const battle of battles.battles) yield battle
 
-		// Wake up the snapshot loop whenever a live query notification arrives
-		let wake: (() => void) | null = null
-		const changed = () => {
-			wake?.()
-			wake = null
+		const [id] = await db.query<Uuid[]>("LIVE SELECT * FROM battle")
+
+		for await (const { action, value } of await db.liveOf(id)) {
+			console.log(`${action}:`, value)
+			if (action !== "CREATE") continue
+
+			console.log("CREATE", value)
+			yield {}
 		}
-		const nextChange = () =>
-			new Promise<void>(resolve => {
-				wake = resolve
-			})
+	}
+)
 
-		let snapshot: Leaderboard
-		try {
-			console.log("reading snapshot")
-			snapshot = await readSnapshot()
-			console.log("read snapshot")
-		} catch (error) {
-			console.error("Leaderboard initial load failed:", error)
-			throw error
-		}
-		console.log("loaded snapshot", snapshot)
+export const leaderboardBots = query.live(
+	async function* (): AsyncGenerator<BotRow> {
+		const bots = await botsSnapshot()
+		for (const bot of bots.bots) yield bot
 
-		const subs = await Promise.all([db.live(Bot), db.live(Battle)])
+		const [id] = await db.query<Uuid[]>("LIVE SELECT * FROM bot")
 
-		try {
-			for (const sub of subs)
-				sub.subscribe((message: LiveMessage) => {
-					if (message.action !== "KILLED") changed()
-				})
+		for await (const { action, value } of await db.liveOf(id)) {
+			console.log(`${action}:`, value)
+			if (action !== "CREATE") continue
 
-			for (;;) {
-				console.log("Yielding")
-				yield snapshot
-				await nextChange()
-
-				try {
-					snapshot = await readSnapshot()
-				} catch (error) {
-					console.error("Leaderboard update failed:", error)
-					snapshot = disconnected
-				}
-			}
-		} finally {
-			await Promise.all(subs.map(sub => sub.kill().catch(() => {})))
+			console.log("CREATE", value)
+			yield {}
 		}
 	}
 )
