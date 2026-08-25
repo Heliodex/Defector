@@ -163,7 +163,7 @@ h1 {
 }
 
 h2 {
-	@apply text-3xl pb-4 underline decoration-blue-600;
+	@apply text-3xl pb-4 underline decoration-blue-400 decoration-3;
 }
 
 h3 {
