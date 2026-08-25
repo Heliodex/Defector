@@ -1,6 +1,6 @@
 <script lang="ts">
 import "./layout.css"
-import { repoName } from "#lib/assets/config.js"
+import { programmeName, repoName } from "#lib/assets/config.js"
 import favicon from "#lib/assets/logo.svg"
 import { getIsAdmin, getLoggedIn, login } from "./data.remote"
 
@@ -65,7 +65,8 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 <aside
 	class="sidebar hidden sm:block fixed inset-y-0 left-0 w-40 overflow-y-auto border-r-2 border-neutral-200 bg-white"
 >
-	<nav class="p-4">
+	<h1 class="text-2xl! p-4">{programmeName}</h1>
+	<nav class="p-4 pt-0">
 		<ul class="flex flex-col gap-4">
 			{#if await user}
 				{@render navlink("home", "Home")}
@@ -82,7 +83,9 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 				{@render navlink("", "Landing")}
 				<li>
 					<form {...login} class="w-full">
-						<button class="navbtn w-full" type="submit">Login</button>
+						<button class="navbtn w-full" type="submit">
+							Login
+						</button>
 					</form>
 				</li>
 			{/if}
