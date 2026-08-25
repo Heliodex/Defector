@@ -1,5 +1,6 @@
 <script lang="ts">
 import Head from "#lib/components/Head.svelte"
+import TimeAgo from "#lib/components/TimeAgo.svelte"
 import { leaderboardBattles, leaderboardBots } from "./leaderboard.remote"
 
 const battleData = leaderboardBattles()
@@ -114,9 +115,9 @@ const connected = $derived(battleData.connected && botData.connected)
 								>{battle.botNames[1]}</span
 							>
 						</span>
-						<span class="text-xs text-neutral-600"
-							>{battle.created}</span
-						>
+						<span class="text-xs text-neutral-600">
+							<TimeAgo date={battle.created} />
+						</span>
 					</a>
 				</li>
 			{/each}

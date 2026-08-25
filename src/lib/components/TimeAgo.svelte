@@ -1,0 +1,36 @@
+<script lang="ts">
+	let { date }: { date: Date } = $props()
+
+	const units: [Intl.RelativeTimeFormatUnit, number][] = [
+		["year", 365 * 24 * 60 * 60],
+		["month", 30 * 24 * 60 * 60],
+		["week", 7 * 24 * 60 * 60],
+		["day", 24 * 60 * 60],
+		["hour", 60 * 60],
+		["minute", 60],
+		["second", 1],
+	]
+
+	const formatter = new Intl.RelativeTimeFormat(undefined, {
+		numeric: "always",
+	})
+
+	let now = $state(Date.now())
+
+	setInterval(() => (now = Date.now()), 30_000)
+
+	const label = $derived.by(() => {
+		const seconds = (now - +date) / 1000
+
+		for (const [unit, size] of units) {
+			if (seconds >= size)
+				return formatter.format(-Math.floor(seconds / size), unit)
+		}
+
+		return formatter.format(-Math.round(seconds), "second")
+	})
+</script>
+
+<time datetime={date.toISOString()} title={date.toLocaleString()}>
+	{label}
+</time>
