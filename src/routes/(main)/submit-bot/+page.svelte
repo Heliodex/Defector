@@ -79,8 +79,8 @@ import { newBotForm } from "./bot.remote"
 			</p>
 			<ul class="list-disc pl-6">
 				<li>
-					Battles last 100 rounds. Your bot plays against an opponent,
-					and each makes a move at the same time.
+					Battles last at least 100 rounds. Your bot plays against an
+					opponent, and each makes a move at the same time.
 				</li>
 				<li>
 					<code class="font-mono">state</code>

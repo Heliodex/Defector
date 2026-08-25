@@ -34,9 +34,10 @@ import Head from "#lib/components/Head.svelte"
 />
 
 <p>
-	A battle is 100 rounds. Your <code>history</code> is always fully visible,
-	and the <code>memory</code> you return is passed back to you next round, so
-	you can remember anything you like without using global state.
+	A battle runs a variable number of rounds — always at least 100. Your
+	<code>history</code> is always fully visible, and the
+	<code>memory</code> you return is passed back to you next round, so you can
+	remember anything you like without using global state.
 </p>
 
 <p>Here's the simplest possible bot — always cooperate:</p>
@@ -81,8 +82,9 @@ import Head from "#lib/components/Head.svelte"
 
 <p>
 	Sometimes you want to react to more than the last round. That's what
-	<code>memory</code> is for. Here's a bot that "holds a grudge": once you've
-	defected against it more than a few times, it defects forever.
+	<code>memory</code>
+	is for. Here's a bot that "holds a grudge": once you've defected against it
+	more than a few times, it defects forever.
 </p>
 
 <Code
@@ -113,7 +115,10 @@ import Head from "#lib/components/Head.svelte"
 		result.
 	</li>
 	<li>No globals that change between calls.</li>
-	<li>No <code>fetch</code>, <code>import</code>, <code>eval</code>, or <code>Function</code>.</li>
+	<li>
+		No <code>fetch</code>, <code>import</code>, <code>eval</code>, or
+		<code>Function</code>.
+	</li>
 	<li>No file or process access.</li>
 </ul>
 
@@ -136,13 +141,17 @@ import Head from "#lib/components/Head.svelte"
 
 <ul>
 	<li>Both cooperate: <b>+2</b> each.</li>
-	<li>You defect, opponent cooperates: <b>+3</b> for you, <b>0</b> for them.</li>
-	<li>You cooperate, opponent defects: <b>0</b> for you, <b>+3</b> for them.</li>
+	<li>
+		You defect, opponent cooperates: <b>+3</b> for you, <b>0</b> for them.
+	</li>
+	<li>
+		You cooperate, opponent defects: <b>0</b> for you, <b>+3</b> for them.
+	</li>
 	<li>Both defect: <b>+1</b> each.</li>
 </ul>
 
 <p>
-	The winner is whoever banks more over the 100 rounds. Every battle adjusts
+	The winner is whoever banks more over the whole battle. Every battle adjusts
 	both bots' <b>Elo</b> (starting at 1000), which is what the leaderboard
 	ranks.
 </p>

@@ -19,7 +19,9 @@ function botHref(i: 0 | 1): string | null {
 {#if battle}
 	<Head title="Battle" />
 
-	<a href="/leaderboard" class="text-sm hover:underline">Back to leaderboard</a>
+	<a href="/leaderboard" class="text-sm hover:underline"
+		>Back to leaderboard</a
+	>
 
 	<h1 class="text-2xl font-bold pt-4">Battle {battle.id}</h1>
 
@@ -30,21 +32,51 @@ function botHref(i: 0 | 1): string | null {
 	<div class="pt-4 rounded border p-4 max-w-xl">
 		<div class="flex items-center justify-between gap-4">
 			{#if battle.winnerIndex === 0}
-				<span class="font-bold">{#if botHref(0)}<a href={botHref(0)} class="underline">{name(0)}</a>{:else}{name(0)}{/if}</span>
+				<span class="font-bold"
+					>{#if botHref(0)}
+						<a href={botHref(0)} class="underline">{name(0)}</a>
+					{:else}
+						{name(0)}
+					{/if}</span
+				>
 			{:else}
-				<span>{#if botHref(0)}<a href={botHref(0)} class="underline">{name(0)}</a>{:else}{name(0)}{/if}</span>
+				<span
+					>{#if botHref(0)}
+						<a href={botHref(0)} class="underline">{name(0)}</a>
+					{:else}
+						{name(0)}
+					{/if}</span
+				>
 			{/if}
-			<span class="text-2xl font-semibold">{battle.scores[0]} : {battle.scores[1]}</span>
+			<span class="text-2xl font-semibold"
+				>{battle.scores[0]}
+				: {battle.scores[1]}</span
+			>
 			{#if battle.winnerIndex === 1}
-				<span class="font-bold">{#if botHref(1)}<a href={botHref(1)} class="underline">{name(1)}</a>{:else}{name(1)}{/if}</span>
+				<span class="font-bold"
+					>{#if botHref(1)}
+						<a href={botHref(1)} class="underline">{name(1)}</a>
+					{:else}
+						{name(1)}
+					{/if}</span
+				>
 			{:else}
-				<span>{#if botHref(1)}<a href={botHref(1)} class="underline">{name(1)}</a>{:else}{name(1)}{/if}</span>
+				<span
+					>{#if botHref(1)}
+						<a href={botHref(1)} class="underline">{name(1)}</a>
+					{:else}
+						{name(1)}
+					{/if}</span
+				>
 			{/if}
 		</div>
 
 		<p class="pt-2 text-center text-sm">
 			{#if battle.winnerIndex !== null}
-				<span class="text-green-600">{name(battle.winnerIndex)} won</span>
+				<span class="text-green-600"
+					>{name(battle.winnerIndex)}
+					won</span
+				>
 			{:else}
 				<span class="text-gray-500">Tie</span>
 			{/if}
@@ -59,7 +91,7 @@ function botHref(i: 0 | 1): string | null {
 			</p>
 			{#each battle.errors as err, i (i)}
 				{#if err}
-					<div class="mt-2 rounded border border-red-300 p-3 text-sm">
+					<div class="pt-2 rounded border border-red-300 p-3 text-sm">
 						<p class="font-medium">{name(i as 0 | 1)} crashed:</p>
 						<p class="text-red-600 whitespace-pre-wrap">{err}</p>
 					</div>
@@ -72,7 +104,7 @@ function botHref(i: 0 | 1): string | null {
 		<h2 class="font-semibold">Replay (100 rounds)</h2>
 		<details class="pt-2">
 			<summary class="cursor-pointer text-sm">Show all rounds</summary>
-			<div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1">
+			<div class="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-1">
 				{#each battle.rounds as round, i (i)}
 					<div class="rounded border px-2 py-1 text-xs">
 						Round {i + 1}:
