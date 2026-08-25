@@ -2,6 +2,7 @@
 import Accordion from "#components/Accordion.svelte"
 import AccordionItem from "#components/AccordionItem.svelte"
 import Head from "#components/Head.svelte"
+import chessboard from "#lib/assets/chessboard.png"
 import { programmeName } from "#lib/assets/config.js"
 import logo from "#lib/assets/logo.svg"
 </script>
@@ -148,6 +149,12 @@ import logo from "#lib/assets/logo.svg"
 		</Accordion>
 	</div>
 </div>
+
+<img
+	src={chessboard}
+	alt="Chessboard"
+	class="w-full pt-20"
+>
 
 <style>
 #hc:hover {
