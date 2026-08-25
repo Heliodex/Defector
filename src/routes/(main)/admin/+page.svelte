@@ -207,36 +207,3 @@ let battles = $derived(await getBattles())
 		</tbody>
 	</table>
 {/if}
-
-<h2 class="pt-10 text-2xl">Recent battles</h2>
-
-{#if battles.length === 0}
-	<p class="pt-4">No battles yet.</p>
-{:else}
-	<table class="w-full border-collapse text-sm">
-		<thead>
-			<tr class="text-left text-neutral-600">
-				<th class="border-b border-neutral-200 p-3">Battle</th>
-				<th class="border-b border-neutral-200 p-3">Scores</th>
-				<th class="border-b border-neutral-200 p-3">When</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each battles as battle (battle.id)}
-				<tr class="align-top">
-					<td class="border-b border-neutral-300 p-3">
-						<a href="/battle/{battle.id}">
-							{battle.bot0} vs {battle.bot1}
-						</a>
-					</td>
-					<td class="border-b border-neutral-300 p-3">
-						{battle.scores[0]?.toFixed(2)} – {battle.scores[1]?.toFixed(2)}
-					</td>
-					<td class="border-b border-neutral-300 p-3 whitespace-nowrap">
-						{battle.created}
-					</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
-{/if}
