@@ -58,10 +58,10 @@ import { newBotForm } from "./bot.remote"
 			class="font-mono"
 			rows="14"
 			required
-			placeholder={`export default (state) => {
-	// return "C" to cooperate, "D" to defect
-	return "C";
-};`}
+			placeholder={`export default state => {
+	// "C" to cooperate, "D" to defect
+	return ["C", state.memory]
+}`}
 		></textarea>
 		{#each newBotForm.fields.code.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
