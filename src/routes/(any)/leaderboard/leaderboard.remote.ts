@@ -7,10 +7,7 @@ import leaderboardBotsQuery from "./leaderboardBots.surql?raw"
 type BattleRow = {
 	id: string
 	created: Date
-	scores: [number, number]
-	errors: [string?, string?]
-	bot0: string
-	bot1: string
+	botNames: [string, string]
 	botIds: [string, string]
 }
 

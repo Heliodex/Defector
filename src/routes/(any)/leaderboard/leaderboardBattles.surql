@@ -3,8 +3,7 @@ SELECT
 	created,
 	scores,
 	errors,
-	(SELECT VALUE name FROM ONLY $parent.bots[0])[0] AS bot0,
-	(SELECT VALUE name FROM ONLY $parent.bots[1])[0] AS bot1,
+	$parent.bots.map(|$b| SELECT VALUE name FROM ONLY $b) AS botNames,
 	[record::id($parent.bots[0]), record::id($parent.bots[1])] AS botIds
 FROM battle
 ORDER BY created DESC
