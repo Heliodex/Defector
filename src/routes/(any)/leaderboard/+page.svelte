@@ -98,17 +98,21 @@ const connected = $derived(battleData.connected && botData.connected)
 	{#if battles.battles.length === 0}
 		<p class="pt-2 text-neutral-600">No battles yet.</p>
 	{:else}
-		<ul class="grid gap-2 pt-4">
+		<ul class="noul flex flex-col gap-2 pt-4">
 			{#each battles.battles as battle (battle.id)}
 				<li>
 					<a
 						href="/battle/{battle.id}"
-						class="flex items-center justify-between rounded-lg border border-neutral-300 bg-white px-4 py-2 hover:border-blue-600"
+						class="btn flex items-center justify-between rounded-lg border border-neutral-300 bg-white px-4 py-2 hover:border-blue-600"
 					>
 						<span>
-							<span class="font-semibold">{battle.bot0}</span>
+							<span class="font-semibold"
+								>{battle.botNames[0]}</span
+							>
 							<span class="text-neutral-600"> vs </span>
-							<span class="font-semibold">{battle.bot1}</span>
+							<span class="font-semibold"
+								>{battle.botNames[1]}</span
+							>
 						</span>
 						<span class="text-xs text-neutral-600"
 							>{battle.created}</span
