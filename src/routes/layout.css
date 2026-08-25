@@ -159,15 +159,15 @@ h3 {
 }
 
 h1 {
-	@apply text-5xl pb-4 text-blue-600;
+	@apply text-4xl pb-4 text-blue-600;
 }
 
 h2 {
-	@apply text-4xl pb-4 underline decoration-blue-600;
+	@apply text-3xl pb-4 underline decoration-blue-600;
 }
 
 h3 {
-	@apply text-3xl pb-4;
+	@apply text-2xl pb-4;
 }
 
 button[disabled] {
