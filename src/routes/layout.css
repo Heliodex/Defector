@@ -23,6 +23,7 @@
 }
 
 * {
+	@apply accent-blue-500;
 	box-sizing: border-box;
 }
 
@@ -131,7 +132,7 @@ select {
 input,
 textarea,
 select {
-	@apply bg-white border border-neutral-400 rounded-lg px-4 py-2 accent-blue-500 inset-shadow-sm transition-all active:scale-[99.5%];
+	@apply bg-white border border-neutral-400 rounded-lg px-4 py-2 inset-shadow-sm transition-all active:scale-[99.5%];
 }
 
 select,
