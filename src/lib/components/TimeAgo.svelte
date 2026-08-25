@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { SvelteDate } from "svelte/reactivity"
+
 	let { date }: { date: Date } = $props()
 
 	const units: [Intl.RelativeTimeFormatUnit, number][] = [
@@ -14,7 +16,7 @@
 		numeric: "always",
 	})
 
-	let now = $state(Date.now())
+	const now = new SvelteDate()
 
 	function delay(seconds: number) {
 		if (!Number.isFinite(seconds) || seconds < 60) return 1_000
@@ -22,16 +24,16 @@
 		return 60 * 60_000
 	}
 
-	// Re-render at a rate appropriate to the current granularity
+	// Keep `now` ticking at a rate appropriate to the current granularity
 	$effect(() => {
-		const seconds = (now - +date) / 1000
+		const seconds = (+now - +date) / 1000
 
-		const id = setInterval(() => (now = Date.now()), delay(seconds))
+		const id = setInterval(() => now.setTime(Date.now()), delay(seconds))
 		return () => clearInterval(id)
 	})
 
 	const label = $derived.by(() => {
-		const seconds = (now - +date) / 1000
+		const seconds = (+now - +date) / 1000
 
 		if (seconds < 5) return "just now"
 
