@@ -140,7 +140,7 @@ input[type="file"] {
 }
 
 details:hover:not([open]) {
-	@apply bg-neutral-100;
+	@apply bg-neutral-300;
 }
 
 input[type="checkbox"] {
