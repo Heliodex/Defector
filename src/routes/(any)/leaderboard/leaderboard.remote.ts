@@ -2,13 +2,19 @@ import type { Uuid } from "surrealdb"
 import { db } from "#lib/server/db.js"
 import { query } from "$app/server"
 import leaderboardBattlesQuery from "./leaderboardBattles.surql?raw"
+import leaderboardBattlesLiveQuery from "./leaderboardBattlesLive.surql?raw"
 import leaderboardBotsQuery from "./leaderboardBots.surql?raw"
+import leaderboardBotsLiveQuery from "./leaderboardBotsLive.surql?raw"
 
-type BattleRow = {
+export type BattleRow = {
 	id: string
 	created: Date
 	botNames: [string, string]
 	botIds: [string, string]
+}
+
+export interface BattleRowLive extends BattleRow {
+	allBattles: number
 }
 
 type BotRow = {
@@ -18,12 +24,16 @@ type BotRow = {
 	wins: number
 	losses: number
 	totalBattles: number
-	ownerName: string | null
+	ownerName?: string
+}
+
+export interface BotRowLive extends BotRow {
+	activeBots: number
 }
 
 export type LeaderboardBattles = {
 	battles: BattleRow[]
-	totalBattles: number
+	allBattles: number
 }
 
 export type LeaderboardBots = {
@@ -38,7 +48,7 @@ async function battlesSnapshot(): Promise<LeaderboardBattles> {
 
 	return {
 		battles,
-		totalBattles: battleCount ?? 0,
+		allBattles: battleCount ?? 0,
 	}
 }
 
@@ -56,14 +66,18 @@ export const leaderboardBattles = query.live(
 	async function* (): AsyncGenerator<LeaderboardBattles> {
 		yield await battlesSnapshot()
 
-		const [id] = await db.query<Uuid[]>("LIVE SELECT * FROM battle")
+		const [id] = await db.query<Uuid[]>(leaderboardBattlesLiveQuery)
 
 		for await (const { action, value } of await db.liveOf(id)) {
 			if (action !== "CREATE") continue
 
-			console.log("CREATE", value)
+			const v = value as unknown as BattleRowLive
+			console.log("CREATE", v)
 
-			yield await battlesSnapshot()
+			yield {
+				battles: [v],
+				allBattles: v.allBattles,
+			}
 		}
 	}
 )
@@ -72,14 +86,18 @@ export const leaderboardBots = query.live(
 	async function* (): AsyncGenerator<LeaderboardBots> {
 		yield await botsSnapshot()
 
-		const [id] = await db.query<Uuid[]>("LIVE SELECT * FROM bot")
+		const [id] = await db.query<Uuid[]>(leaderboardBotsLiveQuery)
 
 		for await (const { action, value } of await db.liveOf(id)) {
-			if (action !== "CREATE") continue
+			if (action !== "UPDATE") continue
 
-			console.log("CREATE", value)
+			const v = value as unknown as BotRowLive
+			console.log("UPDATE", v)
 
-			yield await botsSnapshot()
+			yield {
+				bots: [v],
+				activeBots: v.activeBots,
+			}
 		}
 	}
 )

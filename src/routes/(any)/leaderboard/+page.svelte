@@ -1,14 +1,30 @@
 <script lang="ts">
+import { onMount } from "svelte"
 import Head from "#lib/components/Head.svelte"
 import TimeAgo from "#lib/components/TimeAgo.svelte"
-import { leaderboardBattles, leaderboardBots } from "./leaderboard.remote"
+import {
+	type LeaderboardBattles,
+	leaderboardBattles,
+	leaderboardBots,
+} from "./leaderboard.remote"
 
-const battleData = leaderboardBattles()
-const botData = leaderboardBots()
+const battleDataResult = leaderboardBattles()
+const botDataResult = leaderboardBots()
 
-const battles = $derived(await battleData)
-const bots = $derived(await botData)
-const connected = $derived(battleData.connected && botData.connected)
+let battles = $state<LeaderboardBattles>({ battles: [], totalBattles: 0 })
+
+onMount(async () => {
+	// skip to end
+	for await (const msg of battleDataResult) {
+		battles.battles.push(...msg.battles)
+		battles.totalBattles = msg.totalBattles
+	}
+})
+
+const bots = $derived(await botDataResult)
+const connected = $derived(
+	battleDataResult.connected && botDataResult.connected
+)
 </script>
 
 <Head title="Leaderboard" />
