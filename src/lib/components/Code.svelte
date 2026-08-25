@@ -13,8 +13,8 @@ const lines = $derived(
 )
 </script>
 
-<div class="pt-2 pb-6 bg-neutral-100">
-	<div class="w-full px-4 py-2 flex-col border border-neutral-300 rounded-xl">
+<div class="pt-2 pb-6">
+	<div class="w-full px-4 py-2 flex-col border border-neutral-400 rounded-xl bg-white inset-shadow-sm">
 		<p class="pb-2 font-bold"><u>{filename}</u></p>
 
 		<div>
