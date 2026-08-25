@@ -8,7 +8,6 @@
 		["day", 24 * 60 * 60],
 		["hour", 60 * 60],
 		["minute", 60],
-		["second", 1],
 	]
 
 	const formatter = new Intl.RelativeTimeFormat(undefined, {
@@ -17,10 +16,24 @@
 
 	let now = $state(Date.now())
 
-	setInterval(() => (now = Date.now()), 30_000)
+	function delay(seconds: number) {
+		if (!Number.isFinite(seconds) || seconds < 60) return 1_000
+		if (seconds < 60 * 60) return 60_000
+		return 60 * 60_000
+	}
+
+	// Re-render at a rate appropriate to the current granularity
+	$effect(() => {
+		const seconds = (now - +date) / 1000
+
+		const id = setInterval(() => (now = Date.now()), delay(seconds))
+		return () => clearInterval(id)
+	})
 
 	const label = $derived.by(() => {
 		const seconds = (now - +date) / 1000
+
+		if (seconds < 5) return "just now"
 
 		for (const [unit, size] of units) {
 			if (seconds >= size)
@@ -31,6 +44,6 @@
 	})
 </script>
 
-<time datetime={date.toISOString()} title={date.toLocaleString()}>
+<time datetime={new Date(date).toISOString()} title={new Date(date).toLocaleString()}>
 	{label}
 </time>
