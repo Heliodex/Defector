@@ -177,7 +177,10 @@ async function fetchLapseTimelapses(user: User): Promise<LapseTimelapse[]> {
 	)
 	const lapse = result?.[0]
 	if (!lapse?.accessToken)
-		error(401, "Please link your lapse account to submit your work!")
+		error(
+			401,
+			"Please link your Lapse account to submit your work! You can do this on the home page."
+		)
 
 	const response = await fetch(
 		`https://api.lapse.hackclub.com/api/timelapse/findByUser?user=${encodeURIComponent(lapse.id)}`,
