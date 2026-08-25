@@ -84,12 +84,12 @@ const cardStyle =
 	<div class="pt-6 max-w-xl">
 		<h2 class="font-semibold">Elo history</h2>
 		{#if bot.eloHistory.length > 1}
-			{@const elos = bot.eloHistory.map(p => p.elo)}
-			{@const min = Math.min(...elos)}
-			{@const max = Math.max(...elos)}
-			{@const span = max - min || 1}
-			{@const last = bot.eloHistory[bot.eloHistory.length - 1].elo}
-			{@const points = bot.eloHistory
+			{let elos = bot.eloHistory.map(p => p.elo)}
+			{let min = Math.min(...elos)}
+			{let max = Math.max(...elos)}
+			{let span = max - min || 1}
+			{let last = bot.eloHistory[bot.eloHistory.length - 1].elo}
+			{let points = bot.eloHistory
 				.map(p => {
 					const x = (p.index / (bot.eloHistory.length - 1)) * 100
 					const y = 30 - ((p.elo - min) / span) * 30
