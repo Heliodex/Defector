@@ -97,7 +97,7 @@ import { newBotForm } from "./bot.remote"
 					<code class="font-mono">import</code>
 					, or
 					<code class="font-mono">eval</code>
-					— the sandbox is isolated.
+					&ndash; the sandbox is isolated.
 				</li>
 			</ul>
 		</div>
