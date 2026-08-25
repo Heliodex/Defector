@@ -1,4 +1,6 @@
 <script lang="ts">
+import Accordion from "#lib/components/Accordion.svelte"
+import AccordionItem from "#lib/components/AccordionItem.svelte"
 import Head from "#lib/components/Head.svelte"
 import { page } from "$app/state"
 import { getBattle } from "./battle.remote"
@@ -30,7 +32,7 @@ function botHref(i: 0 | 1): string | null {
 		{new Date(battle.created).toLocaleString()}
 	</p>
 
-	<div class="pt-4 rounded border p-4 max-w-xl">
+	<div class="shadowcard max-w-xl">
 		<div class="flex items-center justify-between gap-4">
 			{#if battle.winnerIndex === 0}
 				<span class="font-bold"
@@ -90,29 +92,55 @@ function botHref(i: 0 | 1): string | null {
 			<p class="pt-1 text-sm text-gray-500">
 				This battle was forfeited because a bot crashed.
 			</p>
-			{#each battle.errors as err, i (i)}
-				{#if err}
-					<div class="pt-2 rounded border border-red-300 p-3 text-sm">
-						<p class="font-medium">{name(i as 0 | 1)} crashed:</p>
-						<p class="text-red-600 whitespace-pre-wrap">{err}</p>
-					</div>
-				{/if}
-			{/each}
+
+			<div class="flex flex-col gap-4 pt-2">
+				{#each battle.errors as err, i (i)}
+					{#if err}
+						<div class="shadowcard  border-red-300 text-sm">
+							<p class="font-medium">
+								{name(i as 0 | 1)}
+								crashed:
+							</p>
+							<p class="text-red-600 whitespace-pre-wrap">
+								{err}
+							</p>
+						</div>
+					{/if}
+				{/each}
+			</div>
 		</div>
 	{/if}
 
-	<div class="pt-6 max-w-xl">
-		<h2 class="font-semibold">Replay (100 rounds)</h2>
-		<details class="pt-2">
-			<summary class="cursor-pointer text-sm">Show all rounds</summary>
-			<div class="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-1">
-				{#each battle.rounds as round, i (i)}
-					<div class="rounded border px-2 py-1 text-xs">
-						Round {i + 1}:
-						{name(0)} {round[0]} vs {name(1)} {round[1]}
-					</div>
-				{/each}
-			</div>
-		</details>
-	</div>
+	{#if battle.rounds.length > 0}
+		<div class="pt-6 max-w-xl">
+			<h2 class="font-semibold">Replay (100 rounds)</h2>
+
+			<Accordion class="flex flex-col gap-4">
+				<AccordionItem title="Show all rounds">
+					<table class="w-full">
+						<thead>
+							<tr>
+								<th>Round</th>
+								<th>{name(0)}</th>
+								<th>{name(1)}</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each battle.rounds as round, i (i)}
+								<tr>
+									<td>Round {i + 1}</td>
+									<td class="text-center">{round[0]}</td>
+									<td class="text-center">{round[1]}</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</AccordionItem>
+			</Accordion>
+		</div>
+	{:else}
+		<p class="pt-6 text-sm text-gray-500">
+			This battle did not have any rounds.
+		</p>
+	{/if}
 {/if}
