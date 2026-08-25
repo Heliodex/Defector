@@ -2,7 +2,6 @@ import type { LiveMessage } from "surrealdb"
 import { Battle, Bot, db } from "#lib/server/db.js"
 import { query } from "$app/server"
 import leaderboardQuery from "./leaderboard.surql?raw"
-import recentBattlesQuery from "./recentBattles.surql?raw"
 
 type BotRow = {
 	id: string
@@ -32,9 +31,6 @@ export type Leaderboard = {
 	activeBots: number
 }
 
-const countsQuery =
-	"SELECT count() AS battles FROM battle; SELECT count() AS bots FROM bot;"
-
 const disconnected: Leaderboard = {
 	connected: false,
 	bots: [],
@@ -44,16 +40,13 @@ const disconnected: Leaderboard = {
 }
 
 async function readSnapshot(): Promise<Leaderboard> {
-	const [bots] = await db.query<BotRow[][]>(leaderboardQuery)
-	const [battles] = await db.query<BattleRow[][]>(recentBattlesQuery)
-	const [[counts]] =
-		await db.query<
-			{
-				battles: number
-				bots: number
-			}[][]
-		>(countsQuery)
+	console.log("ss1")
+	const [bots, battles, botCount, battleCount] =
+		await db.query<[BotRow[], BattleRow[], number, number]>(
+			leaderboardQuery
+		)
 
+	console.log("ss2")
 	return {
 		connected: true,
 		bots: (bots ?? []).map(bot => ({
@@ -65,8 +58,8 @@ async function readSnapshot(): Promise<Leaderboard> {
 			...battle,
 			created: new Date(battle.created).toLocaleString(),
 		})),
-		totalBattles: counts?.battles ?? 0,
-		activeBots: counts?.bots ?? 0,
+		totalBattles: battleCount ?? 0,
+		activeBots: botCount ?? 0,
 	}
 }
 
@@ -75,6 +68,8 @@ async function readSnapshot(): Promise<Leaderboard> {
  */
 export const leaderboard = query.live(
 	async function* (): AsyncGenerator<Leaderboard> {
+		console.log("leaderboard live query started")
+
 		// Wake up the snapshot loop whenever a live query notification arrives
 		let wake: (() => void) | null = null
 		const changed = () => {
@@ -88,11 +83,14 @@ export const leaderboard = query.live(
 
 		let snapshot: Leaderboard
 		try {
+			console.log("reading snapshot")
 			snapshot = await readSnapshot()
+			console.log("read snapshot")
 		} catch (error) {
 			console.error("Leaderboard initial load failed:", error)
-			snapshot = disconnected
+			throw error
 		}
+		console.log("loaded snapshot", snapshot)
 
 		const subs = await Promise.all([db.live(Bot), db.live(Battle)])
 
@@ -103,6 +101,7 @@ export const leaderboard = query.live(
 				})
 
 			for (;;) {
+				console.log("Yielding")
 				yield snapshot
 				await nextChange()
 
@@ -114,8 +113,7 @@ export const leaderboard = query.live(
 				}
 			}
 		} finally {
-			for (const subscription of subs)
-				await subscription.kill().catch(() => {})
+			await Promise.all(subs.map(sub => sub.kill().catch(() => {})))
 		}
 	}
 )
