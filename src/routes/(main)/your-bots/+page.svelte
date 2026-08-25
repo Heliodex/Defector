@@ -22,31 +22,31 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 	</p>
 {/if}
 
-{#if toggleActiveForm.fields.allIssues()?.length}
-	<div class="pb-6" role="alert">
-		<p class="font-bold text-red-500">Please fix the following issues:</p>
-		<ul class="list-disc pl-6 text-sm text-red-500">
-			{#each toggleActiveForm.fields.allIssues() ?? [] as issue}
-				<li>{issue.message}</li>
-			{/each}
-		</ul>
-	</div>
-{/if}
-
 {#if !bots || bots.length === 0}
 	<div class="pt-4">
 		<p class="pb-4">You haven't submitted any bots yet.</p>
-		<a
-			href="/submit-bot"
-			class="btn btn-primary"
-		>
+		<a href="/submit-bot" class="btn btn-primary">
 			Submit your first bot
 		</a>
 	</div>
 {:else}
-	<ul class="grid gap-4 pt-4 sm:grid-cols-2">
+	<ul class="noul grid gap-4 pt-4 sm:grid-cols-2">
 		{#each bots as bot (bot.id)}
-			<li class="rounded-lg border border-neutral-300 bg-white p-4">
+			{let botForm = toggleActiveForm.for(bot.id)}
+			<li class="rounded-lg border border-neutral-300 bg-white p-4 flex flex-col">
+				{#if botForm.fields.allIssues()?.length}
+					<div class="pb-6" role="alert">
+						<p class="font-bold text-red-500">
+							Please fix the following issues:
+						</p>
+						<ul class="list-disc pl-6 text-sm text-red-500">
+							{#each botForm.fields.allIssues() ?? [] as issue}
+								<li>{issue.message}</li>
+							{/each}
+						</ul>
+					</div>
+				{/if}
+
 				<div class="flex items-start justify-between gap-4">
 					<div>
 						<h2 class="font-semibold">
@@ -60,7 +60,7 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 					</div>
 					{#if bot.active}
 						<span
-							class="rounded bg-green-600 px-2 py-0.5 text-xs font-bold"
+							class="rounded bg-green-600 text-white px-2 py-0.5 text-xs font-bold"
 							>Active</span
 						>
 					{:else}
@@ -90,7 +90,7 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 					</p>
 				</div>
 
-				<div class="flex items-center gap-4 pt-3">
+				<div class="flex items-center justify-between gap-4 pt-3 mt-auto">
 					<a
 						href="/bot/{bot.id}"
 						class="text-sm text-blue-400 hover:underline"
@@ -99,20 +99,20 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 					</a>
 
 					<form
-						{...toggleActiveForm}
+						{...botForm}
 						class="inline-flex items-center gap-2"
 					>
 						<input
-							{...toggleActiveForm.fields.id.as("hidden", bot.id)}
+							{...botForm.fields.id.as("hidden", bot.id)}
 						>
-						<label class="pb-0!">
-							<input
-								{...toggleActiveForm.fields.active.as("checkbox")}
-								checked={bot.active}
-							>
-							<span class="pl-2"
-								>{bot.active ? "Deactivate" : "Activate"}</span
-							>
+						<label class="pb-0! pt-3 px-4">
+							<span>
+								<input
+									{...botForm.fields.active.as("checkbox")}
+									checked={bot.active}
+								>
+								<span class="pl-2">Active</span>
+							</span>
 						</label>
 						<button
 							class="btn btn-primary text-sm px-3 py-1"
