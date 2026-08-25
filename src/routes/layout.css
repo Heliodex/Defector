@@ -53,7 +53,7 @@ a:not(.btn, .navbtn) {
 }
 
 .navbtn {
-	@apply cursor-pointer transition-colors font-bold border-b-2 border-solid pb-0 block text-blue-500 border-blue-200 hover:text-blue-600 hover:border-blue-600;
+	@apply cursor-pointer transition-colors text-left font-bold border-b-2 border-solid pb-0 block text-blue-500 border-blue-200 hover:text-blue-600 hover:border-blue-600;
 	box-shadow: 0.1rem 0.1rem 0 var(--tw-shadow-color);
 }
 
