@@ -1,29 +1,13 @@
 <script lang="ts">
-import { onMount } from "svelte"
 import Head from "#lib/components/Head.svelte"
-import { type Leaderboard, leaderboard } from "./leaderboard.remote"
+import { leaderboardBattles, leaderboardBots } from "./leaderboard.remote"
 
-let data = $state<Leaderboard | null>(null)
+const battleData = leaderboardBattles()
+const botData = leaderboardBots()
 
-// Subscribe to the live query stream; each snapshot replaces `data`.
-onMount(() => {
-	const iterator = leaderboard()[Symbol.asyncIterator]()
-	let active = true
-
-	async function iter() {
-		while (active) {
-			const { value, done } = await iterator.next()
-			if (done) break
-			data = value
-		}
-	}
-	iter()
-
-	return () => {
-		active = false
-		iterator.return?.(undefined)
-	}
-})
+const battles = $derived(await battleData)
+const bots = $derived(await botData)
+const connected = $derived(battleData.connected && botData.connected)
 </script>
 
 <Head title="Leaderboard" />
@@ -31,101 +15,91 @@ onMount(() => {
 <div class="flex items-center justify-between">
 	<h1 class="text-2xl">Live leaderboard</h1>
 
-	{#if data}
+	<span
+		class={["inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold text-white", connected ? 'bg-green-600' : 'bg-orange-600']}
+	>
 		<span
-			class={["inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold text-white", data.connected ? 'bg-green-600' : 'bg-orange-600']}
-		>
-			<span
-				class={["size-2 rounded-full", data.connected ? 'bg-green-200' : 'bg-orange-200']}
-			></span>
-			{data.connected ? "Live" : "Connecting…"}
-		</span>
-	{/if}
+			class={["size-2 rounded-full", connected ? 'bg-green-200' : 'bg-orange-200']}
+		></span>
+		{connected ? "Live" : "Connecting…"}
+	</span>
 </div>
 
-{#if !data}
+{#if !bots || !battles}
 	<p class="pt-4 text-neutral-600">Loading leaderboard…</p>
 {:else}
 	<p class="pt-2 text-sm text-neutral-600">
-		{data.activeBots}
-		active bot{data.activeBots === 1 ? "" : "s"}
+		{bots.activeBots}
+		active bot{bots.activeBots === 1 ? "" : "s"}
 		·
-		{data.totalBattles}
-		battle{data.totalBattles === 1 ? "" : "s"}
+		{battles.totalBattles}
+		battle{battles.totalBattles === 1 ? "" : "s"}
 		fought
 	</p>
 
-	{#if data.bots.length === 0}
+	{#if bots.bots.length === 0}
 		<p class="pt-4">
 			No active bots yet. Submit one today and it'll start battling in
 			seconds.
 		</p>
 	{:else}
-		<div
-			class="relative left-1/2 w-screen -translate-x-1/2 overflow-x-clip"
-		>
-			<div class="overflow-x-auto px-4 sm:px-6">
-				<table class="w-full min-w-200 border-collapse text-sm">
-					<thead>
-						<tr class="text-left text-neutral-600">
-							<th class="border-b border-neutral-200 p-3">#</th>
-							<th class="border-b border-neutral-200 p-3">Bot</th>
-							<th class="border-b border-neutral-200 p-3">
-								Owner
-							</th>
-							<th class="border-b border-neutral-200 p-3">Elo</th>
-							<th class="border-b border-neutral-200 p-3">W-L</th>
-							<th class="border-b border-neutral-200 p-3">
-								Battles
-							</th>
+		<div class="overflow-x-auto px-4 sm:px-6">
+			<table class="w-full min-w-200 border-collapse text-sm">
+				<thead>
+					<tr class="text-left text-neutral-600">
+						<th class="border-b border-neutral-200 p-3">#</th>
+						<th class="border-b border-neutral-200 p-3">Bot</th>
+						<th class="border-b border-neutral-200 p-3">Owner</th>
+						<th class="border-b border-neutral-200 p-3">Elo</th>
+						<th class="border-b border-neutral-200 p-3">W-L</th>
+						<th class="border-b border-neutral-200 p-3">Battles</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each bots.bots as bot, i (bot.id)}
+						<tr class="align-top">
+							<td
+								class="border-b border-neutral-300 p-3 font-semibold"
+							>
+								{i + 1}
+							</td>
+							<td class="border-b border-neutral-300 p-3">
+								<a
+									href="/bot/{bot.id}"
+									class="font-semibold text-blue-600 hover:text-blue-700"
+									>{bot.name}</a
+								>
+							</td>
+							<td
+								class="border-b border-neutral-300 p-3 text-neutral-600"
+							>
+								{bot.ownerName ?? "—"}
+							</td>
+							<td
+								class="border-b border-neutral-300 p-3 font-bold"
+							>
+								{Math.round(bot.elo)}
+							</td>
+							<td class="border-b border-neutral-300 p-3">
+								{bot.wins}-{bot.losses}
+							</td>
+							<td class="border-b border-neutral-300 p-3">
+								{bot.totalBattles}
+							</td>
 						</tr>
-					</thead>
-					<tbody>
-						{#each data.bots as bot, i (bot.id)}
-							<tr class="align-top">
-								<td
-									class="border-b border-neutral-300 p-3 font-semibold"
-								>
-									{i + 1}
-								</td>
-								<td class="border-b border-neutral-300 p-3">
-									<a
-										href="/bot/{bot.id}"
-										class="font-semibold text-blue-600 hover:text-blue-700"
-										>{bot.name}</a
-									>
-								</td>
-								<td
-									class="border-b border-neutral-300 p-3 text-neutral-600"
-								>
-									{bot.ownerName ?? "—"}
-								</td>
-								<td
-									class="border-b border-neutral-300 p-3 font-bold"
-								>
-									{Math.round(bot.elo)}
-								</td>
-								<td class="border-b border-neutral-300 p-3">
-									{bot.wins}-{bot.losses}
-								</td>
-								<td class="border-b border-neutral-300 p-3">
-									{bot.totalBattles}
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+					{/each}
+				</tbody>
+			</table>
 		</div>
 	{/if}
 
 	<h2 class="pt-10 text-2xl">Recent battles</h2>
 
-	{#if data.battles.length === 0}
+	{#if battles.battles.length === 0}
 		<p class="pt-2 text-neutral-600">No battles yet.</p>
 	{:else}
 		<ul class="grid gap-2 pt-4">
-			{#each data.battles as battle (battle.id)}
+			{#each battles.battles as battle (battle.id)}
 				<li>
 					<a
 						href="/battle/{battle.id}"
