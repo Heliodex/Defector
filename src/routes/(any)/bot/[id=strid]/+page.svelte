@@ -98,6 +98,7 @@ const cardStyle =
 				.join(" ")}
 			<div class="rounded border p-3">
 				<svg
+					aria-label="Elo history"
 					viewBox="0 0 100 30"
 					preserveAspectRatio="none"
 					class="w-full h-16"
