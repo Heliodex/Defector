@@ -2,9 +2,7 @@ import type { Uuid } from "surrealdb"
 import { db } from "#lib/server/db.js"
 import { query } from "$app/server"
 import leaderboardBattlesQuery from "./leaderboardBattles.surql?raw"
-import leaderboardBattlesLiveQuery from "./leaderboardBattlesLive.surql?raw"
 import leaderboardBotsQuery from "./leaderboardBots.surql?raw"
-import leaderboardBotsLiveQuery from "./leaderboardBotsLive.surql?raw"
 
 export type BattleRow = {
 	id: string
@@ -43,37 +41,41 @@ export type LeaderboardBots = {
 	og?: boolean
 }
 
-async function battlesSnapshot(): Promise<LeaderboardBattles> {
-	const [battles, battleCount] = await db.query<[BattleRow[], number]>(
-		leaderboardBattlesQuery
-	)
+async function battlesSnapshot(): Promise<[LeaderboardBattles, Uuid]> {
+	const [battles, battleCount, lqid] = await db.query<
+		[BattleRow[], number, Uuid]
+	>(leaderboardBattlesQuery)
 
-	return {
-		battles,
-		allBattles: battleCount ?? 0,
-		og: true,
-	}
+	return [
+		{
+			battles,
+			allBattles: battleCount ?? 0,
+			og: true,
+		},
+		lqid,
+	]
 }
 
-async function botsSnapshot(): Promise<LeaderboardBots> {
-	const [bots, botCount] =
-		await db.query<[BotRow[], number]>(leaderboardBotsQuery)
+async function botsSnapshot(): Promise<[LeaderboardBots, Uuid]> {
+	const [bots, botCount, lqid] =
+		await db.query<[BotRow[], number, Uuid]>(leaderboardBotsQuery)
 
-	return {
-		bots,
-		activeBots: botCount ?? 0,
-		og: true,
-	}
+	return [
+		{
+			bots,
+			activeBots: botCount ?? 0,
+			og: true,
+		},
+		lqid, // liquid lol
+	]
 }
 
 export const leaderboardBattles = query.live(
 	async function* (): AsyncGenerator<LeaderboardBattles> {
-		yield await battlesSnapshot()
+		const [snapshot, lqid] = await battlesSnapshot()
+		yield snapshot
 
-		const [id] = await db.query<Uuid[]>(leaderboardBattlesLiveQuery)
-		console.log("battles", id)
-
-		const lq = await db.liveOf(id)
+		const lq = await db.liveOf(lqid)
 		console.log("battles lq", lq)
 
 		for await (const { action, value } of lq) {
@@ -95,12 +97,10 @@ export const leaderboardBattles = query.live(
 
 export const leaderboardBots = query.live(
 	async function* (): AsyncGenerator<LeaderboardBots> {
-		yield await botsSnapshot()
+		const [snapshot, lqid] = await botsSnapshot()
+		yield snapshot
 
-		const [id] = await db.query<Uuid[]>(leaderboardBotsLiveQuery)
-		console.log("bots", id)
-
-		const lq = await db.liveOf(id)
+		const lq = await db.liveOf(lqid)
 		console.log("bots lq", lq)
 
 		for await (const { action, value } of lq) {
