@@ -4,7 +4,6 @@ import type { QuickJSContext } from "quickjs-emscripten-core"
 import type { RecordId } from "surrealdb"
 import type { Memory, Move, State } from "./bots/bot"
 
-export const rounds = 100
 export const timeout = 10 // ms per move
 export const memoryLimitMb = 1
 export const stackLimitMb = 1

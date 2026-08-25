@@ -1,6 +1,6 @@
 import { type RecordId, type Surreal, Table } from "surrealdb"
 import type { Memory, Move, State } from "./bots/bot"
-import { callBot, rounds } from "./sandbox"
+import { callBot } from "./sandbox"
 
 export type DBBot = {
 	id: RecordId<"bot">
@@ -36,6 +36,9 @@ export async function simulateBattle(
 	]
 	const history: MovePair[] = []
 	const errors: [string?, string?] = [undefined, undefined]
+
+	// Variable number of rounds, though always at least 100
+	const rounds = 100 - 20 * Math.log(1 - Math.random())
 
 	for (let i = 0; i < rounds; i++) {
 		const moves: MovePair = ["C", "C"]
