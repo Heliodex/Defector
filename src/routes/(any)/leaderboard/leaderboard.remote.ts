@@ -34,11 +34,13 @@ export interface BotRowLive extends BotRow {
 export type LeaderboardBattles = {
 	battles: BattleRow[]
 	allBattles: number
+	og?: boolean
 }
 
 export type LeaderboardBots = {
 	bots: BotRow[]
 	activeBots: number
+	og?: boolean
 }
 
 async function battlesSnapshot(): Promise<LeaderboardBattles> {
@@ -49,6 +51,7 @@ async function battlesSnapshot(): Promise<LeaderboardBattles> {
 	return {
 		battles,
 		allBattles: battleCount ?? 0,
+		og: true,
 	}
 }
 
@@ -59,6 +62,7 @@ async function botsSnapshot(): Promise<LeaderboardBots> {
 	return {
 		bots,
 		activeBots: botCount ?? 0,
+		og: true,
 	}
 }
 
@@ -67,9 +71,16 @@ export const leaderboardBattles = query.live(
 		yield await battlesSnapshot()
 
 		const [id] = await db.query<Uuid[]>(leaderboardBattlesLiveQuery)
+		console.log("battles", id)
 
-		for await (const { action, value } of await db.liveOf(id)) {
-			if (action !== "CREATE") continue
+		const lq = await db.liveOf(id)
+		console.log("battles lq", lq)
+
+		for await (const { action, value } of lq) {
+			if (action !== "CREATE") {
+				console.log(action, value)
+				continue
+			}
 
 			const v = value as unknown as BattleRowLive
 			console.log("CREATE", v)
@@ -87,9 +98,16 @@ export const leaderboardBots = query.live(
 		yield await botsSnapshot()
 
 		const [id] = await db.query<Uuid[]>(leaderboardBotsLiveQuery)
+		console.log("bots", id)
 
-		for await (const { action, value } of await db.liveOf(id)) {
-			if (action !== "UPDATE") continue
+		const lq = await db.liveOf(id)
+		console.log("bots lq", lq)
+
+		for await (const { action, value } of lq) {
+			if (action !== "UPDATE") {
+				console.log(action, value)
+				continue
+			}
 
 			const v = value as unknown as BotRowLive
 			console.log("UPDATE", v)

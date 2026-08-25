@@ -4,6 +4,7 @@ import Head from "#lib/components/Head.svelte"
 import TimeAgo from "#lib/components/TimeAgo.svelte"
 import {
 	type LeaderboardBattles,
+	type LeaderboardBots,
 	leaderboardBattles,
 	leaderboardBots,
 } from "./leaderboard.remote"
@@ -11,17 +12,44 @@ import {
 const battleDataResult = leaderboardBattles()
 const botDataResult = leaderboardBots()
 
-let battles = $state<LeaderboardBattles>({ battles: [], totalBattles: 0 })
+let battles = $state<LeaderboardBattles>({ battles: [], allBattles: 0 })
+let bots = $state<LeaderboardBots>({ bots: [], activeBots: 0 })
 
 onMount(async () => {
-	// skip to end
 	for await (const msg of battleDataResult) {
+		console.log("NEW BATTLE MESSAGE", msg)
+		if (msg.og) {
+			battles = msg
+			continue
+		}
+
 		battles.battles.push(...msg.battles)
-		battles.totalBattles = msg.totalBattles
+		battles.allBattles = msg.allBattles
 	}
 })
 
-const bots = $derived(await botDataResult)
+// const bots = $derived(await botDataResult)
+onMount(async () => {
+	for await (const msg of botDataResult) {
+		console.log("NEW BOT MESSAGE", msg)
+		if (msg.og) {
+			bots = msg
+			continue
+		}
+
+		for (const bot of msg.bots) {
+			// replace bots by index
+			const index = bots.bots.findIndex(b => b.id === bot.id)
+			if (index !== -1) bots.bots[index] = bot
+			else {
+				console.log("new bot", bot)
+				bots.bots.push(bot)
+			}
+		}
+		bots.activeBots = msg.activeBots
+	}
+})
+
 const connected = $derived(
 	battleDataResult.connected && botDataResult.connected
 )
