@@ -38,7 +38,7 @@ export async function simulateBattle(
 	const errors: [string?, string?] = [undefined, undefined]
 
 	// Variable number of rounds, though always at least 100
-	const rounds = 100 - 20 * Math.log(1 - Math.random())
+	const rounds = Math.floor(100 - 20 * Math.log(1 - Math.random()))
 
 	for (let i = 0; i < rounds; i++) {
 		const moves: MovePair = ["C", "C"]
