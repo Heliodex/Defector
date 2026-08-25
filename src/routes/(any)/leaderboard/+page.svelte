@@ -21,7 +21,7 @@ const connected = $derived(battleData.connected && botData.connected)
 		<span
 			class={["size-2 rounded-full", connected ? 'bg-green-200' : 'bg-orange-200']}
 		></span>
-		{connected ? "Live" : "Connecting…"}
+		{connected ? "Live" : "Connecting..."}
 	</span>
 </div>
 
