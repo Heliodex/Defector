@@ -33,26 +33,32 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 	</script>
 </svelte:head>
 
+{#snippet navlink(link: string, label: string)}
+	<li><a class="navbtn" href="/{link}">{label}</a></li>
+{/snippet}
+
 <nav class="sm:hidden px-4 py-3">
 	<ul class="flex flex-wrap gap-5">
-		<li><a class="navbtn" href="/leaderboard">Leaderboard</a></li>
 		{#if await user}
-			<li><a class="navbtn" href="/home">Home</a></li>
-			<li><a class="navbtn" href="/your-bots">Your bots</a></li>
-			<li><a class="navbtn" href="/submit-bot">Submit bot</a></li>
-			<li><a class="navbtn" href="/submit">Submit hours</a></li>
+			{@render navlink("home", "Home")}
+		{/if}
+		{@render navlink("leaderboard", "Leaderboard")}
+		{#if await user}
+			{@render navlink("your-bots", "Your bots")}
+			{@render navlink("submit-bot", "Submit bot")}
+			{@render navlink("submit", "Submit hours")}
 			{#if await isAdmin}
-				<li><a class="navbtn" href="/admin">Admin</a></li>
+				{@render navlink("admin", "Admin")}
 			{/if}
 		{:else}
-			<li><a class="navbtn" href="/">Landing</a></li>
+			{@render navlink("", "Landing")}
 			<li>
 				<form {...login}>
 					<button class="navbtn" type="submit">Login</button>
 				</form>
 			</li>
 		{/if}
-		<li><a class="navbtn" href="/guide">Guide</a></li>
+		{@render navlink("guide", "Guide")}
 	</ul>
 </nav>
 
@@ -61,32 +67,26 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 >
 	<nav class="p-4">
 		<ul class="flex flex-col gap-4">
-			<li>
-				<a class="navbtn" href="/leaderboard">Leaderboard</a>
-			</li>
 			{#if await user}
-				<li><a class="navbtn" href="/home">Home</a></li>
-				<li>
-					<a class="navbtn" href="/your-bots">Your bots</a>
-				</li>
-				<li>
-					<a class="navbtn" href="/submit-bot">Submit bot</a>
-				</li>
-				<li>
-					<a class="navbtn" href="/submit">Submit hours</a>
-				</li>
+				{@render navlink("home", "Home")}
+			{/if}
+			{@render navlink("leaderboard", "Leaderboard")}
+			{#if await user}
+				{@render navlink("your-bots", "Your bots")}
+				{@render navlink("submit-bot", "Submit bot")}
+				{@render navlink("submit", "Submit hours")}
 				{#if await isAdmin}
-					<li><a class="navbtn" href="/admin">Admin</a></li>
+					{@render navlink("admin", "Admin")}
 				{/if}
 			{:else}
-				<li><a class="navbtn" href="/">Landing</a></li>
+				{@render navlink("", "Landing")}
 				<li>
 					<form {...login}>
 						<button class="navbtn" type="submit">Login</button>
 					</form>
 				</li>
 			{/if}
-			<li><a class="navbtn" href="/guide">Guide</a></li>
+			{@render navlink("guide", "Guide")}
 		</ul>
 	</nav>
 </aside>
