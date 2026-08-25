@@ -83,9 +83,13 @@ export const toggleActiveForm = form(toggleSchema, async ({ id, active }) => {
 	const { user } = await authorise()
 
 	try {
-		const [, updated] = await db.query<
+		const [, , , , updated] = await db.query<
 			{ id: string; name: string; active: boolean }[][]
-		>(setBotActiveQuery, { user: user.id, id, active: active === true })
+		>(setBotActiveQuery, {
+			user: user.id,
+			id,
+			active: active === true,
+		})
 		return updated?.[0]
 	} catch (e) {
 		const message =
