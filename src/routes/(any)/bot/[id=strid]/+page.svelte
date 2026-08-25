@@ -3,7 +3,7 @@ import Head from "#lib/components/Head.svelte"
 import { page } from "$app/state"
 import { getBot } from "./bot.remote"
 
-const bot = $derived(await getBot(page.params.id))
+const bot = $derived(await getBot(page.params.id ?? ""))
 
 const cardStyle =
 	"rounded-lg border border-neutral-400 px-4 py-3 bg-white inset-shadow-sm"

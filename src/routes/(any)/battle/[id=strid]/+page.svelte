@@ -1,8 +1,9 @@
 <script lang="ts">
 import Head from "#lib/components/Head.svelte"
+import { page } from "$app/state"
 import { getBattle } from "./battle.remote"
 
-const battle = $derived(await getBattle())
+const battle = $derived(await getBattle(page.params.id ?? ""))
 
 function name(i: 0 | 1): string {
 	if (!battle) return ""
