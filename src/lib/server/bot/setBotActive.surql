@@ -9,7 +9,7 @@ IF $active AND count(SELECT id FROM $user->created->bot WHERE active AND id != $
 	THROW "You can only have 3 active bots at once";
 };
 
-LET $updated = UPDATE $bot SET active = $active RETURN AFTER;
+LET $updated = UPDATE ONLY $bot SET active = $active;
 
 {
 	id: record::id($updated.id),
