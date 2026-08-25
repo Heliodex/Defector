@@ -23,9 +23,10 @@ export function moveToInt(move: Move): number {
 }
 
 /**
- * Plays a full 100-round match between two bots entirely in memory,
- * threading each bot's memory and full history round-to-round. Throws an
- * error if either bot fails to return a valid [move, memory] tuple.
+ * Plays a variable-round match between two bots entirely in memory — always
+ * at least 100 rounds — threading each bot's memory and full history
+ * round-to-round. Throws an error if either bot fails to return a valid
+ * [move, memory] tuple.
  */
 export async function simulateBattle(
 	bots: [DBBot, DBBot]

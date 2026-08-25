@@ -24,9 +24,10 @@ test("always-cooperate vs always-defect: C never beats D", async () => {
 	])
 
 	expect(errors).toEqual([undefined, undefined])
-	expect(rounds).toHaveLength(100)
+	// Battles run a variable number of rounds, always at least 100.
+	expect(rounds.length).toBeGreaterThanOrEqual(100)
 	// C plays 0, D plays 1 for every single round.
-	expect(rounds).toEqual(Array(100).fill(["C", "D"]))
+	expect(rounds.every(([you, opp]) => you === "C" && opp === "D")).toBe(true)
 })
 
 test("always-cooperate vs tit-for-tat: both cooperate forever", async () => {
@@ -36,8 +37,9 @@ test("always-cooperate vs tit-for-tat: both cooperate forever", async () => {
 	])
 
 	expect(errors).toEqual([undefined, undefined])
-	expect(rounds).toHaveLength(100)
-	expect(rounds).toEqual(Array(100).fill(["C", "C"]))
+	// Battles run a variable number of rounds, always at least 100.
+	expect(rounds.length).toBeGreaterThanOrEqual(100)
+	expect(rounds.every(([you, opp]) => you === "C" && opp === "C")).toBe(true)
 })
 
 test("tit-for-tat punishes a defector after one cooperative round", async () => {
@@ -47,11 +49,14 @@ test("tit-for-tat punishes a defector after one cooperative round", async () => 
 	])
 
 	expect(errors).toEqual([undefined, undefined])
-	expect(rounds).toHaveLength(100)
+	// Battles run a variable number of rounds, always at least 100.
+	expect(rounds.length).toBeGreaterThanOrEqual(100)
 	// Round 0: TFT cooperates, always-defect defects.
 	expect(rounds[0]).toEqual(["C", "D"])
-	// Rounds 1-99: TFT retaliates and both defect.
-	expect(rounds.slice(1)).toEqual(Array(99).fill(["D", "D"]))
+	// Every round after: TFT retaliates and both defect.
+	expect(
+		rounds.slice(1).every(([you, opp]) => you === "D" && opp === "D")
+	).toBe(true)
 })
 
 test("a bot that throws records an error instead of a move", async () => {
