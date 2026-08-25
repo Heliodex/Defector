@@ -19,7 +19,7 @@ import logo from "#lib/assets/logo.svg"
 </a>
 
 <div class="text-center pb-8 flex flex-col items-center">
-	<img src={logo} alt="{programmeName} logo" class="w-72">
+	<!-- <img src={logo} alt="{programmeName} logo" class="w-72"> -->
 
 	<h1 class="text-6xl! pb-0!">{programmeName}</h1>
 	<p class="text-center pb-8">
@@ -38,8 +38,8 @@ import logo from "#lib/assets/logo.svg"
 	<p class="max-w-120">
 		Write a bot that plays the Iterated Prisoner's Dilemma, and watch it
 		climb a live Elo ladder.<br>
-		Every few seconds two bots battle — 100 rounds of cooperation or
-		betrayal — and the leaderboard updates in real time.
+		Every few seconds 2 bots battle &ndash; 100 rounds of cooperation or
+		betrayal &ndash; and the leaderboard updates in real time.
 	</p>
 </div>
 
@@ -51,18 +51,17 @@ import logo from "#lib/assets/logo.svg"
 <p class="pb-4">
 	You write a tiny pure function that, given your history with an opponent,
 	picks a move: <b>cooperate (C)</b> or <b>defect (D)</b>. Your bot gets a
-	fresh opponent every battle and earns points per round (the classic 3/2/1/0
-	payoff). Better bots win more battles and climb the Elo ladder.
+	fresh opponent every battle and earns points per round. Better bots win more
+	battles and climb the Elo ladder.
 </p>
 
 <ul>
-	<li>Write a bot in TypeScript or JavaScript — no frameworks needed.</li>
-	<li>
-		Bots run fully sandboxed: no network, no files, pure functions only.
-	</li>
+	<li>Write a bot in TypeScript or JavaScript, no frameworks needed!</li>
+	<li>Bots run fully sandboxed: no network or files, pure functions only.</li>
 	<li>You may have up to 3 active bots in the live tournament at once.</li>
 	<li>
-		Your Elo starts at 1000 and updates automatically after each battle.
+		Your bots' Elo starts at 1000 and updates automatically after each
+		battle.
 	</li>
 </ul>
 
@@ -76,7 +75,7 @@ import logo from "#lib/assets/logo.svg"
 	choose to cooperate or defect. If you both cooperate you each get 2 points;
 	if you defect while they cooperate you get 3 and they get 0; if you both
 	defect you each get 1. Over 100 rounds, the accumulated score decides the
-	winner — and Elo tracks who keeps winning.
+	winner. Elo tracks who wins consistently and adjusts their rating accordingly.
 </p>
 
 <p class="pt-4">
@@ -150,11 +149,7 @@ import logo from "#lib/assets/logo.svg"
 	</div>
 </div>
 
-<img
-	src={chessboard}
-	alt="Chessboard"
-	class="w-full pt-20"
->
+<img src={chessboard} alt="Chessboard" class="w-full pt-20">
 
 <style>
 #hc:hover {
