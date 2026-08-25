@@ -1,4 +1,3 @@
-import type { Cookies } from "@sveltejs/kit"
 import { redirect } from "@sveltejs/kit"
 import { db, Record, type RecordId } from "#lib/server/db.js"
 import deleteExpiredSessionsQuery from "#lib/server/deleteExpiredSessions.surql?raw"
