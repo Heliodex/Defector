@@ -17,6 +17,9 @@ function botHref(i: 0 | 1): string | null {
 	const id = battle.botIds[i]
 	return id ? `/bot/${id}` : null
 }
+
+// 2 decimal places
+const round = (num: number): number => Math.round(num * 100) / 100
 </script>
 
 <Head title="Battle" />
@@ -49,8 +52,8 @@ function botHref(i: 0 | 1): string | null {
 			>
 		{/if}
 		<span class="text-2xl font-semibold"
-			>{battle.scores[0]}
-			: {battle.scores[1]}</span
+			>{round(battle.scores[0])}
+			: {round(battle.scores[1])}</span
 		>
 		{#if battle.winnerIndex === 1}
 			<span class="font-bold"
