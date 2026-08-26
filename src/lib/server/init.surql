@@ -118,10 +118,9 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 
 		1000.0 + math::sum($deltas);
 	};
-	REMOVE FIELD IF EXISTS eloHistory.* ON bot;
 	DEFINE FIELD OVERWRITE eloHistory ON bot TYPE array<float> COMPUTED
-		SELECT VALUE eloDelta[array::find_index(bots, $bot)]
-		FROM battle WHERE $bot IN bots
+		SELECT VALUE eloDelta[array::find_index(bots, $parent.id)]
+		FROM battle WHERE $parent.id IN bots
 		ORDER BY created DESC
 		LIMIT 200;
 	DEFINE FIELD OVERWRITE wins ON bot TYPE int COMPUTED {

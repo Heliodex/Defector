@@ -12,6 +12,7 @@ type BotRow = {
 	active: boolean
 	created: Date
 	elo: number
+	eloHistory: number[]
 	wins: number
 	losses: number
 	totalBattles: number
@@ -28,14 +29,8 @@ export const getBot = query(type.string, async (id: string): Promise<Bot> => {
 	const [row] = await db.query<[BotRow]>(getBotQuery, { bot })
 	if (!row) error(404, "Bot not found")
 
-	const eloHistory = await db.select<number[]>(bot).value("eloHistory")
-	if (!eloHistory) console.error("Loading Elo history failed")
-
-	console.log(eloHistory)
-
 	return {
 		...row,
 		source: row.source ?? "",
-		eloHistory: eloHistory ?? [],
 	}
 })

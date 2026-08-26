@@ -6,6 +6,11 @@ SELECT
 	active,
 	created,
 	elo,
+	-- convert list of deltas into list of cumulative ELOs
+	eloHistory.fold(
+		[],
+		|$acc, $delta| $acc.append($delta + ($acc[$] ?? 0))
+	) AS eloHistory,
 	wins,
 	losses,
 	totalBattles,

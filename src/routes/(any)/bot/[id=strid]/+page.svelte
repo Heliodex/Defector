@@ -83,11 +83,10 @@ const bot = $derived(await getBot(page.params.id ?? ""))
 		{let max = Math.max(...elos)}
 		{let len = elos.length}
 		{let span = max - min || 1}
-		{let last = elos[len - 1]}
 		{let points = elos
 			.map((elo, i) => {
 				const x = (i / (len - 1)) * 100
-				const y = 29 - ((elo - min) / span) * 28
+				const y = 29 - ((elo - min) / span) * 28 // 1 unit padding top and bottom
 				return `${x},${y}`
 			})
 			.join(" ")}
@@ -105,7 +104,7 @@ const bot = $derived(await getBot(page.params.id ?? ""))
 					stroke-width="1.5"
 				/>
 			</svg>
-			<p class="pt-1 text-xs text-gray-500 text-right">Now: {last}</p>
+			<p class="pt-1 text-xs text-gray-500 text-right">Now: {bot.elo}</p>
 		</div>
 	{:else}
 		<p class="pt-1 text-gray-500">Not enough battles for a chart yet.</p>
