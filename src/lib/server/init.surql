@@ -112,15 +112,18 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 		(SELECT VALUE transpiled FROM $this.code ORDER BY updated)[$];
 	DEFINE FIELD OVERWRITE active ON bot TYPE bool DEFAULT ALWAYS false;
 	DEFINE FIELD OVERWRITE created ON bot TYPE datetime DEFAULT ALWAYS time::now();
-	DEFINE FIELD OVERWRITE elo ON bot TYPE float VALUE {
-		LET $deltas = SELECT VALUE IF bots[0] = $parent.id {
-			eloDelta[0]
-		} ELSE {
-			eloDelta[1]
-		} FROM battle WHERE $parent.id IN bots AND eloDelta != NONE;
+	DEFINE FIELD OVERWRITE elo ON bot TYPE float COMPUTED {
+		LET $deltas = SELECT VALUE eloDelta[array::find_index(bots, $parent.id)]
+			FROM battle WHERE $parent.id IN bots;
 
-		1000.0 + (math::sum($deltas) ?? 0.0)
+		1000.0 + math::sum($deltas);
 	};
+	REMOVE FIELD IF EXISTS eloHistory.* ON bot;
+	DEFINE FIELD OVERWRITE eloHistory ON bot TYPE array<float> COMPUTED
+		SELECT VALUE eloDelta[array::find_index(bots, $bot)]
+		FROM battle WHERE $bot IN bots
+		ORDER BY created DESC
+		LIMIT 200;
 	DEFINE FIELD OVERWRITE wins ON bot TYPE int COMPUTED {
 		LET $results = SELECT VALUE {
 			LET $idx = array::find_index(bots, $parent.id)
@@ -158,7 +161,6 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE errors ON battle TYPE array<option<string>, 2>;
 	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> DEFAULT ALWAYS
 		fn::calculateScore($this);
-	REMOVE FIELD IF EXISTS eloDelta.* ON battle;
 	DEFINE FIELD OVERWRITE eloDelta ON battle TYPE array<float, 2> DEFAULT ALWAYS {
 		LET $matrix: record<matrix> = (SELECT VALUE matrix FROM ONLY $this) OR fn::latestMatrix();
 		LET $payoff: array<array<float, 2>, 2> = SELECT VALUE payoff FROM ONLY $matrix;

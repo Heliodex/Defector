@@ -78,15 +78,16 @@ const bot = $derived(await getBot(page.params.id ?? ""))
 <div class="pt-6 max-w-xl">
 	<h2 class="font-semibold">Elo history</h2>
 	{#if bot.eloHistory.length > 1}
-		{let elos = bot.eloHistory.map(p => p.elo)}
+		{let elos = bot.eloHistory}
 		{let min = Math.min(...elos)}
 		{let max = Math.max(...elos)}
+		{let len = elos.length}
 		{let span = max - min || 1}
-		{let last = bot.eloHistory[bot.eloHistory.length - 1].elo}
-		{let points = bot.eloHistory
-			.map(p => {
-				const x = (p.index / (bot.eloHistory.length - 1)) * 100
-				const y = 29 - ((p.elo - min) / span) * 28
+		{let last = elos[len - 1]}
+		{let points = elos
+			.map((elo, i) => {
+				const x = (i / (len - 1)) * 100
+				const y = 29 - ((elo - min) / span) * 28
 				return `${x},${y}`
 			})
 			.join(" ")}
