@@ -63,7 +63,8 @@ DEFINE FUNCTION OVERWRITE fn::initialMatrix() {
 	LET $P = <float> 1;
 	LET $S = <float> 0;
 
-	 [[$R, $S], [$T, $P]];
+	# We could have an unbalanced matrix here instead though that would make matchups randomly unfair
+	[[$R, $S], [$T, $P]];
 };
 
 # Seed the matrix only if it isn't already present (keeps re-runs idempotent).
