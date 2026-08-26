@@ -23,18 +23,18 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL TYPE NORMAL;
 		DEFINE FIELD OVERWRITE extraInfo.nickname ON user TYPE string;
 		DEFINE FIELD OVERWRITE extraInfo.emailVerified ON user TYPE bool;
 		# HQ-official only (phone, birthdate, address scopes):
-		# DEFINE FIELD OVERWRITE extraInfo.phoneNumber ON user TYPE string;
-		# DEFINE FIELD OVERWRITE extraInfo.phoneNumberVerified ON user TYPE bool;
-		# DEFINE FIELD OVERWRITE extraInfo.birthdate ON user TYPE string;
+		-- DEFINE FIELD OVERWRITE extraInfo.phoneNumber ON user TYPE string;
+		-- DEFINE FIELD OVERWRITE extraInfo.phoneNumberVerified ON user TYPE bool;
+		-- DEFINE FIELD OVERWRITE extraInfo.birthdate ON user TYPE string;
 		DEFINE FIELD OVERWRITE extraInfo.slackId ON user TYPE string;
 		DEFINE FIELD OVERWRITE extraInfo.verificationStatus ON user TYPE string;
 		DEFINE FIELD OVERWRITE extraInfo.yswsEligible ON user TYPE bool;
-		# DEFINE FIELD OVERWRITE extraInfo.address ON user TYPE option<object>;
-		# 	DEFINE FIELD OVERWRITE extraInfo.address.streetAddress ON user TYPE option<string>;
-		# 	DEFINE FIELD OVERWRITE extraInfo.address.locality ON user TYPE option<string>;
-		# 	DEFINE FIELD OVERWRITE extraInfo.address.region ON user TYPE option<string>;
-		# 	DEFINE FIELD OVERWRITE extraInfo.address.postalCode ON user TYPE option<string>;
-		# 	DEFINE FIELD OVERWRITE extraInfo.address.country ON user TYPE option<string>;
+		-- DEFINE FIELD OVERWRITE extraInfo.address ON user TYPE option<object>;
+			-- DEFINE FIELD OVERWRITE extraInfo.address.streetAddress ON user TYPE option<string>;
+			-- DEFINE FIELD OVERWRITE extraInfo.address.locality ON user TYPE option<string>;
+			-- DEFINE FIELD OVERWRITE extraInfo.address.region ON user TYPE option<string>;
+			-- DEFINE FIELD OVERWRITE extraInfo.address.postalCode ON user TYPE option<string>;
+			-- DEFINE FIELD OVERWRITE extraInfo.address.country ON user TYPE option<string>;
 	DEFINE FIELD OVERWRITE lapseData ON user TYPE option<object>;
 		DEFINE FIELD OVERWRITE lapseData.id ON user TYPE string;
 		DEFINE FIELD OVERWRITE lapseData.handle ON user TYPE string;
@@ -118,32 +118,26 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 
 		1000.0 + math::sum($deltas);
 	};
+	REMOVE FIELD IF EXISTS eloHistory.* ON bot; # WHY
 	DEFINE FIELD OVERWRITE eloHistory ON bot TYPE array<float> COMPUTED
 		SELECT VALUE eloDelta[array::find_index(bots, $parent.id)]
 		FROM battle WHERE $parent.id IN bots
 		ORDER BY created DESC
 		LIMIT 200;
-	DEFINE FIELD OVERWRITE wins ON bot TYPE int COMPUTED {
-		LET $results = SELECT VALUE {
+	DEFINE FIELD OVERWRITE wins ON bot TYPE int COMPUTED
+		(SELECT VALUE {
 			LET $idx = array::find_index(bots, $parent.id)
 			$this.scores[$idx] > $this.scores[1 - $idx]
-		} FROM battle WHERE $parent.id IN bots;
-
-		count($results.filter(|$w| $w == true))
-	};
-	DEFINE FIELD OVERWRITE losses ON bot TYPE int COMPUTED {
-		LET $results = SELECT VALUE {
+		} FROM battle WHERE $parent.id IN bots)
+			[? $this].chain(|$v| count($v));
+	DEFINE FIELD OVERWRITE losses ON bot TYPE int COMPUTED
+		(SELECT VALUE {
 			LET $idx = array::find_index(bots, $parent.id)
 			$this.scores[$idx] < $this.scores[1 - $idx]
-		} FROM battle WHERE $parent.id IN bots;
-
-		count($results.filter(|$w| $w == true))
-	};
-	DEFINE FIELD OVERWRITE totalBattles ON bot TYPE int VALUE {
-		LET $battles = SELECT VALUE id FROM battle WHERE $parent.id IN bots;
-
-		count($battles)
-	};
+		} FROM battle WHERE $parent.id IN bots)
+			[? $this].chain(|$v| count($v));
+	DEFINE FIELD OVERWRITE totalBattles ON bot TYPE int COMPUTED
+		count(SELECT 1 FROM battle WHERE $parent.id IN bots);
 
 DEFINE FUNCTION OVERWRITE fn::latestMatrix() -> record<matrix> {
 	(SELECT VALUE id FROM matrix ORDER BY created)[$];
@@ -152,8 +146,8 @@ DEFINE FUNCTION OVERWRITE fn::latestMatrix() -> record<matrix> {
 DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON battle TYPE string;
 	DEFINE FIELD OVERWRITE bots ON battle TYPE array<record<bot>, 2>;
-	DEFINE FIELD OVERWRITE matrix ON battle TYPE record<matrix>
-		DEFAULT ALWAYS fn::latestMatrix();
+	DEFINE FIELD OVERWRITE matrix ON battle TYPE record<matrix> DEFAULT ALWAYS
+		fn::latestMatrix();
 	DEFINE FIELD OVERWRITE rounds ON battle TYPE array<array<int, 2>>;
 		DEFINE FIELD OVERWRITE rounds.*.* ON battle TYPE int
 			ASSERT $value IN [0, 1];
@@ -237,5 +231,5 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE howLikelyRecommend ON hourSubmission TYPE option<int>
 		ASSERT 1 <= $value AND $value <= 10;
 	DEFINE FIELD OVERWRITE lapseTimelapses ON hourSubmission TYPE array<string>;
-	DEFINE FIELD OVERWRITE status ON hourSubmission TYPE string DEFAULT "pending"
+	DEFINE FIELD OVERWRITE status ON hourSubmission TYPE string DEFAULT ALWAYS "pending"
 		ASSERT $value IN ["pending", "approved", "rejected"];
