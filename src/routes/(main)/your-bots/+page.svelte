@@ -33,7 +33,9 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 	<ul class="noul grid gap-4 pt-4 sm:grid-cols-2">
 		{#each bots as bot (bot.id)}
 			{let botForm = toggleActiveForm.for(bot.id)}
-			<li class="rounded-lg border border-neutral-300 bg-white p-4 flex flex-col">
+			<li
+				class="rounded-lg border border-neutral-300 bg-white p-4 flex flex-col"
+			>
 				{#if botForm.fields.allIssues()?.length}
 					<div class="pb-6" role="alert">
 						<p class="font-bold text-red-500">
@@ -75,22 +77,30 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 
 				<div class="pt-3 text-sm">
 					<p>
-						<span class="font-semibold">Elo</span>
-						{bot.elo.toFixed(0)}
+						<span class="font-semibold">
+							{bot.elo.toFixed(0)}
+						</span>
+						Elo
 					</p>
 					<p>
-						<span class="font-semibold">Wins</span>
-						{bot.wins}
-						·
-						<span class="font-semibold">Losses</span>
-						{bot.losses}
-						·
-						<span class="font-semibold">Battles</span>
-						{bot.totalBattles}
+						<span class="font-semibold">
+							{bot.wins}
+						</span>
+						wins ·
+						<span class="font-semibold">
+							{bot.losses}
+						</span>
+						losses ·
+						<span class="font-semibold">
+							{bot.totalBattles}
+						</span>
+						battles
 					</p>
 				</div>
 
-				<div class="flex items-center justify-between gap-4 pt-3 mt-auto">
+				<div
+					class="flex items-center justify-between gap-4 pt-3 mt-auto"
+				>
 					<a
 						href="/bot/{bot.id}"
 						class="text-sm text-blue-400 hover:underline"
@@ -98,13 +108,8 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 						View
 					</a>
 
-					<form
-						{...botForm}
-						class="inline-flex items-center gap-2"
-					>
-						<input
-							{...botForm.fields.id.as("hidden", bot.id)}
-						>
+					<form {...botForm} class="inline-flex items-center gap-2">
+						<input {...botForm.fields.id.as("hidden", bot.id)}>
 						<label class="pb-0! pt-3 px-4">
 							<span>
 								<input
