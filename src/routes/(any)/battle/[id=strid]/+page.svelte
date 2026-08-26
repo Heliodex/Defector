@@ -110,7 +110,7 @@ function botHref(i: 0 | 1): string | null {
 
 {#if battle.rounds.length > 0}
 	<div class="pt-6 max-w-xl">
-		<h2 class="font-semibold">Replay (100 rounds)</h2>
+		<h2 class="font-semibold">Replay ({battle.rounds.length} rounds)</h2>
 
 		<Accordion class="flex flex-col gap-4">
 			<AccordionItem title="Show all rounds">
