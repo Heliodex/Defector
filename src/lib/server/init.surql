@@ -121,20 +121,18 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 
 		1000.0 + (math::sum($deltas) ?? 0.0)
 	};
-	DEFINE FIELD OVERWRITE wins ON bot TYPE int VALUE {
-		LET $results = SELECT VALUE IF bots[0] = $parent.id {
-			$this.scores[0] > $this.scores[1]
-		} ELSE {
-			$this.scores[1] > $this.scores[0]
+	DEFINE FIELD OVERWRITE wins ON bot TYPE int COMPUTED {
+		LET $results = SELECT VALUE {
+			LET $idx = array::find_index(bots, $parent.id)
+			$this.scores[$idx] > $this.scores[1 - $idx]
 		} FROM battle WHERE $parent.id IN bots;
 
 		count($results.filter(|$w| $w == true))
 	};
-	DEFINE FIELD OVERWRITE losses ON bot TYPE int VALUE {
-		LET $results = SELECT VALUE IF bots[0] = $parent.id {
-			$this.scores[0] < $this.scores[1]
-		} ELSE {
-			$this.scores[1] < $this.scores[0]
+	DEFINE FIELD OVERWRITE losses ON bot TYPE int COMPUTED {
+		LET $results = SELECT VALUE {
+			LET $idx = array::find_index(bots, $parent.id)
+			$this.scores[$idx] < $this.scores[1 - $idx]
 		} FROM battle WHERE $parent.id IN bots;
 
 		count($results.filter(|$w| $w == true))
