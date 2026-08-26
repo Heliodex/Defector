@@ -63,7 +63,7 @@ DEFINE FUNCTION OVERWRITE fn::initialMatrix() {
 	LET $P = <float> 1;
 	LET $S = <float> 0;
 
-	RETURN [[$R, $S], [$T, $P]];
+	 [[$R, $S], [$T, $P]];
 };
 
 # Seed the matrix only if it isn't already present (keeps re-runs idempotent).
@@ -145,18 +145,23 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 		count($battles)
 	};
 
+DEFINE FUNCTION OVERWRITE fn::latestMatrix() -> record<matrix> {
+	(SELECT VALUE id FROM matrix ORDER BY created)[$];
+};
+
 DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON battle TYPE string;
 	DEFINE FIELD OVERWRITE bots ON battle TYPE array<record<bot>, 2>;
-	DEFINE FIELD OVERWRITE matrix ON battle TYPE record<matrix> DEFAULT ALWAYS
-		(SELECT VALUE id FROM matrix ORDER BY created)[$];
+	DEFINE FIELD OVERWRITE matrix ON battle TYPE record<matrix>
+		DEFAULT ALWAYS fn::latestMatrix();
 	DEFINE FIELD OVERWRITE rounds ON battle TYPE array<array<int, 2>>;
 		DEFINE FIELD OVERWRITE rounds.*.* ON battle TYPE int
 			ASSERT $value IN [0, 1];
 	DEFINE FIELD OVERWRITE errors ON battle TYPE array<option<string>, 2>;
 	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> VALUE fn::calculateScore($this);
-	DEFINE FIELD OVERWRITE eloDelta ON battle TYPE array<float, 2> VALUE {
-		LET $payoff = SELECT VALUE matrix.payoff FROM ONLY $this;
+	DEFINE FIELD OVERWRITE eloDelta ON battle TYPE array<float, 2> DEFAULT ALWAYS {
+		LET $matrix: record<matrix> = (SELECT VALUE matrix FROM ONLY $this) OR fn::latestMatrix();
+		LET $payoff: array<array<float, 2>, 2> = SELECT VALUE payoff FROM ONLY $matrix;
 		IF !$payoff {
 			THROW "eloDelta: payoff is NONE";
 		};
@@ -173,7 +178,8 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		} ELSE IF $e1 {
 			[$T, $S];
 		} ELSE {
-			LET $payoff = SELECT VALUE matrix.payoff FROM ONLY $this;
+			LET $matrix: record<matrix> = (SELECT VALUE matrix FROM ONLY $this) OR fn::latestMatrix();
+			LET $payoff: array<array<float, 2>, 2> = SELECT VALUE payoff FROM ONLY $matrix;
 			IF !$payoff {
 				THROW "eloDelta: payoff is NONE in scores";
 			};

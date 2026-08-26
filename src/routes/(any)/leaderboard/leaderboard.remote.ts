@@ -76,7 +76,6 @@ export const leaderboardBattles = query.live(
 		yield snapshot
 
 		const lq = await db.liveOf(lqid)
-		console.log("battles lq", lq)
 
 		for await (const { action, value } of lq) {
 			if (action !== "CREATE") {
@@ -97,11 +96,12 @@ export const leaderboardBattles = query.live(
 
 export const leaderboardBots = query.live(
 	async function* (): AsyncGenerator<LeaderboardBots> {
+		console.log("getting bots")
 		const [snapshot, lqid] = await botsSnapshot()
+		console.log("got bots")
 		yield snapshot
 
 		const lq = await db.liveOf(lqid)
-		console.log("bots lq", lq)
 
 		for await (const { action, value } of lq) {
 			if (action !== "UPDATE") {
