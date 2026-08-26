@@ -1,7 +1,32 @@
 let started = false
 
+async function isLockHeldByLivingProcess(): Promise<boolean> {
+	try {
+		const pid = Number.parseInt(
+			(await Bun.file("data/surreal/LOCK").text()).trim(),
+			10
+		)
+		if (!Number.isFinite(pid)) return false
+
+		try {
+			process.kill(pid, 0)
+			return true
+		} catch (err) {
+			// EPERM: the process exists but belongs to another user
+			return (err as NodeJS.ErrnoException).code === "EPERM"
+		}
+	} catch {
+		// No lock file — this is the first start
+		return false
+	}
+}
+
 export default async () => {
 	if (started) return
+	if (await isLockHeldByLivingProcess()) {
+		console.log("SurrealDB is already running — skipping start.")
+		return
+	}
 	console.log("Starting SurrealDB...")
 	started = true
 
