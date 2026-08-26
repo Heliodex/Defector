@@ -77,8 +77,8 @@ const connected = $derived(
 		{bots.activeBots}
 		active bot{bots.activeBots === 1 ? "" : "s"}
 		·
-		{battles.totalBattles}
-		battle{battles.totalBattles === 1 ? "" : "s"}
+		{battles.allBattles}
+		battle{battles.allBattles === 1 ? "" : "s"}
 		fought
 	</p>
 
