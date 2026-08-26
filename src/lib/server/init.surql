@@ -154,33 +154,43 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		DEFINE FIELD OVERWRITE rounds.*.* ON battle TYPE int
 			ASSERT $value IN [0, 1];
 	DEFINE FIELD OVERWRITE errors ON battle TYPE array<option<string>, 2>;
-	# SurrealDB auto-creates a `scores.*` child field for array COMPUTED fields,
-	# which conflicts on re-run. Clear it first so init stays idempotent.
-	REMOVE FIELD IF EXISTS scores.* ON battle;
-	REMOVE FIELD IF EXISTS scores ON battle;
-	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> COMPUTED
-		fn::calculateScore($this);
-	DEFINE FIELD OVERWRITE eloDelta ON battle TYPE array<float, 2> DEFAULT {
-		LET $payoff = $this.matrix.payoff;
+	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> VALUE fn::calculateScore($this);
+	DEFINE FIELD OVERWRITE eloDelta ON battle TYPE array<float, 2> VALUE {
+		LET $payoff = SELECT VALUE matrix.payoff FROM ONLY $this;
+		IF !$payoff {
+			THROW "eloDelta: payoff is NONE";
+		};
+
 		LET $T = $payoff[1][0];
 		LET $S = $payoff[0][1];
 		LET $errors = $this.errors;
 		LET $e0 = $errors[0] != NONE;
 		LET $e1 = $errors[1] != NONE;
 		LET $scores = IF $e0 AND $e1 {
-			[$S, $S]
+			[$S, $S];
 		} ELSE IF $e0 {
-			[$S, $T]
+			[$S, $T];
 		} ELSE IF $e1 {
-			[$T, $S]
+			[$T, $S];
 		} ELSE {
-			LET $pts = $this.rounds.map(|$r| [$payoff[$r[0]][$r[1]], $payoff[$r[1]][$r[0]]]);
+			LET $payoff = SELECT VALUE matrix.payoff FROM ONLY $this;
+			IF !$payoff {
+				THROW "eloDelta: payoff is NONE in scores";
+			};
+
+			LET $rounds = SELECT VALUE rounds FROM ONLY $this;
+			IF !$rounds {
+				THROW "eloDelta: rounds is NONE";
+			};
+
+			LET $pts = $rounds.map(|$r| [$payoff[$r[0]][$r[1]], $payoff[$r[1]][$r[0]]]);
+
 			LET $c = <float> count($pts);
-			[math::sum($pts.map(|$p| $p[0])) / $c, math::sum($pts.map(|$p| $p[1])) / $c]
+			[math::sum($pts.map(|$p| $p[0])) / $c, math::sum($pts.map(|$p| $p[1])) / $c];
 		};
 		LET $K = <float> 32;
-		LET $rating0 = (SELECT VALUE elo FROM ONLY $this.bots[0]);
-		LET $rating1 = (SELECT VALUE elo FROM ONLY $this.bots[1]);
+		LET $rating0 = SELECT VALUE elo FROM ONLY $this.bots[0];
+		LET $rating1 = SELECT VALUE elo FROM ONLY $this.bots[1];
 		LET $expected0 = 1.0 / (1.0 + math::pow(10.0, ($rating1 - $rating0) / 400.0));
 		LET $expected1 = 1.0 - $expected0;
 		LET $actual0 = IF $scores[0] > $scores[1] {
