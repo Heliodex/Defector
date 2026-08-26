@@ -73,7 +73,8 @@ IF count(matrix) < 1 {
 	};
 };
 
-DEFINE FUNCTION OVERWRITE fn::calculateScore($battle: object, $payoff: array<array<float, 2>>) {
+DEFINE FUNCTION OVERWRITE fn::calculateScore($battle: object) {
+	LET $payoff = $battle.matrix.payoff;
 	LET $S = $payoff[0][1];
 	LET $T = $payoff[1][0];
 
@@ -158,11 +159,11 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	REMOVE FIELD IF EXISTS scores.* ON battle;
 	REMOVE FIELD IF EXISTS scores ON battle;
 	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> COMPUTED
-		fn::calculateScore($this, (SELECT VALUE payoff FROM ONLY $this.matrix));
+		fn::calculateScore($this);
 	DEFINE FIELD OVERWRITE eloDelta ON battle TYPE array<float, 2> DEFAULT {
-		LET $initialMatrix = fn::initialMatrix();
-		LET $T = $initialMatrix[1][0];
-		LET $S = $initialMatrix[0][1];
+		LET $payoff = $this.matrix.payoff;
+		LET $T = $payoff[1][0];
+		LET $S = $payoff[0][1];
 		LET $errors = $this.errors;
 		LET $e0 = $errors[0] != NONE;
 		LET $e1 = $errors[1] != NONE;
@@ -173,7 +174,6 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		} ELSE IF $e1 {
 			[$T, $S]
 		} ELSE {
-			LET $payoff = fn::initialMatrix();
 			LET $pts = $this.rounds.map(|$r| [$payoff[$r[0]][$r[1]], $payoff[$r[1]][$r[0]]]);
 			LET $c = <float> count($pts);
 			[math::sum($pts.map(|$p| $p[0])) / $c, math::sum($pts.map(|$p| $p[1])) / $c]
