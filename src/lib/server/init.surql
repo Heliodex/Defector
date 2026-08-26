@@ -112,7 +112,7 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 		(SELECT VALUE transpiled FROM $this.code ORDER BY updated)[$];
 	DEFINE FIELD OVERWRITE active ON bot TYPE bool DEFAULT ALWAYS false;
 	DEFINE FIELD OVERWRITE created ON bot TYPE datetime DEFAULT ALWAYS time::now();
-	DEFINE FIELD OVERWRITE elo ON bot TYPE float COMPUTED {
+	DEFINE FIELD OVERWRITE elo ON bot TYPE float VALUE {
 		LET $deltas = SELECT VALUE IF bots[0] = $parent.id {
 			eloDelta[0]
 		} ELSE {
@@ -121,7 +121,7 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 
 		1000.0 + (math::sum($deltas) ?? 0.0)
 	};
-	DEFINE FIELD OVERWRITE wins ON bot TYPE int COMPUTED {
+	DEFINE FIELD OVERWRITE wins ON bot TYPE int VALUE {
 		LET $results = SELECT VALUE IF bots[0] = $parent.id {
 			$this.scores[0] > $this.scores[1]
 		} ELSE {
@@ -130,7 +130,7 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 
 		count($results.filter(|$w| $w == true))
 	};
-	DEFINE FIELD OVERWRITE losses ON bot TYPE int COMPUTED {
+	DEFINE FIELD OVERWRITE losses ON bot TYPE int VALUE {
 		LET $results = SELECT VALUE IF bots[0] = $parent.id {
 			$this.scores[0] < $this.scores[1]
 		} ELSE {
@@ -139,7 +139,7 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 
 		count($results.filter(|$w| $w == true))
 	};
-	DEFINE FIELD OVERWRITE totalBattles ON bot TYPE int COMPUTED {
+	DEFINE FIELD OVERWRITE totalBattles ON bot TYPE int VALUE {
 		LET $battles = SELECT VALUE id FROM battle WHERE $parent.id IN bots;
 
 		count($battles)
