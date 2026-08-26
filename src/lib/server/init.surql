@@ -156,7 +156,9 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		DEFINE FIELD OVERWRITE rounds.*.* ON battle TYPE int
 			ASSERT $value IN [0, 1];
 	DEFINE FIELD OVERWRITE errors ON battle TYPE array<option<string>, 2>;
-	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> VALUE fn::calculateScore($this);
+	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> DEFAULT ALWAYS
+		fn::calculateScore($this);
+	REMOVE FIELD IF EXISTS eloDelta.* ON battle;
 	DEFINE FIELD OVERWRITE eloDelta ON battle TYPE array<float, 2> DEFAULT ALWAYS {
 		LET $matrix: record<matrix> = (SELECT VALUE matrix FROM ONLY $this) OR fn::latestMatrix();
 		LET $payoff: array<array<float, 2>, 2> = SELECT VALUE payoff FROM ONLY $matrix;
