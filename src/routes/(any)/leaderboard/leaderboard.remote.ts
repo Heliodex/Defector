@@ -11,10 +11,6 @@ export type BattleRow = {
 	botIds: [string, string]
 }
 
-export interface BattleRowLive extends BattleRow {
-	allBattles: number
-}
-
 type BotRow = {
 	id: string
 	name: string
@@ -25,17 +21,9 @@ type BotRow = {
 	ownerName?: string
 }
 
-export interface BotRowLive extends BotRow {
-	activeBots: number
-}
-
-export type LeaderboardBattles = {
+export type LeaderboardData = {
 	battles: BattleRow[]
 	allBattles: number
-	og?: boolean
-}
-
-export type LeaderboardBots = {
 	bots: BotRow[]
 	activeBots: number
 	og?: boolean
@@ -43,7 +31,7 @@ export type LeaderboardBots = {
 
 async function battlesSnapshot(
 	id?: RecordId<"battle", string>
-): Promise<LeaderboardBattles> {
+): Promise<Pick<LeaderboardData, "battles" | "allBattles">> {
 	const [battles, battleCount] = await db.query<[BattleRow[], number, Uuid]>(
 		leaderboardBattlesQuery,
 		{ id }
@@ -52,13 +40,12 @@ async function battlesSnapshot(
 	return {
 		battles,
 		allBattles: battleCount ?? 0,
-		...(!id && { og: true }),
 	}
 }
 
 async function botsSnapshot(
 	id?: RecordId<"bot", string>
-): Promise<LeaderboardBots> {
+): Promise<Pick<LeaderboardData, "bots" | "activeBots">> {
 	const [bots, botCount] = await db.query<[BotRow[], number, Uuid]>(
 		leaderboardBotsQuery,
 		{ id }
@@ -67,46 +54,28 @@ async function botsSnapshot(
 	return {
 		bots,
 		activeBots: botCount ?? 0,
-		...(!id && { og: true }),
 	}
 }
 
-export const leaderboardBattles = query.live(
-	async function* (): AsyncGenerator<LeaderboardBattles> {
-		const snapshot = await battlesSnapshot()
-		yield snapshot
+export const leaderboardData = query.live(
+	async function* (): AsyncGenerator<LeaderboardData> {
+		const [battleData, botData] = await Promise.all([
+			battlesSnapshot(),
+			botsSnapshot(),
+		])
+		yield { ...battleData, ...botData, og: true }
 
 		for await (const { action, recordId } of await db.live(Battle)) {
-			if (action !== "CREATE") {
-				console.log(action, recordId)
-				continue
-			}
+			if (action !== "CREATE" || !recordId) continue
 
-			const id = recordId as unknown as RecordId<"battle", string>
-			console.log("CREATE", id)
+			const id = recordId as RecordId<"battle", string>
 
-			yield await battlesSnapshot(id)
-		}
-	}
-)
+			const [updatedBattles, updatedBots] = await Promise.all([
+				battlesSnapshot(id),
+				botsSnapshot(),
+			])
 
-export const leaderboardBots = query.live(
-	async function* (): AsyncGenerator<LeaderboardBots> {
-		console.log("getting bots")
-		const snapshot = await botsSnapshot()
-		console.log("got bots")
-		yield snapshot
-
-		for await (const { action, value } of await db.live(Bot)) {
-			if (action !== "UPDATE") {
-				console.log(action, value)
-				continue
-			}
-
-			const id = value.id as unknown as RecordId<"bot", string>
-			console.log("UPDATE", id)
-
-			yield await botsSnapshot(id)
+			yield { ...updatedBattles, ...updatedBots }
 		}
 	}
 )

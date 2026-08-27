@@ -4,58 +4,33 @@ import { flip } from "svelte/animate"
 import { fly } from "svelte/transition"
 import Head from "#lib/components/Head.svelte"
 import TimeAgo from "#lib/components/TimeAgo.svelte"
-import {
-	type LeaderboardBattles,
-	type LeaderboardBots,
-	leaderboardBattles,
-	leaderboardBots,
-} from "./leaderboard.remote"
+import { type LeaderboardData, leaderboardData } from "./leaderboard.remote"
 
-const battleDataResult = leaderboardBattles()
-const botDataResult = leaderboardBots()
-
-let battles = $state<LeaderboardBattles>({ battles: [], allBattles: 0 })
-let bots = $state<LeaderboardBots>({ bots: [], activeBots: 0 })
+const dataResult = leaderboardData()
+const data = $state<LeaderboardData>({
+	battles: [],
+	allBattles: 0,
+	bots: [],
+	activeBots: 0,
+})
 
 onMount(async () => {
-	for await (const msg of battleDataResult) {
-		console.log("NEW BATTLE MESSAGE", msg)
+	for await (const msg of dataResult) {
 		if (msg.og) {
-			battles = msg
+			Object.assign(data, msg)
 			continue
 		}
 
-		battles.battles = [...msg.battles, ...battles.battles].slice(0, 50)
-		battles.allBattles = msg.allBattles
+		data.battles = [...msg.battles, ...data.battles].slice(0, 50)
+		data.allBattles = msg.allBattles
+		data.bots = msg.bots
+		data.activeBots = msg.activeBots
 	}
 })
 
-// const bots = $derived(await botDataResult)
-onMount(async () => {
-	for await (const msg of botDataResult) {
-		console.log("NEW BOT MESSAGE", msg)
-		if (msg.og) {
-			bots = msg
-			continue
-		}
+$inspect(data)
 
-		for (const bot of msg.bots) {
-			// replace bots by index
-			const index = bots.bots.findIndex(b => b.id === bot.id)
-			if (index !== -1) bots.bots[index] = bot
-			else {
-				console.log("new bot", bot)
-				bots.bots.push(bot)
-				bots.bots.sort((a, b) => b.elo - a.elo)
-			}
-		}
-		bots.activeBots = msg.activeBots
-	}
-})
-
-const connected = $derived(
-	battleDataResult.connected && botDataResult.connected
-)
+const connected = $derived(dataResult.connected)
 </script>
 
 <Head title="Leaderboard" />
@@ -73,19 +48,19 @@ const connected = $derived(
 	</span>
 </div>
 
-{#if !bots || !battles}
+{#if !data}
 	<p class="pt-4 text-neutral-600">Loading leaderboard…</p>
 {:else}
 	<p class="pt-2 text-sm text-neutral-600">
-		{bots.activeBots}
-		active bot{bots.activeBots === 1 ? "" : "s"}
+		{data.activeBots}
+		active bot{data.activeBots === 1 ? "" : "s"}
 		·
-		{battles.allBattles}
-		battle{battles.allBattles === 1 ? "" : "s"}
+		{data.allBattles}
+		battle{data.allBattles === 1 ? "" : "s"}
 		fought
 	</p>
 
-	{#if bots.bots.length === 0}
+	{#if data.bots.length === 0}
 		<p class="pt-4">
 			No active bots yet. Submit one today and it'll start battling in
 			seconds.
@@ -104,7 +79,7 @@ const connected = $derived(
 					</tr>
 				</thead>
 				<tbody>
-					{#each bots.bots as bot, i (bot.id)}
+					{#each data.bots as bot, i (bot.id)}
 						<tr class="align-top">
 							<td
 								class="border-b border-neutral-300 p-3 font-semibold"
@@ -143,11 +118,11 @@ const connected = $derived(
 
 	<h2 class="pt-10 text-2xl">Recent battles</h2>
 
-	{#if battles.battles.length === 0}
+	{#if data.battles.length === 0}
 		<p class="pt-2 text-neutral-600">No battles yet.</p>
 	{:else}
 		<ul class="noul flex flex-col gap-2 pt-4">
-			{#each battles.battles as battle (battle.id)}
+			{#each data.battles as battle (battle.id)}
 				<li
 					in:fly={{ x: -300, y: 0, duration: 400 }}
 					animate:flip={{ duration: 300 }}
