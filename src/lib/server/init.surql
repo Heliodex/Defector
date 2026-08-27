@@ -102,11 +102,7 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE name ON bot TYPE string;
 	DEFINE FIELD OVERWRITE description ON bot TYPE string;
 	DEFINE FIELD OVERWRITE codeUrl ON bot TYPE option<string>;
-	DEFINE FIELD OVERWRITE code ON bot TYPE array<{
-		source: string,
-		transpiled: string,
-		updated: datetime
-	}>
+	DEFINE FIELD OVERWRITE code ON bot TYPE array<object>
 			ASSERT array::len($value) >= 1;
 		DEFINE FIELD OVERWRITE code.*.source ON bot TYPE string;
 		DEFINE FIELD OVERWRITE code.*.transpiled ON bot TYPE string;
