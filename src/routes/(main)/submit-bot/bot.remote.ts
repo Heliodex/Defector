@@ -42,7 +42,7 @@ export const newBotForm = form(
 			invalid(message)
 		}
 
-		const [, botId] = await db.query<RecordId<"bot">[]>(createBotQuery, {
+		const [, , , id] = await db.query<string[]>(createBotQuery, {
 			user: user.id,
 			name,
 			description,
@@ -52,7 +52,7 @@ export const newBotForm = form(
 			active: active === true,
 		})
 
-		return { id: String(botId) }
+		return { id, name }
 	}
 )
 

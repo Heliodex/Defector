@@ -20,7 +20,7 @@ import { newBotForm } from "./bot.remote"
 		<p class="font-bold">
 			Your bot
 			<a href="/bot/{newBotForm.result.id}" class="text-blue-400"
-				>{newBotForm.result.id}</a
+				>{newBotForm.result.name}</a
 			>
 			was created!
 		</p>
