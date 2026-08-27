@@ -124,7 +124,8 @@ const connected = $derived(dataResult.connected)
 		<ul class="noul flex flex-col gap-2 pt-4">
 			{#each data.battles as battle (battle.id)}
 				<li
-					in:fly={{ x: -300, y: 0, duration: 400 }}
+					in:fly={{ x: -200, duration: 400 }}
+					out:fly={{ y: 100, duration: 400 }}
 					animate:flip={{ duration: 300 }}
 				>
 					<a
