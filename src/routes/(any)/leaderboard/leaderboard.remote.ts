@@ -1,5 +1,5 @@
 import type { Uuid } from "surrealdb"
-import { db } from "#lib/server/db.js"
+import { Battle, Bot, db, type RecordId } from "#lib/server/db.js"
 import { query } from "$app/server"
 import leaderboardBattlesQuery from "./leaderboardBattles.surql?raw"
 import leaderboardBotsQuery from "./leaderboardBots.surql?raw"
@@ -41,55 +41,51 @@ export type LeaderboardBots = {
 	og?: boolean
 }
 
-async function battlesSnapshot(): Promise<[LeaderboardBattles, Uuid]> {
-	const [battles, battleCount, lqid] = await db.query<
-		[BattleRow[], number, Uuid]
-	>(leaderboardBattlesQuery)
+async function battlesSnapshot(
+	id?: RecordId<"battle", string>
+): Promise<LeaderboardBattles> {
+	const [battles, battleCount] = await db.query<[BattleRow[], number, Uuid]>(
+		leaderboardBattlesQuery,
+		{ id }
+	)
 
-	return [
-		{
-			battles,
-			allBattles: battleCount ?? 0,
-			og: true,
-		},
-		lqid,
-	]
+	return {
+		battles,
+		allBattles: battleCount ?? 0,
+		...(!id && { og: true }),
+	}
 }
 
-async function botsSnapshot(): Promise<[LeaderboardBots, Uuid]> {
-	const [bots, botCount, lqid] =
-		await db.query<[BotRow[], number, Uuid]>(leaderboardBotsQuery)
+async function botsSnapshot(
+	id?: RecordId<"bot", string>
+): Promise<LeaderboardBots> {
+	const [bots, botCount] = await db.query<[BotRow[], number, Uuid]>(
+		leaderboardBotsQuery,
+		{ id }
+	)
 
-	return [
-		{
-			bots,
-			activeBots: botCount ?? 0,
-			og: true,
-		},
-		lqid, // liquid lol
-	]
+	return {
+		bots,
+		activeBots: botCount ?? 0,
+		...(!id && { og: true }),
+	}
 }
 
 export const leaderboardBattles = query.live(
 	async function* (): AsyncGenerator<LeaderboardBattles> {
-		const [snapshot, lqid] = await battlesSnapshot()
+		const snapshot = await battlesSnapshot()
 		yield snapshot
 
-		const lq = await db.liveOf(lqid)
-
-		for await (const { action, value } of lq) {
+		for await (const { action, recordId } of await db.live(Battle)) {
 			if (action !== "CREATE") {
-				console.log(action, value)
+				console.log(action, recordId)
 				continue
 			}
 
-			const v = value as unknown as BattleRowLive
-			console.log("CREATE", v)
+			const id = recordId as unknown as RecordId<"battle", string>
+			console.log("CREATE", id)
 
-			yield {
-				battles: [v],
-				allBattles: v.allBattles,
-			}
+			yield await battlesSnapshot(id)
 		}
 	}
 )
@@ -97,25 +93,20 @@ export const leaderboardBattles = query.live(
 export const leaderboardBots = query.live(
 	async function* (): AsyncGenerator<LeaderboardBots> {
 		console.log("getting bots")
-		const [snapshot, lqid] = await botsSnapshot()
+		const snapshot = await botsSnapshot()
 		console.log("got bots")
 		yield snapshot
 
-		const lq = await db.liveOf(lqid)
-
-		for await (const { action, value } of lq) {
+		for await (const { action, value } of await db.live(Bot)) {
 			if (action !== "UPDATE") {
 				console.log(action, value)
 				continue
 			}
 
-			const v = value as unknown as BotRowLive
-			console.log("UPDATE", v)
+			const id = value.id as unknown as RecordId<"bot", string>
+			console.log("UPDATE", id)
 
-			yield {
-				bots: [v],
-				activeBots: v.activeBots,
-			}
+			yield await botsSnapshot(id)
 		}
 	}
 )
