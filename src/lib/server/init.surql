@@ -124,13 +124,13 @@ REMOVE FIELD IF EXISTS losses ON bot;
 REMOVE FIELD IF EXISTS totalBattles ON bot;
 
 DEFINE FUNCTION OVERWRITE fn::botElo($bot: record<bot>) -> float {
-	LET $id = record::id($bot.id);
-	1000.0 + math::sum(SELECT VALUE eloDelta[array::find_index(bots, $bot.id)]
+	LET $id = record::id($bot);
+	1000.0 + math::sum(SELECT VALUE eloDelta[array::find_index(bots, $bot)]
 		FROM battle WHERE $id IN botIds);
 };
 
 DEFINE FUNCTION OVERWRITE fn::botEloHistory($bot: record<bot>) -> array<float> {
-	LET $id = record::id($bot.id);
+	LET $id = record::id($bot);
 	SELECT VALUE eloDelta[array::find_index(bots, $bot.id)]
 		FROM battle WHERE $id IN botIds
 		ORDER BY created DESC
@@ -138,25 +138,21 @@ DEFINE FUNCTION OVERWRITE fn::botEloHistory($bot: record<bot>) -> array<float> {
 };
 
 DEFINE FUNCTION OVERWRITE fn::botWins($bot: record<bot>) -> int {
-	LET $id = record::id($bot.id);
-	(SELECT VALUE {
-		LET $idx = array::find_index(bots, $bot.id)
-		$this.scores[$idx] > $this.scores[1 - $idx]
-	} FROM battle WHERE $id IN botIds)
-		[? $this].chain(|$v| count($v));
+	LET $id = record::id($bot);
+	count(SELECT 1 FROM battle
+		WHERE $id IN botIds
+		AND scores[array::find_index(bots, $bot)] > scores[1 - array::find_index(bots, $bot)]);
 };
 
 DEFINE FUNCTION OVERWRITE fn::botLosses($bot: record<bot>) -> int {
-	LET $id = record::id($bot.id);
-	(SELECT VALUE {
-		LET $idx = array::find_index(bots, $bot.id)
-		$this.scores[$idx] < $this.scores[1 - $idx]
-	} FROM battle WHERE $id IN botIds)
-		[? $this].chain(|$v| count($v));
+	LET $id = record::id($bot);
+	count(SELECT 1 FROM battle
+		WHERE $id IN botIds
+		AND scores[array::find_index(bots, $bot)] < scores[1 - array::find_index(bots, $bot)]);
 };
 
 DEFINE FUNCTION OVERWRITE fn::botTotalBattles($bot: record<bot>) -> int {
-	LET $id = record::id($bot.id);
+	LET $id = record::id($bot);
 	count(SELECT 1 FROM battle WHERE $id IN botIds);
 };
 
