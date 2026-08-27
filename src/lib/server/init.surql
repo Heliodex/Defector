@@ -124,35 +124,40 @@ REMOVE FIELD IF EXISTS losses ON bot;
 REMOVE FIELD IF EXISTS totalBattles ON bot;
 
 DEFINE FUNCTION OVERWRITE fn::botElo($bot: record<bot>) -> float {
+	LET $id = record::id($bot.id);
 	1000.0 + math::sum(SELECT VALUE eloDelta[array::find_index(bots, $bot.id)]
-		FROM battle WHERE $bot.id IN bots);
+		FROM battle WHERE $id IN botIds);
 };
 
 DEFINE FUNCTION OVERWRITE fn::botEloHistory($bot: record<bot>) -> array<float> {
+	LET $id = record::id($bot.id);
 	SELECT VALUE eloDelta[array::find_index(bots, $bot.id)]
-		FROM battle WHERE $bot.id IN bots
+		FROM battle WHERE $id IN botIds
 		ORDER BY created DESC
 		LIMIT 200;
 };
 
 DEFINE FUNCTION OVERWRITE fn::botWins($bot: record<bot>) -> int {
+	LET $id = record::id($bot.id);
 	(SELECT VALUE {
 		LET $idx = array::find_index(bots, $bot.id)
 		$this.scores[$idx] > $this.scores[1 - $idx]
-	} FROM battle WHERE $bot.id IN bots)
+	} FROM battle WHERE $id IN botIds)
 		[? $this].chain(|$v| count($v));
 };
 
 DEFINE FUNCTION OVERWRITE fn::botLosses($bot: record<bot>) -> int {
+	LET $id = record::id($bot.id);
 	(SELECT VALUE {
 		LET $idx = array::find_index(bots, $bot.id)
 		$this.scores[$idx] < $this.scores[1 - $idx]
-	} FROM battle WHERE $bot.id IN bots)
+	} FROM battle WHERE $id IN botIds)
 		[? $this].chain(|$v| count($v));
 };
 
 DEFINE FUNCTION OVERWRITE fn::botTotalBattles($bot: record<bot>) -> int {
-	count(SELECT 1 FROM battle WHERE $bot.id IN bots);
+	LET $id = record::id($bot.id);
+	count(SELECT 1 FROM battle WHERE $id IN botIds);
 };
 
 DEFINE FUNCTION OVERWRITE fn::latestMatrix() -> record<matrix> {
@@ -162,6 +167,9 @@ DEFINE FUNCTION OVERWRITE fn::latestMatrix() -> record<matrix> {
 DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON battle TYPE string;
 	DEFINE FIELD OVERWRITE bots ON battle TYPE array<record<bot>, 2>;
+	# Materialised string form of the battle's bot ids so the per-bot stats scans can use an index. SurrealDB cannot use an index to search an array of record references directly, but it can index an array of strings (see battleBotIds index and the fn::bot* functions), which is what makes the leaderboard fast.
+	DEFINE FIELD OVERWRITE botIds ON battle TYPE array<string, 2> VALUE
+		$this.bots.map(|$bot| record::id($bot));
 	DEFINE FIELD OVERWRITE matrix ON battle TYPE record<matrix> DEFAULT ALWAYS
 		fn::latestMatrix();
 	DEFINE FIELD OVERWRITE rounds ON battle TYPE array<array<int, 2>>;
@@ -222,6 +230,9 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		[$K * ($actual0 - $expected0), $K * ($actual1 - $expected1)]
 	};
 	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
+
+# Index the materialised bot id strings so per-bot stat functions (fn::botElo, fn::botWins, etc.) resolve "which battles involve this bot" via an index lookup instead of a full table scan per bot.
+DEFINE INDEX OVERWRITE battleBotIds ON TABLE battle FIELDS botIds.*;
 
 # THIS CANNOT BE A COMPUTED BECAUSE OTHERWISE IT WILL EAT ALL 32GB OF MY RAM
 DEFINE FUNCTION OVERWRITE fn::battleBotNames($battle: record<battle>) -> array<string, 2> {
