@@ -1,9 +1,12 @@
-SELECT
+(SELECT
 	record::id(id) AS id,
 	created,
 	scores,
 	errors,
 	rounds,
-	fn::battleBotNames($parent.id) AS botNames,
-	$parent.bots.map(|$bot| record::id($bot)) AS botIds
-FROM ONLY $battle;
+	bots
+FROM ONLY $battle)
+	.chain(|$row| object::extend($row, {
+		botNames: fn::battleBotNames($battle),
+		botIds: $row.bots.map(|$bot| record::id($bot)),
+	}))

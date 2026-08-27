@@ -1,11 +1,16 @@
-SELECT
-	record::id(id) AS id,
-	created,
-	fn::battleBotNames($parent.id) AS botNames,
-	[record::id($parent.bots[0]), record::id($parent.bots[1])] AS botIds
+(SELECT
+    id,
+    created,
+    bots
 FROM battle
 WHERE IF $id { id == $id } ELSE { true }
 ORDER BY created DESC
-LIMIT 50;
+LIMIT 50)
+    .map(|$b| {
+        id: record::id($b.id),
+        created: $b.created,
+        botNames: fn::battleBotNames($b.id),
+        botIds: $b.bots.map(|$bot| record::id($bot)),
+    });
 
 count(SELECT 1 FROM battle);
