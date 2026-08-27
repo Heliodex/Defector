@@ -5,7 +5,7 @@
 ## 1. Stack (reused from Power Tools)
 
 *   **App:** Svelte 5 (runes, `experimental.async`), SvelteKit `next` with `experimental.remoteFunctions: true`, Vite 8, Tailwind 4, `adapter-node`
-*   **DB:** SurrealDB 2 (embedded via `surreal` binary, `ws://localhost:8002`, `surrealdb` JS client, `init.surql` migrations)
+*   **DB:** SurrealDB 2 (embedded via `surreal` binary, `ws://localhost:8003`, `surrealdb` JS client, `init.surql` migrations)
 *   **Auth:** Hack Club OAuth (OIDC `openid profile email`) via `src/lib/server/auth.ts:22`, session cookie `session` (30d, `src/lib/server/init.surql:32`), `hooks.server.ts:81` guard
 *   **Time tracking:** Lapse OAuth PKCE (`src/lib/server/auth.ts:254`), `GET /lapse` + `fetchLapseTimelapses()` (`src/routes/(main)/submit/submit.remote.ts:173`), `LAPSE_TIMELAPSE_SINCE` env
 *   **Validation:** `arktype` + Standard Schema, `sharp` for images (kept for hour submissions), `Bun` for `CryptoHasher`/`Transpiler`
