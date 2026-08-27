@@ -231,6 +231,7 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 DEFINE INDEX OVERWRITE battleBotIds ON TABLE battle FIELDS botIds.*;
 
 # THIS CANNOT BE A COMPUTED BECAUSE OTHERWISE IT WILL EAT ALL 32GB OF MY RAM
+# though since bot names may change, this can't be a VALUE or DEFAULT ALWAYS either :heavysob:
 DEFINE FUNCTION OVERWRITE fn::battleBotNames($battle: record<battle>) -> array<string, 2> {
 	SELECT VALUE name FROM $battle.bots;
 };
