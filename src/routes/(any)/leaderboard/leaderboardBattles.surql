@@ -1,3 +1,5 @@
+# NOTE: fn::battleBotNames() must be called from a plain expression, not a SELECT projection, or SurrealDB re-fetches the bot records for every row (~100x slower).
+# See the comment on fn::battleBotNames in src/lib/server/init.surql.
 (SELECT
     id,
     created,
