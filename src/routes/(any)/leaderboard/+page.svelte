@@ -71,7 +71,7 @@ const connected = $derived(dataResult.connected)
 					<tr class="text-left text-neutral-600">
 						<th class="border-b border-neutral-200 p-3">#</th>
 						<th class="border-b border-neutral-200 p-3">Bot</th>
-						<th class="border-b border-neutral-200 p-3">Owner</th>
+						<!-- <th class="border-b border-neutral-200 p-3">Owner</th> -->
 						<th class="border-b border-neutral-200 p-3">Elo</th>
 						<th class="border-b border-neutral-200 p-3">W-L</th>
 						<th class="border-b border-neutral-200 p-3">Battles</th>
@@ -92,11 +92,11 @@ const connected = $derived(dataResult.connected)
 									>{truncate(bot.name)}</a
 								>
 							</td>
-							<td
+							<!-- <td
 								class="border-b border-neutral-300 p-3 text-neutral-600"
 							>
 								{bot.ownerName ?? "—"}
-							</td>
+							</td> -->
 							<td
 								class="border-b border-neutral-300 p-3 font-bold"
 							>
