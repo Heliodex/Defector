@@ -50,7 +50,7 @@ const connected = $derived(dataResult.connected)
 {#if !data}
 	<p class="pt-4 text-neutral-600">Loading leaderboard…</p>
 {:else}
-	<p class="pt-2 text-sm text-neutral-600">
+	<p class="py-2 text-sm text-neutral-600">
 		{data.activeBots}
 		active bot{data.activeBots === 1 ? "" : "s"}
 		·
