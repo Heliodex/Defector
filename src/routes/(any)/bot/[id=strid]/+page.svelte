@@ -2,15 +2,16 @@
 import Head from "#lib/components/Head.svelte"
 import { page } from "$app/state"
 import { getBot } from "./bot.remote"
+import { truncate } from "#lib/truncate.js"
 
 const bot = $derived(await getBot(page.params.id ?? ""))
 </script>
 
-<Head title={`Bot: ${bot.name}`} />
+<Head title={`Bot: ${truncate(bot.name)}`} />
 
 <a href="/leaderboard" class="text-sm hover:underline">Back to leaderboard</a>
 
-<h1 class="text-2xl font-bold pt-4">{bot.name}</h1>
+<h1 class="text-2xl font-bold pt-4">{truncate(bot.name)}</h1>
 
 <p class="pt-2 text-sm text-gray-500">
 	Created

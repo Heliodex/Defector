@@ -4,6 +4,7 @@ import { flip } from "svelte/animate"
 import { fly } from "svelte/transition"
 import Head from "#lib/components/Head.svelte"
 import TimeAgo from "#lib/components/TimeAgo.svelte"
+import { truncate } from "#lib/truncate.js"
 import { type LeaderboardData, leaderboardData } from "./leaderboard.remote"
 
 const dataResult = leaderboardData()
@@ -27,8 +28,6 @@ onMount(async () => {
 		data.activeBots = msg.activeBots
 	}
 })
-
-$inspect(data)
 
 const connected = $derived(dataResult.connected)
 </script>
@@ -90,7 +89,7 @@ const connected = $derived(dataResult.connected)
 								<a
 									href="/bot/{bot.id}"
 									class="font-semibold text-blue-600 hover:text-blue-700"
-									>{bot.name}</a
+									>{truncate(bot.name)}</a
 								>
 							</td>
 							<td
@@ -134,11 +133,11 @@ const connected = $derived(dataResult.connected)
 					>
 						<span>
 							<span class="font-semibold"
-								>{battle.botNames[0]}</span
+								>{truncate(battle.botNames[0])}</span
 							>
 							<span class="text-neutral-600"> vs </span>
 							<span class="font-semibold"
-								>{battle.botNames[1]}</span
+								>{truncate(battle.botNames[1])}</span
 							>
 						</span>
 						<span class="text-xs text-neutral-600">

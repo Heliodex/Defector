@@ -1,5 +1,6 @@
 <script lang="ts">
 import Head from "#lib/components/Head.svelte"
+import { truncate } from "#lib/truncate.js"
 import { getMyBots, toggleActiveForm } from "./myBots.remote"
 
 const bots = $derived(await getMyBots())
@@ -53,7 +54,7 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 					<div>
 						<h2 class="font-semibold">
 							<a href="/bot/{bot.id}" class="hover:text-blue-400"
-								>{bot.name}</a
+								>{truncate(bot.name)}</a
 							>
 						</h2>
 						<p class="text-xs opacity-70">

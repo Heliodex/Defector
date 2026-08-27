@@ -1,5 +1,6 @@
 <script lang="ts">
 import Head from "#lib/components/Head.svelte"
+import { truncate } from "#lib/truncate.js"
 import { getBattles, getBots, getSubmissions, reviewForm } from "./admin.remote"
 
 let submissions = $derived(await getSubmissions())
@@ -21,10 +22,14 @@ let battles = $derived(await getBattles())
 			<table class="w-full min-w-250 border-collapse text-sm">
 				<thead>
 					<tr class="text-left text-neutral-600">
-						<th class="border-b border-neutral-200 p-3">Submission</th>
+						<th class="border-b border-neutral-200 p-3">
+							Submission
+						</th>
 						<th class="border-b border-neutral-200 p-3">Owner</th>
 						<th class="border-b border-neutral-200 p-3">AI</th>
-						<th class="border-b border-neutral-200 p-3">Timelapses</th>
+						<th class="border-b border-neutral-200 p-3">
+							Timelapses
+						</th>
 						<th class="border-b border-neutral-200 p-3">Status</th>
 						<th class="border-b border-neutral-200 p-3">Review</th>
 					</tr>
@@ -106,7 +111,7 @@ let battles = $derived(await getBattles())
 							<td class="border-b border-neutral-300 p-3">
 								<span
 									class="font-bold {sub.status === "approved" ? '' : sub.status === "rejected" ? 'text-red-400' : 'text-blue-600'}"
-								>{sub.status}</span
+									>{sub.status}</span
 								>
 								{#if sub.review?.notes}
 									<p class="pt-1 text-xs text-neutral-600">
@@ -125,7 +130,9 @@ let battles = $derived(await getBattles())
 											)}
 										>
 										<label class="pb-1!">
-											<span class="pb-1! text-xs">Status</span>
+											<span class="pb-1! text-xs"
+												>Status</span
+											>
 											<select
 												{...reviewForm.fields.status.as(
 													"select"
@@ -141,7 +148,9 @@ let battles = $derived(await getBattles())
 											</select>
 										</label>
 										<label class="pb-1!">
-											<span class="pb-1! text-xs">Notes</span>
+											<span class="pb-1! text-xs"
+												>Notes</span
+											>
 											<textarea
 												{...reviewForm.fields.notes.as(
 													"text"
@@ -188,7 +197,7 @@ let battles = $derived(await getBattles())
 			{#each bots as bot (bot.id)}
 				<tr class="align-top">
 					<td class="border-b border-neutral-300 p-3 font-semibold">
-						<a href="/bot/{bot.id}">{bot.name}</a>
+						<a href="/bot/{bot.id}">{truncate(bot.name)}</a>
 					</td>
 					<td class="border-b border-neutral-300 p-3">
 						{bot.ownerEmail ?? "—"}
