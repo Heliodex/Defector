@@ -40,7 +40,7 @@ db.query = async <R extends unknown[] = unknown[]>(
 
 export const version = db.version.bind(db)
 
-const url = new URL(process.env.SURREAL_URL ?? "ws://localhost:8002") // must be ws:// to prevent token expiration, http:// will expire after 1 hour by default
+const url = new URL(process.env.SURREAL_URL ?? "ws://localhost:8003") // must be ws:// to prevent token expiration, http:// will expire after 1 hour by default
 
 export async function reconnect() {
 	for (let attempt = 0; ; attempt++)
@@ -77,21 +77,29 @@ export async function reconnect() {
 }
 
 type RecordIdTypes = {
-	createdProject: string
+	bot: string
+	battle: string
+	created: string
 	hasSession: string
-	project: string
+	hourSubmission: string
+	matrix: string
 	session: string
+	submittedHours: string
 	user: string
 }
 
-export const CreatedProject = new Table("createdProject")
+export const Bot = new Table("bot")
+export const Battle = new Table("battle")
+export const Created = new Table("created")
 export const HasSession = new Table("hasSession")
-export const Project = new Table("project")
+export const HourSubmission = new Table("hourSubmission")
+export const Matrix = new Table("matrix")
 export const Session = new Table("session")
+export const SubmittedHours = new Table("submittedHours")
 export const User = new Table("user")
 
 // Ensure type safety when creating record ids
-export type RecordId<T extends keyof RecordIdTypes> = SurrealRecordId<T>
+export type RecordId<T extends keyof RecordIdTypes, U extends RecordIdTypes[T] = RecordIdTypes[T]> = SurrealRecordId<T, U>
 
 /**
  * Returns a record id object for a given table and id.

@@ -21,7 +21,7 @@ import Head from "#lib/components/Head.svelte"
 	<div class="mt-8 flex gap-4">
 		<a
 			href="/home"
-			class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 font-bold"
+			class="btn btn-primary"
 		>
 			Back to home
 		</a>

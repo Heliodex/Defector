@@ -1,7 +1,7 @@
 <script lang="ts">
 import "./layout.css"
-import { repoName } from "#lib/assets/config.js"
-import favicon from "#lib/assets/powertools.svg"
+import { programmeName, repoName } from "#lib/assets/config.js"
+import favicon from "#lib/assets/logo.svg"
 import { getIsAdmin, getLoggedIn, login } from "./data.remote"
 
 let { children } = $props()
@@ -33,76 +33,108 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 	</script>
 </svelte:head>
 
-<header class="max-w-280 mx-auto flex">
-	<nav>
-		<ul class="list-none p-0 m-0 flex gap-8 py-6">
-			{#if await user}
-				<li><a class="btn" href="/home">Home</a></li>
-			{:else}
-				<li><a class="btn" href="/">Landing</a></li>
+{#snippet navlink(link: string, label: string)}
+	<li><a class="navbtn" href="/{link}">{label}</a></li>
+{/snippet}
+
+<nav class="sm:hidden pl-40 px-4 py-3">
+	<ul class="flex flex-wrap gap-5">
+		{#if await user}
+			{@render navlink("home", "Home")}
+		{/if}
+		{@render navlink("leaderboard", "Leaderboard")}
+		{#if await user}
+			{@render navlink("your-bots", "Your bots")}
+			{@render navlink("submit-bot", "Submit bot")}
+			{@render navlink("submit", "Submit hours")}
+			{#if await isAdmin}
+				{@render navlink("admin", "Admin")}
 			{/if}
-			<li><a class="btn" href="/guide">Guide</a></li>
+		{:else}
+			{@render navlink("", "Landing")}
+			<li>
+				<form {...login}>
+					<button class="navbtn" type="submit">Log in</button>
+				</form>
+			</li>
+		{/if}
+		{@render navlink("guide", "Guide")}
+	</ul>
+</nav>
+
+<aside
+	class="sidebar hidden sm:block fixed inset-y-0 left-0 w-40 overflow-y-auto border-r-2 border-neutral-200 bg-white z-1"
+>
+	<h1 class="text-2xl! p-4">{programmeName}</h1>
+	<nav class="p-4 pt-0">
+		<ul class="flex flex-col gap-4">
 			{#if await user}
-				<li><a class="btn" href="/submit">Submit</a></li>
+				{@render navlink("home", "Home")}
+			{/if}
+			{@render navlink("leaderboard", "Leaderboard")}
+			{#if await user}
+				{@render navlink("your-bots", "Your bots")}
+				{@render navlink("submit-bot", "Submit bot")}
+				{@render navlink("submit", "Submit hours")}
 				{#if await isAdmin}
-					<li><a class="btn" href="/admin">Admin</a></li>
+					{@render navlink("admin", "Admin")}
 				{/if}
 			{:else}
+				{@render navlink("", "Landing")}
 				<li>
-					<form {...login} class="-mt-1.5">
-						<!-- why wrong paddingg ggggg -->
-						<button class="btn" type="submit">Login</button>
+					<form {...login} class="w-full">
+						<button class="navbtn w-full" type="submit">
+							Login
+						</button>
 					</form>
 				</li>
 			{/if}
+			{@render navlink("guide", "Guide")}
 		</ul>
 	</nav>
-</header>
+</aside>
 
-<main class="px-4 py-20 max-w-240 w-full mx-auto flex-1 min-w-0">
-	{@render children()}
-</main>
+<div class="flex flex-col flex-1 min-w-0 sm:pl-40">
+	<main class="px-4 py-20 max-w-240 w-full mx-auto flex-1 min-w-0">
+		{@render children()}
+	</main>
 
-<footer class="bg-stone-950 px-8 py-4 text-center">
-	<p class="pb-4">
-		A programme by
-		<a
-			href="https://hackclub.enterprise.slack.com/team/U07JH9LU1NC"
-			target="_blank"
-			rel="noreferrer"
-			>@Heliodex</a
-		>
-		at
-		<a href="https://hackclub.com/" target="_blank" rel="noreferrer"
-			>Hack Club</a
-		>!
-	</p>
+	<footer class="bg-neutral-200 px-8 py-4 text-center">
+		<p class="pb-4">
+			A programme by
+			<a
+				href="https://hackclub.enterprise.slack.com/team/U07JH9LU1NC"
+				target="_blank"
+				rel="noreferrer"
+				>@Heliodex</a
+			>
+			at
+			<a href="https://hackclub.com/" target="_blank" rel="noreferrer"
+				>Hack Club</a
+			>!
+		</p>
 
-	<p>
-		<a
-			href="https://hackclub.com/privacy-and-terms"
-			target="_blank"
-			rel="noreferrer"
-			>Privacy & Terms</a
-		>
-		|
-		<a href="https://github.com/{repoName}" target="_blank" rel="noreferrer"
-			>Source code</a
-		>
-	</p>
-</footer>
-
-<style>
-@import "tailwindcss";
-
-li {
-	@apply inline-block;
-
-	a,
-	button {
-		@apply text-black bg-[#f7df1e] hover:bg-yellow-600 active:bg-yellow-400 shadow-amber-500;
-
-		box-shadow: 0.1rem 0.1rem 0 var(--tw-shadow-color);
-	}
-}
-</style>
+		<p>
+			<a
+				href="https://hackclub.com/privacy-and-terms"
+				target="_blank"
+				rel="noreferrer"
+				>Privacy & Terms</a
+			>
+			|
+			<a
+				href="https://forms.hackclub.com/bounty"
+				target="_blank"
+				rel="noreferrer"
+				>Fulfilment bounty</a
+			>
+			|
+			<a
+				href="https://github.com/{repoName}"
+				target="_blank"
+				rel="noreferrer"
+				>Source code</a
+			>
+		</p>
+	</footer>
+</div>

@@ -1,6 +1,6 @@
 <script lang="ts">
 import Head from "#lib/components/Head.svelte"
-import { getTimelapses, newProjectForm } from "./submit.remote"
+import { getTimelapses, newSubmissionForm } from "./submit.remote"
 
 const timelapseData = $derived(await getTimelapses())
 
@@ -8,7 +8,7 @@ const sinceLabel = $derived(
 	timelapseData ? new Date(timelapseData.since).toLocaleDateString() : ""
 )
 
-let selected = $derived(newProjectForm.fields.timelapseIds.value() ?? [])
+let selected = $derived(newSubmissionForm.fields.timelapseIds.value() ?? [])
 
 function formatDuration(seconds: number) {
 	const hours = Math.floor(seconds / 3600)
@@ -21,11 +21,11 @@ function formatDuration(seconds: number) {
 }
 </script>
 
-<Head title="Submit your project" />
+<Head title="Submit your work" />
 
-<h1 class="text-2xl">Submit your project</h1>
+<h1 class="text-2xl">Submit your work</h1>
 
-<form {...newProjectForm} enctype="multipart/form-data" class="pt-8">
+<form {...newSubmissionForm} enctype="multipart/form-data" class="pt-8">
 	{#if timelapseData.error}
 		<p class="pb-4 text-red-500">{timelapseData.error}</p>
 	{:else if timelapseData.timelapses.length === 0}
@@ -42,11 +42,11 @@ function formatDuration(seconds: number) {
 			<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
 				{#each timelapseData.timelapses as t (t.id)}
 					<label
-						class="relative flex cursor-pointer flex-col overflow-hidden rounded-lg border border-zinc-700 bg-zinc-900 p-2 transition-colors hover:border-yellow-600 has-checked:border-yellow-400"
+						class="relative flex cursor-pointer flex-col overflow-hidden rounded-lg border border-neutral-300 bg-white p-2 transition-colors hover:border-blue-600 has-checked:border-blue-400"
 					>
 						<input
-							{...newProjectForm.fields.timelapseIds.as("checkbox", t.id)}
-							class="absolute top-2 left-2 z-10 size-5 accent-yellow-400"
+							{...newSubmissionForm.fields.timelapseIds.as("checkbox", t.id)}
+							class="absolute top-2 left-2 z-10 size-5 accent-blue-600"
 						>
 						{#if t.thumbnailUrl}
 							<img
@@ -56,7 +56,7 @@ function formatDuration(seconds: number) {
 							>
 						{:else}
 							<div
-								class="flex aspect-video w-full items-center justify-center rounded bg-zinc-800 text-sm text-zinc-500"
+								class="flex aspect-video w-full items-center justify-center rounded bg-neutral-200 text-sm text-neutral-500"
 							>
 								Processing…
 							</div>
@@ -78,19 +78,19 @@ function formatDuration(seconds: number) {
 					? "No timelapses selected."
 					: `${selected.length} timelapse${selected.length === 1 ? "" : "s"} selected.`}
 			</p>
-			{#each newProjectForm.fields.timelapseIds.issues() ?? [] as issue}
+			{#each newSubmissionForm.fields.timelapseIds.issues() ?? [] as issue}
 				<p class="pt-2 text-sm text-red-500">{issue.message}</p>
 			{/each}
 		</fieldset>
 	{/if}
 
 	<label>
-		<span>Project image or screenshot</span>
-		<input {...newProjectForm.fields.image.as("file")} required>
-		{#each newProjectForm.fields.image.issues() ?? [] as issue}
+		<span>Submission image or screenshot</span>
+		<input {...newSubmissionForm.fields.image.as("file")} required>
+		{#each newSubmissionForm.fields.image.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
-		<p class="pt-2 text-sm text-neutral-400">
+		<p class="pt-2 text-sm text-neutral-600">
 			To clarify, a screenshot of the working output or a demo page made
 			with your tool/framework would be great!
 			<br>
@@ -101,20 +101,20 @@ function formatDuration(seconds: number) {
 	</label>
 
 	<label>
-		<span>Project name</span>
-		<input {...newProjectForm.fields.name.as("text")} required>
-		{#each newProjectForm.fields.name.issues() ?? [] as issue}
+		<span>Submission name</span>
+		<input {...newSubmissionForm.fields.name.as("text")} required>
+		{#each newSubmissionForm.fields.name.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
 	</label>
 
 	<label>
-		<span>Project description</span>
+		<span>Submission description</span>
 		<textarea
-			{...newProjectForm.fields.description.as("text")}
+			{...newSubmissionForm.fields.description.as("text")}
 			required
 		></textarea>
-		{#each newProjectForm.fields.description.issues() ?? [] as issue}
+		{#each newSubmissionForm.fields.description.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
 	</label>
@@ -122,14 +122,14 @@ function formatDuration(seconds: number) {
 	<label>
 		<span>Code URL</span>
 		<input
-			{...newProjectForm.fields.codeUrl.as("url")}
+			{...newSubmissionForm.fields.codeUrl.as("url")}
 			placeholder="https://github.com/..."
 			required
 		>
-		{#each newProjectForm.fields.codeUrl.issues() ?? [] as issue}
+		{#each newSubmissionForm.fields.codeUrl.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
-		<p class="pt-2 text-sm text-neutral-400">
+		<p class="pt-2 text-sm text-neutral-600">
 			A link to your project's code repository on GitHub or similar.
 		</p>
 	</label>
@@ -137,14 +137,14 @@ function formatDuration(seconds: number) {
 	<label>
 		<span>Playable URL</span>
 		<input
-			{...newProjectForm.fields.playableUrl.as("url")}
+			{...newSubmissionForm.fields.playableUrl.as("url")}
 			placeholder="https://example.com/..."
 			required
 		>
-		{#each newProjectForm.fields.playableUrl.issues() ?? [] as issue}
+		{#each newSubmissionForm.fields.playableUrl.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
-		<div class="pt-2 text-sm text-neutral-400">
+		<div class="pt-2 text-sm text-neutral-600">
 			<p>
 				Somewhere where we can see the working output (not just the
 				code) of your project.
@@ -200,15 +200,15 @@ function formatDuration(seconds: number) {
 
 	<label>
 		<span>
-			<input {...newProjectForm.fields.ai.as("checkbox")}>
+			<input {...newSubmissionForm.fields.ai.as("checkbox")}>
 			<span class="pl-2"
 				>I used generative AI in building this project</span
 			>
 		</span>
-		{#each newProjectForm.fields.ai.issues() ?? [] as issue}
+		{#each newSubmissionForm.fields.ai.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
-		<p class="text-sm text-neutral-400">
+		<p class="text-sm text-neutral-600">
 			Generally, up to 30% of the time spent on a project can be completed
 			with generative AI assistance. Projects with more than 30% of their
 			time attributed to AI code generation may have their rewarded hours
@@ -217,40 +217,25 @@ function formatDuration(seconds: number) {
 	</label>
 
 	<label>
-		<span>Extra reviewer notes</span>
-		<textarea
-			{...newProjectForm.fields.reviewerNotes.as("text")}
-		></textarea>
-		{#each newProjectForm.fields.reviewerNotes.issues() ?? [] as issue}
-			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
-		{/each}
-		<p class="pt-2 text-sm text-neutral-400">
-			Add anything else here you'd like us to know about your project.
-		</p>
-	</label>
-
-	<hr>
-
-	<label>
 		<span>How did you hear about this programme?</span>
-		<textarea {...newProjectForm.fields.howHear.as("text")}></textarea>
-		{#each newProjectForm.fields.howHear.issues() ?? [] as issue}
+		<textarea {...newSubmissionForm.fields.howHear.as("text")}></textarea>
+		{#each newSubmissionForm.fields.howHear.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
 	</label>
 
 	<label>
 		<span>How are we doing well?</span>
-		<textarea {...newProjectForm.fields.howDoingWell.as("text")}></textarea>
-		{#each newProjectForm.fields.howDoingWell.issues() ?? [] as issue}
+		<textarea {...newSubmissionForm.fields.howDoingWell.as("text")}></textarea>
+		{#each newSubmissionForm.fields.howDoingWell.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
 	</label>
 
 	<label>
 		<span>How can we improve?</span>
-		<textarea {...newProjectForm.fields.howImprove.as("text")}></textarea>
-		{#each newProjectForm.fields.howImprove.issues() ?? [] as issue}
+		<textarea {...newSubmissionForm.fields.howImprove.as("text")}></textarea>
+		{#each newSubmissionForm.fields.howImprove.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
 	</label>
@@ -262,23 +247,23 @@ function formatDuration(seconds: number) {
 			one) to a friend?</span
 		>
 		<input
-			{...newProjectForm.fields.howLikelyRecommend.as("number")}
+			{...newSubmissionForm.fields.howLikelyRecommend.as("number")}
 			min="1"
 			max="10"
 			step="1"
 		>
-		{#each newProjectForm.fields.howLikelyRecommend.issues() ?? [] as issue}
+		{#each newSubmissionForm.fields.howLikelyRecommend.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
 	</label>
 
-	{#if newProjectForm.fields.allIssues()?.length}
+	{#if newSubmissionForm.fields.allIssues()?.length}
 		<div class="pb-6" role="alert">
 			<p class="font-bold text-red-500">
 				Please fix the following issues:
 			</p>
 			<ul class="list-disc pl-6 text-sm text-red-500">
-				{#each newProjectForm.fields.allIssues() ?? [] as issue}
+				{#each newSubmissionForm.fields.allIssues() ?? [] as issue}
 					<li>{issue.message}</li>
 				{/each}
 			</ul>
@@ -286,10 +271,10 @@ function formatDuration(seconds: number) {
 	{/if}
 
 	<button
-		disabled={!!timelapseData.error || newProjectForm.pending > 0}
+		disabled={!!timelapseData.error || newSubmissionForm.pending > 0}
 		type="submit"
-		class="btn bg-blue-500 hover:bg-blue-600 active:bg-blue-400 font-bold {newProjectForm.pending > 0 ? 'bg-neutral-600 hover:bg-neutral-600 active:bg-neutral-600 opacity-60' : ''}"
+		class="btn btn-primary {newSubmissionForm.pending > 0 ? 'bg-neutral-200 text-neutral-500 hover:bg-neutral-200 active:bg-neutral-200 opacity-60' : ''}"
 	>
-		{newProjectForm.pending > 0 ? "Submitting..." : "Submit"}
+		{newSubmissionForm.pending > 0 ? "Submitting..." : "Submit"}
 	</button>
 </form>

@@ -6,22 +6,22 @@ import { authorise } from "#lib/server/auth.js"
 import { db, type RecordId } from "#lib/server/db.js"
 import { LAPSE_TIMELAPSE_SINCE } from "$app/env/private"
 import { form, getRequestEvent, query } from "$app/server"
-import createProjectQuery from "./createProject.surql?raw"
+import createHourSubmissionQuery from "./createHourSubmission.surql?raw"
 import getLapseDataQuery from "./getLapseData.surql?raw"
-import getLatestProjectQuery from "./getLatestProject.surql?raw"
+import getLatestHourSubmissionQuery from "./getLatestHourSubmission.surql?raw"
 
-const messageName = makeMessage("name", "please give your project a name")
+const messageName = makeMessage("name", "please give your submission a name")
 const messageDescription = makeMessage(
 	"description",
-	"please add a description of your project"
+	"please add a description of your submission"
 )
 const messageCodeUrl = makeMessage(
 	"codeUrl",
-	"please provide a URL to your project's code"
+	"please provide a URL to your submission's code"
 )
 const messagePlayableUrl = makeMessage(
 	"playableUrl",
-	"please provide a URL to your project's playable version"
+	"please provide a URL to your submission's playable version"
 )
 const messageTimelapseIds = makeMessage(
 	"timelapseIds",
@@ -35,7 +35,6 @@ const schema = type({
 	codeUrl: type("string >= 1").configure(messageCodeUrl[0]),
 	playableUrl: type("string >= 1").configure(messagePlayableUrl[0]),
 	"ai?": "boolean",
-	"reviewerNotes?": "string",
 	timelapseIds: type("string[] >= 1").configure(messageTimelapseIds[0]),
 	"howHear?": "string",
 	"howDoingWell?": "string",
@@ -48,7 +47,7 @@ const schema = type({
 	.configure(...messagePlayableUrl)
 	.configure(...messageTimelapseIds)
 
-export const newProjectForm = form(
+export const newSubmissionForm = form(
 	schema,
 	async ({
 		image,
@@ -57,7 +56,6 @@ export const newProjectForm = form(
 		codeUrl,
 		playableUrl,
 		ai,
-		reviewerNotes,
 		howHear,
 		howDoingWell,
 		howImprove,
@@ -88,17 +86,17 @@ export const newProjectForm = form(
 				"Your selected timelapses must total at least 3600 seconds (1 hour) of recorded time."
 			)
 
-		// Only one project may be submitted per minute, measured from the last successful insert. This check runs before image compression so we don't waste CPU on rate-limited submissions.
-		const [latestCreated] = await db.query<Date[]>(getLatestProjectQuery, {
-			user,
-		})
-		console.log(latestCreated)
+		// Only one submission may be made per minute, measured from the last successful insert. This check runs before image compression so we don't waste CPU on rate-limited submissions.
+		const [latestCreated] = await db.query<Date[]>(
+			getLatestHourSubmissionQuery,
+			{ user }
+		)
 		if (latestCreated && Date.now() - latestCreated.getTime() < 60_000)
 			invalid(
-				"You've already submitted a project recently. Please wait a minute before submitting again."
+				"You've already submitted recently. Please wait a minute before submitting again."
 			)
 
-		// Process the uploaded image (if any) into a fixed-size AVIF, then content-address it by its SHA-256 hash so identical uploads share a single file on disk. The hash is stored on the project and used to serve the image later.
+		// Process the uploaded image (if any) into a fixed-size AVIF, then content-address it by its SHA-256 hash so identical uploads share a single file on disk. The hash is stored on the submission and used to serve the image later.
 		let imageHash: string | undefined
 		if (image && image.size > 0) {
 			await fs.promises.mkdir("./data/images", { recursive: true })
@@ -107,7 +105,7 @@ export const newProjectForm = form(
 			const bytes = await sharp(await image.arrayBuffer())
 				.avif()
 				.toBuffer()
-			console.log("compresesd")
+			console.log("compressed")
 
 			imageHash = new Bun.CryptoHasher("sha256")
 				.update(bytes)
@@ -128,7 +126,6 @@ export const newProjectForm = form(
 			codeUrl,
 			playableUrl,
 			ai: ai ?? false,
-			reviewerNotes,
 			howHear,
 			howDoingWell,
 			howImprove,
@@ -136,12 +133,12 @@ export const newProjectForm = form(
 			timelapseIds,
 		}
 
-		const [, project] = await db.query<RecordId<"project">[]>(
-			createProjectQuery,
+		const [, recordId] = await db.query<RecordId<"hourSubmission">[]>(
+			createHourSubmissionQuery,
 			submit
 		)
 
-		console.log("created", project)
+		console.log("created", recordId)
 
 		const { cookies } = getRequestEvent()
 		cookies.set("submitted", "true", { path: "/" })
@@ -180,7 +177,10 @@ async function fetchLapseTimelapses(user: User): Promise<LapseTimelapse[]> {
 	)
 	const lapse = result?.[0]
 	if (!lapse?.accessToken)
-		error(401, "Please link your lapse account to submit a project!")
+		error(
+			401,
+			"Please link your Lapse account to submit your work! You can do this on the home page."
+		)
 
 	const response = await fetch(
 		`https://api.lapse.hackclub.com/api/timelapse/findByUser?user=${encodeURIComponent(lapse.id)}`,

@@ -2,8 +2,10 @@
 import Accordion from "#components/Accordion.svelte"
 import AccordionItem from "#components/AccordionItem.svelte"
 import Head from "#components/Head.svelte"
+import chessboard from "#lib/assets/chessboard.png"
 import { programmeName } from "#lib/assets/config.js"
-import logo from "#lib/assets/powertools.svg"
+import logo from "#lib/assets/logo.svg"
+import { login } from "../data.remote"
 </script>
 
 <Head />
@@ -11,14 +13,14 @@ import logo from "#lib/assets/powertools.svg"
 <a href="https://hackclub.com/" target="_blank" rel="noreferrer">
 	<img
 		id="hc"
-		class="absolute top-0 left-8 border-0 w-32 z-999"
+		class="absolute top-0 lg:left-44 border-0 w-32 z-999"
 		src="https://assets.hackclub.com/flag-orpheus-top.svg"
 		alt="Hack Club"
 	>
 </a>
 
 <div class="text-center pb-8 flex flex-col items-center">
-	<img src={logo} alt="{programmeName} logo" class="w-72">
+	<img src={logo} alt="{programmeName} logo" class="w-24">
 
 	<h1 class="text-6xl! pb-0!">{programmeName}</h1>
 	<p class="text-center pb-8">
@@ -29,55 +31,110 @@ import logo from "#lib/assets/powertools.svg"
 			rel="noreferrer"
 			>@Heliodex</a
 		>
+		at
+		<a href="https://hackclub.com" target="_blank" rel="noreferrer"
+			>Hack Club</a
+		>
+	</p>
+	<p class="max-w-120 pb-4">
+		Write a bot that plays a strategy game, battle other bots,<br>
+		and win money to spend on video games!
 	</p>
 	<p class="max-w-120">
-		Spend 1 hour building a mini JS framework or tool,<br>
-		win $5 in cloud credits to host a demo
+		Every few seconds 2 bots battle, and the winner climbs the leaderboard.
 	</p>
 </div>
 
-<p>You could build something like:</p>
+<div class="flex items-center justify-center gap-4">
+	<form {...login}>
+		<button class="btn btn-primary" type="submit">Log in</button>
+	</form>
+	<a href="/leaderboard" class="btn btn-secondary"> Live leaderboard </a>
+</div>
+
+<h2 class="pt-12 text-center">How it works</h2>
+<p class="pb-4">
+	You write a tiny function that, given your history with an opponent, picks a
+	move: <b>cooperate (C)</b> or <b>defect (D)</b>. Your bot gets a new
+	opponent every battle and earns points per round. Better bots win more
+	battles and climb the Elo ladder.
+</p>
+
 <ul>
+	<li>Write a bot in TypeScript or JavaScript, no frameworks needed.</li>
+	<li>You may have up to 3 active bots in the live tournament at once.</li>
 	<li>
-		A tiny JS framework (think
-		<a href="https://mithril.js.org/" target="_blank" rel="noreferrer"
-			>Mithril.js</a
-		>)
+		Your bots' Elo starts at 1000 and updates automatically after each
+		battle.
 	</li>
-	<li>
-		A utility library like
-		<a href="https://lodash.com/" target="_blank" rel="noreferrer"
-			>lodash</a
-		>
-		or
-		<a href="https://jquery.com/" target="_blank" rel="noreferrer"
-			>jQuery</a
-		>
-	</li>
-	<li>
-		Something for easily enhancing your HTML with scripting, like
-		<a href="https://alpinejs.dev/" target="_blank" rel="noreferrer"
-			>Alpine.js</a
-		>
-	</li>
-	<li>A reactivity system to automatically update your HTML from data</li>
 </ul>
 
-<p class="pb-4">
-	See the <a href="/guide">Guide</a>, showing how to build an example project,
-	for more inspiration.
+<p class="pt-4 pb-8">
+	See the <a href="/guide">Guide</a> for bot examples, and how to write a bot
+	in 3 lines of code.
 </p>
 
 <p>
-	Refurbish your frontend experience and win a grant card spendable at various
-	vendors.
+	Want to know how it works under the hood? The tournament is an
+	<a
+		href="https://en.wikipedia.org/wiki/Prisoner's_dilemma#The_iterated_prisoner's_dilemma"
+		target="_blank"
+		rel="noreferrer"
+		>Iterated Prisoner's Dilemma</a
+	>: in each round both you and your opponent choose to cooperate or defect.
+</p>
+
+<ul>
+	<li>If you both cooperate you each get 2 points.</li>
+	<li>If you both defect you each get 1 point.</li>
+	<li>
+		If one of you defects while the other cooperates, the defector gets 3
+		points and the other gets 0.
+	</li>
+</ul>
+
+<p>
+	This makes the payoff matrix (how many points you get for each move) look
+	like this:
+</p>
+
+<div class="py-4">
+	<table class="mx-auto shadowcard">
+		<thead>
+			<tr>
+				<th class="font-normal">You →<br>Opponent ↓</th>
+				<th>Cooperate</th>
+				<th>Defect</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td class="font-bold">Cooperate</td>
+				<td>2, 2</td>
+				<td>0, 3</td>
+			</tr>
+			<tr>
+				<td class="font-bold">Defect</td>
+				<td>3, 0</td>
+				<td>1, 1</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<p>
+	Over at least 100 rounds, the accumulated score decides the winner. Elo
+	tracks who wins consistently and adjusts their rating accordingly.
+</p>
+
+<p class="pt-4">
 	<b
 		>Track your time spent with
 		<a href="https://lapse.hackclub.com/" target="_blank" rel="noreferrer"
 			>Lapse</a
 		>
-		so we can verify it!</b
-	>!
+		so we can verify it for your rewards!</b
+	>
 </p>
 
 <div id="faq">
@@ -93,26 +150,54 @@ import logo from "#lib/assets/powertools.svg"
 				<a
 					href="https://pyramid.hackclub.com"
 					target="_blank"
-					rel="noopener noreferrer"
+					rel="noreferrer"
 				>
 					referring others!
 				</a>
 			</AccordionItem>
 
+			<AccordionItem title="Do I need to know how to code JavaScript?">
+				Nope! The <a href="/guide">Guide</a> will walk you through the
+				basics of writing a bot. It starts with the simplest bots, only
+				a few lines of code, then gradually shows how to build bots with
+				more advanced strategy.
+			</AccordionItem>
+
+			<AccordionItem title="Do I need to know game theory?">
+				Not at all. The simplest bots are only a few lines of code, and
+				you can iterate and deploy new bots throughout the programme,
+				while seeing what works and what doesn't.
+				<br>
+				<br>
+				If you don't know game theory now, you will by the end of the
+				programme! If you want to learn the easy way, check out the
+				<a href="/guide">Guide</a>.
+			</AccordionItem>
+
+			<AccordionItem title="What are the prizes?">
+				Everyone who verifiably spends time gets video game grants or
+				gift cards as a reward. Based on leaderboard position and how
+				many matches your bots play, your grants may be larger!
+			</AccordionItem>
+
 			<AccordionItem title="How much does it cost to join in?">
 				{programmeName}
 				is completely free to join and participate in. All prizes are
-				provided by us.
+				provided by us. All you need is a
+				<a
+					href="https://auth.hackclub.com/welcome"
+					target="_blank"
+					rel="noreferrer"
+				>
+					Hack Club Auth
+				</a>
+				account to log in and participate.
 			</AccordionItem>
 
 			<AccordionItem title="Who runs this?">
 				{programmeName}
 				is sponsored by
-				<a
-					href="https://hackclub.com"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
+				<a href="https://hackclub.com" target="_blank" rel="noreferrer">
 					Hack Club,
 				</a>
 				a US-based 501(c)(3) non-profit organisation. Hack Club aims to
@@ -128,6 +213,14 @@ import logo from "#lib/assets/powertools.svg"
 		</Accordion>
 	</div>
 </div>
+
+<div
+	id="chessboard"
+	role="img"
+	aria-label="Chessboard"
+	class="w-full pt-20"
+	style="--chessboard-bg: url({chessboard})"
+></div>
 
 <style>
 #hc:hover {
@@ -145,5 +238,20 @@ import logo from "#lib/assets/powertools.svg"
 	to {
 		transform: rotate(0deg);
 	}
+}
+
+#chessboard {
+	background-image: var(--chessboard-bg);
+	background-size: cover;
+	background-position: center;
+	aspect-ratio: 2560 / 1206;
+	/* Fade out only the left and right edges into the page background */
+	mask-image: linear-gradient(
+		to right,
+		transparent,
+		black 10%,
+		black 90%,
+		transparent
+	);
 }
 </style>

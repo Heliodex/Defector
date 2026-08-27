@@ -1,4 +1,3 @@
-import type { Cookies } from "@sveltejs/kit"
 import { redirect } from "@sveltejs/kit"
 import { db, Record, type RecordId } from "#lib/server/db.js"
 import deleteExpiredSessionsQuery from "#lib/server/deleteExpiredSessions.surql?raw"
@@ -92,10 +91,11 @@ export function getHackClubAuthUrl(state: string): string {
 }
 
 /**
- * Starts the Hack Club OAuth flow: stores a CSRF state cookie and redirects the
- * user to the Hack Club authorization URL.
+ * Starts the Hack Club OAuth flow: stores a CSRF state cookie and redirects the user to the Hack Club authorization URL.
  */
-export function startHackClubAuth(cookies: Cookies): never {
+export function startHackClubAuth(): never {
+	const { cookies } = getRequestEvent()
+
 	const state = crypto.randomUUID()
 
 	cookies.set("hca_state", state, {

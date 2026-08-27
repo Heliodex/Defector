@@ -1,2 +1,2 @@
-export const programmeName = "Power Tools"
-export const repoName = "Heliodex/PowerTools"
+export const programmeName = "Defector"
+export const repoName = "Heliodex/ysws3"

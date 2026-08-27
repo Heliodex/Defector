@@ -1,0 +1,1 @@
+<a href="/submit">Take me to the submission form</a>
