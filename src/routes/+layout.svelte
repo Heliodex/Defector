@@ -54,7 +54,7 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 			{@render navlink("", "Landing")}
 			<li>
 				<form {...login}>
-					<button class="navbtn" type="submit">Login</button>
+					<button class="navbtn" type="submit">Log in</button>
 				</form>
 			</li>
 		{/if}

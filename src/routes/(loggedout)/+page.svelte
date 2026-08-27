@@ -4,7 +4,7 @@ import AccordionItem from "#components/AccordionItem.svelte"
 import Head from "#components/Head.svelte"
 import chessboard from "#lib/assets/chessboard.png"
 import { programmeName } from "#lib/assets/config.js"
-import logo from "#lib/assets/logo.svg"
+import { login } from "../data.remote"
 </script>
 
 <Head />
@@ -35,17 +35,21 @@ import logo from "#lib/assets/logo.svg"
 			>Hack Club</a
 		>
 	</p>
+	<p class="max-w-120 pb-4">
+		Write a bot that plays a strategy game, battle other bots,<br>
+		and win money to spend on video games!
+	</p>
 	<p class="max-w-120">
-		Write a bot that plays the Iterated Prisoner's Dilemma, and watch it
-		climb a live Elo ladder.<br>
-		Every few seconds 2 bots battle. After 100+ rounds of cooperation or
-		betrayal, the leaderboard updates in real time.
+		Every few seconds 2 bots battle, and the winner climbs the leaderboard.
 	</p>
 </div>
 
-<p class="text-center">
-	<a href="/leaderboard" class="btn btn-primary"> Live leaderboard </a>
-</p>
+<div class="flex items-center justify-center gap-4">
+	<form {...login}>
+		<button class="btn btn-primary" type="submit">Log in</button>
+	</form>
+	<a href="/leaderboard" class="btn btn-secondary"> Live leaderboard </a>
+</div>
 
 <h2 class="pt-12 text-center">How it works</h2>
 <p class="pb-4">
@@ -57,7 +61,7 @@ import logo from "#lib/assets/logo.svg"
 
 <ul>
 	<li>Write a bot in TypeScript or JavaScript, no frameworks needed!</li>
-	<li>Bots run fully sandboxed: no network or files, pure functions only.</li>
+	<!-- <li>Bots run fully sandboxed: no network or files, pure functions only.</li> -->
 	<li>You may have up to 3 active bots in the live tournament at once.</li>
 	<li>
 		Your bots' Elo starts at 1000 and updates automatically after each
@@ -102,7 +106,7 @@ import logo from "#lib/assets/logo.svg"
 				<a
 					href="https://pyramid.hackclub.com"
 					target="_blank"
-					rel="noopener noreferrer"
+					rel="noreferrer"
 				>
 					referring others!
 				</a>
@@ -115,25 +119,29 @@ import logo from "#lib/assets/logo.svg"
 			</AccordionItem>
 
 			<AccordionItem title="What are the prizes?">
-				Everyone who verifiably spends time gets a participation reward
-				per tracked hour, and the top 3 users by Elo at the end win
-				video game grants.
+				Everyone who verifiably spends time gets video game grants or
+				gift cards as a reward. Based on leaderboard position and how
+				many matches your bots play, your grants may be larger!
 			</AccordionItem>
 
 			<AccordionItem title="How much does it cost to join in?">
 				{programmeName}
 				is completely free to join and participate in. All prizes are
-				provided by us.
+				provided by us. All you need is a
+				<a
+					href="https://auth.hackclub.com/welcome"
+					target="_blank"
+					rel="noreferrer"
+				>
+					Hack Club Auth
+				</a>
+				account to log in and participate.
 			</AccordionItem>
 
 			<AccordionItem title="Who runs this?">
 				{programmeName}
 				is sponsored by
-				<a
-					href="https://hackclub.com"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
+				<a href="https://hackclub.com" target="_blank" rel="noreferrer">
 					Hack Club,
 				</a>
 				a US-based 501(c)(3) non-profit organisation. Hack Club aims to
