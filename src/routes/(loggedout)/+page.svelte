@@ -137,7 +137,7 @@ import { login } from "../data.remote"
 	>
 </p>
 
-<div id="faq">
+<div id="faq" class="pb-24">
 	<h2 class="pt-12 pb-4 text-center">Frequently Asked Questions</h2>
 
 	<div class="mx-auto max-w-150 pb-8">
@@ -218,7 +218,7 @@ import { login } from "../data.remote"
 	id="chessboard"
 	role="img"
 	aria-label="Chessboard"
-	class="w-full pt-20"
+	class="-mb-20"
 	style="--chessboard-bg: url({chessboard})"
 ></div>
 
