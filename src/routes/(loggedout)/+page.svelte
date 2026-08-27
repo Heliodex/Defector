@@ -156,6 +156,13 @@ import { login } from "../data.remote"
 				</a>
 			</AccordionItem>
 
+			<AccordionItem title="Do I need to know how to code JavaScript?">
+				Nope! The <a href="/guide">Guide</a> will walk you through the
+				basics of writing a bot. It starts with the simplest bots, only
+				a few lines of code, then gradually shows how to build bots with
+				more advanced strategy.
+			</AccordionItem>
+
 			<AccordionItem title="Do I need to know game theory?">
 				Not at all. The simplest bots are only a few lines of code, and
 				you can iterate and deploy new bots throughout the programme,
