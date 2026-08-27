@@ -13,4 +13,4 @@ LET $bot = CREATE ONLY bot CONTENT {
 
 RELATE $user->created->$bot;
 
-$bot;
+record::id($bot);
