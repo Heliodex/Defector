@@ -66,7 +66,7 @@ const connected = $derived(dataResult.connected)
 		</p>
 	{:else}
 		<div class="overflow-x-auto px-4 sm:px-6">
-			<table class="w-full min-w-200 border-collapse text-sm">
+			<table class="w-full border-collapse text-sm">
 				<thead>
 					<tr class="text-left text-neutral-600">
 						<th class="border-b border-neutral-200 p-3">#</th>
