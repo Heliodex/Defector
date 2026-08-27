@@ -9,11 +9,49 @@ import Head from "#lib/components/Head.svelte"
 
 <h1 class="pt-8">Writing a bot</h1>
 
-<p>
-	Your bot is a single function. Every round of a battle, the tournament calls
+<p class="pb-4">
+	<!-- Your bot is a single function. Every round of a battle, the tournament calls
 	it with your current situation and you return a move — <b>"C"</b>
 	(cooperate) or <b>"D"</b> (defect) — plus a bit of <em>memory</em> to carry
-	into the next round.
+	into the next round. -->
+
+	Your bot is a single function. Imagine it as a machine that takes in a list
+	of moves (the game so far) and some memory, and outputs its next move and an
+	updated memory.<br>
+	This move is for a game similar to the classic
+	<a
+		href="https://en.wikipedia.org/wiki/Prisoner's_dilemma"
+		target="_blank"
+		rel="noreferrer"
+		>Prisoner's Dilemma</a
+	>, sometimes called the
+	<a
+		href="https://en.wikipedia.org/wiki/Peace_war_game"
+		target="_blank"
+		rel="noreferrer"
+		>Peace war game</a
+	>. The number of points for each move varies throughout the event, though
+	the basic idea is as follows:
+</p>
+
+<ul class="pb-4">
+	<li>
+		The 2 options for moves are to <b>cooperate</b>, or to <b>defect</b>.
+	</li>
+	<li>
+		The best outcome for both you and your oppenent is if you
+		<b>both cooperate</b>.
+	</li>
+	<li>
+		The best outcome for you, if your opponent is cooperating, is to
+		<b>defect</b>.
+	</li>
+</ul>
+
+<p>
+	The points are structured in this way because it makes for some interesting
+	gameplay, requires strategy to establish trust, and somewhat reflects many
+	theories on human cooperation and trust.
 </p>
 
 <p>The signature looks like this:</p>
@@ -22,11 +60,17 @@ import Head from "#lib/components/Head.svelte"
 	filename="bot.ts"
 	code={`
 	type Move = "C" | "D"
-	type Match = { you: Move; opponent: Move }
+
+	type Match = {
+		you: Move
+		opponent: Move
+	}
+
 	type Memory = unknown
+
 	type State = {
 		history: Match[]  // every round so far
-		memory: Memory    // whatever you saved last round ({} at the start)
+		memory: Memory // whatever you saved last round ({} at the start)
 	}
 
 	type Bot = (state: State) => [Move, Memory]
@@ -35,9 +79,11 @@ import Head from "#lib/components/Head.svelte"
 
 <p>
 	A battle runs a variable number of rounds — always at least 100. Your
-	<code>history</code> is always fully visible, and the
-	<code>memory</code> you return is passed back to you next round, so you can
-	remember anything you like without using global state.
+	<code>history</code>
+	is always fully visible, and the
+	<code>memory</code>
+	you return is passed back to you next round, so you can remember anything
+	you like without using global state.
 </p>
 
 <p>Here's the simplest possible bot — always cooperate:</p>
