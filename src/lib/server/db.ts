@@ -99,7 +99,7 @@ export const SubmittedHours = new Table("submittedHours")
 export const User = new Table("user")
 
 // Ensure type safety when creating record ids
-export type RecordId<T extends keyof RecordIdTypes> = SurrealRecordId<T>
+export type RecordId<T extends keyof RecordIdTypes, U extends RecordIdTypes[T]> = SurrealRecordId<T, U>
 
 /**
  * Returns a record id object for a given table and id.
