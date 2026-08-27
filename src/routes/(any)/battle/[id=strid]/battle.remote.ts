@@ -1,5 +1,5 @@
 import { error } from "@sveltejs/kit"
-import { type } from "#lib/arktype.ts"
+import { type } from "#lib/arktype.js"
 import { db, Record } from "#lib/server/db.js"
 import { query } from "$app/server"
 import getBattleQuery from "./getBattle.surql?raw"
