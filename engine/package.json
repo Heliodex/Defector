@@ -4,7 +4,7 @@
 		"@sebastianwessel/quickjs": "npm:@jsr/sebastianwessel__quickjs@^3.1.0",
 		"surrealdb": "^2.0.8"
 	},
-	"name": "ysws3",
+	"name": "defector",
 	"private": true,
 	"devDependencies": {
 		"@types/bun": "latest"
