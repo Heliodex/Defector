@@ -63,7 +63,7 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 </nav>
 
 <aside
-	class="sidebar hidden sm:block fixed inset-y-0 left-0 w-40 overflow-y-auto border-r-2 border-neutral-200 bg-white"
+	class="sidebar hidden sm:block fixed inset-y-0 left-0 w-40 overflow-y-auto border-r-2 border-neutral-200 bg-white z-1"
 >
 	<h1 class="text-2xl! p-4">{programmeName}</h1>
 	<nav class="p-4 pt-0">
