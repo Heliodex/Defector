@@ -1,7 +1,7 @@
 import { redirect } from "@sveltejs/kit"
 import { makeMessage, type } from "#lib/arktype.js"
 import { isAdmin } from "#lib/server/admin.js"
-import { authorise } from "#lib/server/auth.ts"
+import { authorise } from "#lib/server/auth.js"
 import { db, Record } from "#lib/server/db.js"
 import { form, getRequestEvent, query } from "$app/server"
 import battlesQuery from "./battles.surql?raw"
