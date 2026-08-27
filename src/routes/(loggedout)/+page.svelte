@@ -4,6 +4,7 @@ import AccordionItem from "#components/AccordionItem.svelte"
 import Head from "#components/Head.svelte"
 import chessboard from "#lib/assets/chessboard.png"
 import { programmeName } from "#lib/assets/config.js"
+import logo from "#lib/assets/logo.svg"
 import { login } from "../data.remote"
 </script>
 
@@ -19,7 +20,7 @@ import { login } from "../data.remote"
 </a>
 
 <div class="text-center pb-8 flex flex-col items-center">
-	<!-- <img src={logo} alt="{programmeName} logo" class="w-72"> -->
+	<img src={logo} alt="{programmeName} logo" class="w-24">
 
 	<h1 class="text-6xl! pb-0!">{programmeName}</h1>
 	<p class="text-center pb-8">
