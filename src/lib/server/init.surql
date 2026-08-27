@@ -113,11 +113,16 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 		(SELECT VALUE transpiled FROM $this.code ORDER BY updated)[$];
 	DEFINE FIELD OVERWRITE active ON bot TYPE bool DEFAULT ALWAYS false;
 	DEFINE FIELD OVERWRITE created ON bot TYPE datetime DEFAULT ALWAYS time::now();
-	DEFINE FIELD OVERWRITE elo ON bot TYPE float COMPUTED
-		(SELECT VALUE eloDelta[array::find_index(bots, $parent.id)]
-			FROM battle WHERE $parent.id IN bots)
-			.chain(|$deltas| 1000.0 + math::sum($deltas));
-	REMOVE FIELD IF EXISTS eloHistory.* ON bot; # WHY
+
+REMOVE FIELD IF EXISTS eloHistory ON bot;
+REMOVE FIELD IF EXISTS wins ON bot;
+REMOVE FIELD IF EXISTS losses ON bot;
+REMOVE FIELD IF EXISTS totalBattles ON bot;
+
+DEFINE FUNCTION OVERWRITE fn::botElo($bot: record<bot>) -> float {
+	1000.0 + math::sum(SELECT VALUE eloDelta[array::find_index(bots, $bot.id)]
+		FROM battle WHERE $bot.id IN bots);
+};
 
 DEFINE FUNCTION OVERWRITE fn::botEloHistory($bot: record<bot>) -> array<float> {
 	SELECT VALUE eloDelta[array::find_index(bots, $bot.id)]
