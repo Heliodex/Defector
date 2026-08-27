@@ -2,15 +2,16 @@
 import Accordion from "#lib/components/Accordion.svelte"
 import AccordionItem from "#lib/components/AccordionItem.svelte"
 import Head from "#lib/components/Head.svelte"
+import { truncate } from "#lib/truncate.js"
 import { page } from "$app/state"
 import { getBattle } from "./battle.remote"
 
 const battle = $derived(await getBattle(page.params.id ?? ""))
 
-function name(i: 0 | 1): string {
-	if (!battle) return ""
-	return battle.botNames[i] ?? battle.botIds[i] ?? `Bot ${i + 1}`
-}
+const name = (i: 0 | 1): string =>
+	battle
+		? truncate(battle.botNames[i] ?? battle.botIds[i] ?? `Bot ${i + 1}`)
+		: ""
 
 function botHref(i: 0 | 1): string | null {
 	if (!battle) return null
