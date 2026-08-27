@@ -54,15 +54,14 @@ import { login } from "../data.remote"
 
 <h2 class="pt-12 text-center">How it works</h2>
 <p class="pb-4">
-	You write a tiny pure function that, given your history with an opponent,
-	picks a move: <b>cooperate (C)</b> or <b>defect (D)</b>. Your bot gets a
-	fresh opponent every battle and earns points per round. Better bots win more
+	You write a tiny function that, given your history with an opponent, picks a
+	move: <b>cooperate (C)</b> or <b>defect (D)</b>. Your bot gets a new
+	opponent every battle and earns points per round. Better bots win more
 	battles and climb the Elo ladder.
 </p>
 
 <ul>
-	<li>Write a bot in TypeScript or JavaScript, no frameworks needed!</li>
-	<!-- <li>Bots run fully sandboxed: no network or files, pure functions only.</li> -->
+	<li>Write a bot in TypeScript or JavaScript, no frameworks needed.</li>
 	<li>You may have up to 3 active bots in the live tournament at once.</li>
 	<li>
 		Your bots' Elo starts at 1000 and updates automatically after each
@@ -70,18 +69,62 @@ import { login } from "../data.remote"
 	</li>
 </ul>
 
-<p class="pb-4 pt-4">
-	See the <a href="/guide">Guide</a> for bot examples (tit-for-tat, and more).
+<p class="pt-4 pb-8">
+	See the <a href="/guide">Guide</a> for bot examples, and how to write a bot
+	in 3 lines of code.
 </p>
 
 <p>
 	Want to know how it works under the hood? The tournament is an
-	<b>Iterated Prisoner's Dilemma</b>: in each round both you and your opponent
-	choose to cooperate or defect. If you both cooperate you each get 2 points;
-	if you defect while they cooperate you get 3 and they get 0; if you both
-	defect you each get 1. Over at least 100 rounds, the accumulated score
-	decides the winner. Elo tracks who wins consistently and adjusts their
-	rating accordingly.
+	<a
+		href="https://en.wikipedia.org/wiki/Prisoner's_dilemma#The_iterated_prisoner's_dilemma"
+		target="_blank"
+		rel="noreferrer"
+		>Iterated Prisoner's Dilemma</a
+	>: in each round both you and your opponent choose to cooperate or defect.
+</p>
+
+<ul>
+	<li>If you both cooperate you each get 2 points.</li>
+	<li>If you both defect you each get 1 point.</li>
+	<li>
+		If one of you defects while the other cooperates, the defector gets 3
+		points and the other gets 0.
+	</li>
+</ul>
+
+<p>
+	This makes the payoff matrix (how many points you get for each move) look
+	like this:
+</p>
+
+<div class="py-4">
+	<table class="mx-auto shadowcard">
+		<thead>
+			<tr>
+				<th class="font-normal">You →<br>Opponent ↓</th>
+				<th>Cooperate</th>
+				<th>Defect</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td class="font-bold">Cooperate</td>
+				<td>2, 2</td>
+				<td>0, 3</td>
+			</tr>
+			<tr>
+				<td class="font-bold">Defect</td>
+				<td>3, 0</td>
+				<td>1, 1</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<p>
+	Over at least 100 rounds, the accumulated score decides the winner. Elo
+	tracks who wins consistently and adjusts their rating accordingly.
 </p>
 
 <p class="pt-4">
@@ -90,7 +133,7 @@ import { login } from "../data.remote"
 		<a href="https://lapse.hackclub.com/" target="_blank" rel="noreferrer"
 			>Lapse</a
 		>
-		so we can verify it for your participation reward!</b
+		so we can verify it for your rewards!</b
 	>
 </p>
 
@@ -114,9 +157,14 @@ import { login } from "../data.remote"
 			</AccordionItem>
 
 			<AccordionItem title="Do I need to know game theory?">
-				Not at all. The simplest bots are just a few lines — "always
-				cooperate", "always defect", or "tit-for-tat" (do what your
-				opponent did last round). See the Guide for examples.
+				Not at all. The simplest bots are only a few lines of code, and
+				you can iterate and deploy new bots throughout the programme,
+				while seeing what works and what doesn't.
+				<br>
+				<br>
+				If you don't know game theory now, you will by the end of the
+				programme! If you want to learn the easy way, check out the
+				<a href="/guide">Guide</a>.
 			</AccordionItem>
 
 			<AccordionItem title="What are the prizes?">

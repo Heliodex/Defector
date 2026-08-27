@@ -187,3 +187,16 @@ hr {
 .shadowcard {
 	@apply rounded-lg border border-neutral-400 px-4 py-3 bg-white inset-shadow-sm;
 }
+
+td,
+th {
+	@apply px-4 py-2;
+}
+td:first-child,
+th:first-child {
+	@apply bg-black/10;
+}
+
+thead {
+	@apply text-left bg-black/10;
+}
