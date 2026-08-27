@@ -5,9 +5,9 @@ SELECT
 	description,
 	active,
 	created,
-	fn::botElo($this) AS elo,
-	fn::botWins($this) AS wins,
-	fn::botLosses($this) AS losses,
-	fn::botTotalBattles($this) AS totalBattles
+	fn::botElo($this.id) AS elo,
+	fn::botWins($this.id) AS wins,
+	fn::botLosses($this.id) AS losses,
+	fn::botTotalBattles($this.id) AS totalBattles
 FROM $user->created->bot
 ORDER BY created DESC;
