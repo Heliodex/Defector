@@ -12,7 +12,7 @@ import { login } from "../data.remote"
 <a href="https://hackclub.com/" target="_blank" rel="noreferrer">
 	<img
 		id="hc"
-		class="absolute top-0 left-44 border-0 w-32 z-999"
+		class="absolute top-0 lg:left-44 border-0 w-32 z-999"
 		src="https://assets.hackclub.com/flag-orpheus-top.svg"
 		alt="Hack Club"
 	>

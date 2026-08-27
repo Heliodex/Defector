@@ -37,7 +37,7 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 	<li><a class="navbtn" href="/{link}">{label}</a></li>
 {/snippet}
 
-<nav class="sm:hidden px-4 py-3">
+<nav class="sm:hidden pl-40 px-4 py-3">
 	<ul class="flex flex-wrap gap-5">
 		{#if await user}
 			{@render navlink("home", "Home")}
