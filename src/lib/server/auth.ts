@@ -76,7 +76,7 @@ export async function authorise() {
 }
 
 /**
- * Generates the Hack Club OAuth authorization URL
+ * Generates the Hack Club OAuth authorisation URL
  */
 export function getHackClubAuthUrl(state: string): string {
 	const params = new URLSearchParams({
@@ -91,7 +91,7 @@ export function getHackClubAuthUrl(state: string): string {
 }
 
 /**
- * Starts the Hack Club OAuth flow: stores a CSRF state cookie and redirects the user to the Hack Club authorization URL.
+ * Starts the Hack Club OAuth flow: stores a CSRF state cookie and redirects the user to the Hack Club authorisation URL.
  */
 export function startHackClubAuth(): never {
 	const { cookies } = getRequestEvent()
@@ -141,7 +141,7 @@ type HackClubUserInfo = {
 }
 
 /**
- * Exchanges an authorization code for an access token
+ * Exchanges an authorisation code for an access token
  */
 export async function exchangeCodeForToken(
 	code: string
@@ -269,7 +269,7 @@ export async function generatePkcePair(): Promise<{
 }
 
 /**
- * Generates the Lapse OAuth authorization URL
+ * Generates the Lapse OAuth authorisation URL
  */
 export function getLapseAuthUrl(state: string, codeChallenge: string): string {
 	const params = new URLSearchParams({

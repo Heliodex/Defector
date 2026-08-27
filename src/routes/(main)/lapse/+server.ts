@@ -11,10 +11,9 @@ import { dev } from "$app/env"
 export async function GET({ cookies, url }: RequestEvent) {
 	const { user } = await authorise()
 
-	// The provider redirects back here with `error` when the user denies consent
-	// or something goes wrong during authorization.
+	// The provider redirects back here with `error` when the user denies consent or something goes wrong during authorization.
 	const authError = url.searchParams.get("error")
-	if (authError) error(400, `Lapse authorization failed: ${authError}`)
+	if (authError) error(400, `Lapse authorisation failed: ${authError}`)
 
 	// Verify state to prevent CSRF
 	const code = url.searchParams.get("code")
