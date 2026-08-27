@@ -23,7 +23,7 @@ onMount(async () => {
 			continue
 		}
 
-		battles.battles.push(...msg.battles)
+		battles.battles = [...msg.battles, ...battles.battles].slice(0, 50)
 		battles.allBattles = msg.allBattles
 	}
 })
@@ -44,6 +44,7 @@ onMount(async () => {
 			else {
 				console.log("new bot", bot)
 				bots.bots.push(bot)
+				bots.bots.sort((a, b) => b.elo - a.elo)
 			}
 		}
 		bots.activeBots = msg.activeBots
