@@ -158,7 +158,13 @@ import { login } from "../data.remote"
 	</div>
 </div>
 
-<img src={chessboard} alt="Chessboard" class="w-full pt-20">
+<div
+	id="chessboard"
+	role="img"
+	aria-label="Chessboard"
+	class="w-full pt-20"
+	style="--chessboard-bg: url({chessboard})"
+></div>
 
 <style>
 #hc:hover {
@@ -176,5 +182,20 @@ import { login } from "../data.remote"
 	to {
 		transform: rotate(0deg);
 	}
+}
+
+#chessboard {
+	background-image: var(--chessboard-bg);
+	background-size: cover;
+	background-position: center;
+	aspect-ratio: 2560 / 1206;
+	/* Fade out only the left and right edges into the page background */
+	mask-image: linear-gradient(
+		to right,
+		transparent,
+		black 10%,
+		black 90%,
+		transparent
+	);
 }
 </style>
