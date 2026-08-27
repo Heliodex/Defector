@@ -29,7 +29,7 @@ const round = (num: number): number => Math.round(num * 100) / 100
 
 <h1 class="text-2xl font-bold pt-4">Battle {battle.id}</h1>
 
-<p class="pt-2 text-sm text-gray-500">
+<p class="py-2 text-sm text-gray-500">
 	{new Date(battle.created).toLocaleString()}
 </p>
 
