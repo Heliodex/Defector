@@ -35,44 +35,24 @@ const round = (num: number): number => Math.round(num * 100) / 100
 
 <div class="shadowcard max-w-xl">
 	<div class="flex items-center justify-between gap-4">
-		{#if battle.winnerIndex === 0}
-			<span class="font-bold"
-				>{#if botHref(0)}
-					<a href={botHref(0)} class="underline">{name(0)}</a>
-				{:else}
-					{name(0)}
-				{/if}</span
-			>
-		{:else}
-			<span
-				>{#if botHref(0)}
-					<a href={botHref(0)} class="underline">{name(0)}</a>
-				{:else}
-					{name(0)}
-				{/if}</span
-			>
-		{/if}
+		<span class={{"font-bold": battle.winnerIndex === 0}}>
+			{#if botHref(0)}
+				<a href={botHref(0)} class="underline">{name(0)}</a>
+			{:else}
+				{name(0)}
+			{/if}
+		</span>
 		<span class="text-2xl font-semibold"
 			>{round(battle.scores[0])}
 			: {round(battle.scores[1])}</span
 		>
-		{#if battle.winnerIndex === 1}
-			<span class="font-bold"
-				>{#if botHref(1)}
-					<a href={botHref(1)} class="underline">{name(1)}</a>
-				{:else}
-					{name(1)}
-				{/if}</span
-			>
-		{:else}
-			<span
-				>{#if botHref(1)}
-					<a href={botHref(1)} class="underline">{name(1)}</a>
-				{:else}
-					{name(1)}
-				{/if}</span
-			>
-		{/if}
+		<span class={{"font-bold": battle.winnerIndex === 1}}>
+			{#if botHref(1)}
+				<a href={botHref(1)} class="underline">{name(1)}</a>
+			{:else}
+				{name(1)}
+			{/if}
+		</span>
 	</div>
 
 	<p class="pt-2 text-center text-sm">
