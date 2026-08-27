@@ -118,25 +118,33 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 			FROM battle WHERE $parent.id IN bots)
 			.chain(|$deltas| 1000.0 + math::sum($deltas));
 	REMOVE FIELD IF EXISTS eloHistory.* ON bot; # WHY
-	DEFINE FIELD OVERWRITE eloHistory ON bot TYPE array<float> COMPUTED
-		SELECT VALUE eloDelta[array::find_index(bots, $parent.id)]
-		FROM battle WHERE $parent.id IN bots
+
+DEFINE FUNCTION OVERWRITE fn::botEloHistory($bot: record<bot>) -> array<float> {
+	SELECT VALUE eloDelta[array::find_index(bots, $bot.id)]
+		FROM battle WHERE $bot.id IN bots
 		ORDER BY created DESC
 		LIMIT 200;
-	DEFINE FIELD OVERWRITE wins ON bot TYPE int COMPUTED
-		(SELECT VALUE {
-			LET $idx = array::find_index(bots, $parent.id)
-			$this.scores[$idx] > $this.scores[1 - $idx]
-		} FROM battle WHERE $parent.id IN bots)
-			[? $this].chain(|$v| count($v));
-	DEFINE FIELD OVERWRITE losses ON bot TYPE int COMPUTED
-		(SELECT VALUE {
-			LET $idx = array::find_index(bots, $parent.id)
-			$this.scores[$idx] < $this.scores[1 - $idx]
-		} FROM battle WHERE $parent.id IN bots)
-			[? $this].chain(|$v| count($v));
-	DEFINE FIELD OVERWRITE totalBattles ON bot TYPE int COMPUTED
-		count(SELECT 1 FROM battle WHERE $parent.id IN bots);
+};
+
+DEFINE FUNCTION OVERWRITE fn::botWins($bot: record<bot>) -> int {
+	(SELECT VALUE {
+		LET $idx = array::find_index(bots, $bot.id)
+		$this.scores[$idx] > $this.scores[1 - $idx]
+	} FROM battle WHERE $bot.id IN bots)
+		[? $this].chain(|$v| count($v));
+};
+
+DEFINE FUNCTION OVERWRITE fn::botLosses($bot: record<bot>) -> int {
+	(SELECT VALUE {
+		LET $idx = array::find_index(bots, $bot.id)
+		$this.scores[$idx] < $this.scores[1 - $idx]
+	} FROM battle WHERE $bot.id IN bots)
+		[? $this].chain(|$v| count($v));
+};
+
+DEFINE FUNCTION OVERWRITE fn::botTotalBattles($bot: record<bot>) -> int {
+	count(SELECT 1 FROM battle WHERE $bot.id IN bots);
+};
 
 DEFINE FUNCTION OVERWRITE fn::latestMatrix() -> record<matrix> {
 	(SELECT VALUE id FROM matrix ORDER BY created)[$];
@@ -207,7 +215,7 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
 
 # THIS CANNOT BE A COMPUTED BECAUSE OTHERWISE IT WILL EAT ALL 32GB OF MY RAM
-DEFINE FUNCTION OVERWRITE fn::botNames($battle: record<battle>) -> array<string, 2> {
+DEFINE FUNCTION OVERWRITE fn::battleBotNames($battle: record<battle>) -> array<string, 2> {
 	SELECT VALUE name FROM ONLY $battle.bots;
 };
 
