@@ -1,5 +1,7 @@
 <script lang="ts">
 import { onMount } from "svelte"
+import { flip } from "svelte/animate"
+import { fly } from "svelte/transition"
 import Head from "#lib/components/Head.svelte"
 import TimeAgo from "#lib/components/TimeAgo.svelte"
 import {
@@ -146,7 +148,10 @@ const connected = $derived(
 	{:else}
 		<ul class="noul flex flex-col gap-2 pt-4">
 			{#each battles.battles as battle (battle.id)}
-				<li>
+				<li
+					in:fly={{ x: -300, y: 0, duration: 400 }}
+					animate:flip={{ duration: 300 }}
+				>
 					<a
 						href="/battle/{battle.id}"
 						class="btn flex items-center justify-between rounded-lg border border-neutral-300 bg-white px-4 py-2 hover:border-blue-600"
