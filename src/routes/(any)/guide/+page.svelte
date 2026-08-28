@@ -10,11 +10,12 @@ import Head from "#lib/components/Head.svelte"
 <h1 class="pt-8">Writing a bot</h1>
 
 <p class="pb-4">
-	<!-- Your bot is a single function. Every round of a battle, the tournament calls
-	it with your current situation and you return a move — <b>"C"</b>
-	(cooperate) or <b>"D"</b> (defect) — plus a bit of <em>memory</em> to carry
-	into the next round. -->
+	This guide will teach you how to write a bot to participate in battles.
+	Simple bots can be written in a few lines of code, but the best bots are
+	often more complex and require some strategy.
+</p>
 
+<p class="pb-4">
 	Your bot is a single function. Imagine it as a machine that takes in a list
 	of moves (the game so far) and some memory, and outputs its next move and an
 	updated memory.<br>
@@ -48,65 +49,116 @@ import Head from "#lib/components/Head.svelte"
 	</li>
 </ul>
 
-<p>
+<p class="pb-4">
 	The points are structured in this way because it makes for some interesting
 	gameplay, requires strategy to establish trust, and somewhat reflects many
-	theories on human cooperation and trust.
+	theories on human cooperation and trust. Each player makes a move at the
+	same time, so can't see what the other player did until they have both made
+	their move.
 </p>
 
-<p>The signature looks like this:</p>
+<p>
+	This programme allows you to submit such functions or bots, written in
+	JavaScript or TypeScript. If you know TypeScript syntax, the signature looks
+	like this:
+</p>
 
 <Code
 	filename="bot.ts"
 	code={`
+	// "C" represents cooperation, "D" represents defection.
 	type Move = "C" | "D"
 
+	// A match has 2 moves, 1 by you and 1 by your opponent.
 	type Match = {
 		you: Move
 		opponent: Move
 	}
 
+	// You can put anything you want in memory, or nothing at all.
 	type Memory = unknown
 
 	type State = {
-		history: Match[]  // every round so far
-		memory: Memory // whatever you saved last round ({} at the start)
+		history: Match[] // Every round so far
+		memory: Memory // Whatever you saved to your memory last round
 	}
 
+	// A bot looks at its existing state (the history and its memory), and outputs its next move and an updated memory.
 	type Bot = (state: State) => [Move, Memory]
 `}
 />
 
-<p>
-	A battle runs a variable number of rounds — always at least 100. Your
-	<code>history</code>
-	is always fully visible, and the
-	<code>memory</code>
-	you return is passed back to you next round, so you can remember anything
-	you like without using global state.
+<p class="pb-4">
+	If you only know JavaScript and not TypeScript, just know that the type
+	annotations used in TypeScript are entirely optional and don't ever affect
+	how the code actually runs. You can write your bot in JavaScript and it will
+	work just fine &ndash; the types are for your own understanding and to help
+	you avoid mistakes.
 </p>
 
-<p>Here's the simplest possible bot — always cooperate:</p>
+<p class="pb-4">
+	A battle runs for many rounds, always at least 100. Your bot can see the
+	full history of moves, and whatever memory you return will be passed back to
+	you in the next round, allowing you to remember anything you like without
+	having to keep variables outside your bot's function (in the global scope,
+	which won't be persisted).
+</p>
+
+<p>
+	Let's write a simple bot. Our strategy will be to cooperate 100% of the
+	time, and hope that our opponent doesn't defect, I guess. Let's call it
+	<b>alwaysCooperate</b>. We'll start with a JavaScript file containing a
+	single function.
+</p>
 
 <Code
-	filename="alwaysCooperate.ts"
+	filename="alwaysCooperate.js"
 	code={`
-	export default function bot({ memory }: State): [Move, Memory] {
-		return ["C", memory]
+	function bot() {
 	}
 `}
 />
 
-<p>And its nemesis — always defect:</p>
+<p>
+	We should define a move to make, and some memory to store. The move we'll
+	make is to cooperate, which is represented with the <code>"C"</code> string.
+	We don't need to store any memory, which we can represent with
+	<code>null</code>.
+</p>
 
 <Code
-	filename="alwaysDefect.ts"
+	filename="alwaysCooperate.js"
 	code={`
-	export default function bot({ memory }: State): [Move, Memory] {
-		return ["D", memory]
+	function bot() {
++		const move = "C" // Cooperate on every move
++		const memory = null // We don't need to remember anything
 	}
 `}
 />
+
+<p>
+	Finally, we need to do 2 things with our move and memory: return them from
+	the function, and export the function so that the tournament can use it. The
+	final code looks like this:
+</p>
+
+<Code
+	filename="alwaysCooperate.js"
+	code={`
++	export default function bot() {
+		const move = "C" // Cooperate on every move
+		const memory = null // We don't need to remember anything
+
++		return [move, memory] // Move must come 1st, then memory 2nd
+	}
+`}
+/>
+
+<h2 class="pt-8">Writing an opponent</h2>
+
+<p>
+	
+</p>
 
 <p>
 	A classic strategy is <b>tit-for-tat</b>: cooperate first, then just mirror
