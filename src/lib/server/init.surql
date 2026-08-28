@@ -173,7 +173,7 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE eloDelta ON battle TYPE array<float, 2> DEFAULT ALWAYS {
 		LET $matrix: record<matrix> = (SELECT VALUE matrix FROM ONLY $this) OR fn::latestMatrix();
 		LET $payoff: array<array<float, 2>, 2> = SELECT VALUE payoff FROM ONLY $matrix;
-		IF !$payoff {
+		IF $payoff == NONE {
 			THROW "eloDelta: payoff is NONE";
 		};
 
@@ -191,12 +191,12 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		} ELSE {
 			LET $matrix: record<matrix> = (SELECT VALUE matrix FROM ONLY $this) OR fn::latestMatrix();
 			LET $payoff: array<array<float, 2>, 2> = SELECT VALUE payoff FROM ONLY $matrix;
-			IF !$payoff {
+			IF $payoff == NONE {
 				THROW "eloDelta: payoff is NONE in scores";
 			};
 
 			LET $rounds = SELECT VALUE rounds FROM ONLY $this;
-			IF !$rounds {
+			IF $rounds == NONE {
 				THROW "eloDelta: rounds is NONE";
 			};
 
