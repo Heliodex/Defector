@@ -206,8 +206,8 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 			[math::sum($pts.map(|$p| $p[0])) / $c, math::sum($pts.map(|$p| $p[1])) / $c];
 		};
 		LET $K = <float> 32;
-		LET $rating0 = SELECT VALUE elo FROM ONLY $this.bots[0];
-		LET $rating1 = SELECT VALUE elo FROM ONLY $this.bots[1];
+		LET $rating0 = fn::botElo($this.bots[0]);
+		LET $rating1 = fn::botElo($this.bots[1]);
 		LET $expected0 = 1.0 / (1.0 + math::pow(10.0, ($rating1 - $rating0) / 400.0));
 		LET $total = $scores[0] + $scores[1];
 		LET $actual0 = IF $total > 0.0 {
