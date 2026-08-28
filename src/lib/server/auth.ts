@@ -84,7 +84,7 @@ export function getHackClubAuthUrl(state: string): string {
 		redirect_uri: HACKCLUB_REDIRECT_URI,
 		response_type: "code",
 		// "phone address birthdate" scopes are HQ-official only
-		scope: "openid profile email slack_id verification_status",
+		scope: "openid email name profile phone birthdate address verification_status slack_id basic_info",
 		state,
 	})
 	return `https://auth.hackclub.com/oauth/authorize?${params.toString()}`
@@ -125,19 +125,19 @@ type HackClubUserInfo = {
 	family_name?: string
 	nickname?: string
 	// HQ-official only (phone, birthdate, address scopes):
-	// phone_number?: string
-	// phone_number_verified?: boolean
-	// birthdate?: string
+	phone_number?: string
+	phone_number_verified?: boolean
+	birthdate?: string
 	slack_id?: string
 	verification_status?: string
 	ysws_eligible?: boolean
-	// address?: {
-	// 	street_address?: string
-	// 	locality?: string
-	// 	region?: string
-	// 	postal_code?: string
-	// 	country?: string
-	// }
+	address?: {
+		street_address?: string
+		locality?: string
+		region?: string
+		postal_code?: string
+		country?: string
+	}
 }
 
 /**
@@ -185,7 +185,9 @@ export async function fetchHackClubUserInfo(
 		throw new Error(`Failed to fetch user info: ${error}`)
 	}
 
-	return response.json()
+	const res = await response.json()
+	console.log(res)
+	return res
 }
 
 /**
@@ -203,13 +205,13 @@ export async function findOrCreateUser(
 		nickname,
 		email_verified,
 		// HQ-official only (phone, birthdate, address scopes):
-		// phone_number,
-		// phone_number_verified,
-		// birthdate,
+		phone_number,
+		phone_number_verified,
+		birthdate,
 		slack_id,
 		verification_status,
 		ysws_eligible,
-		// address,
+		address,
 	} = userInfo
 
 	const extraInfo = {
@@ -219,21 +221,21 @@ export async function findOrCreateUser(
 		nickname: nickname ?? "",
 		emailVerified: email_verified ?? false,
 		// HQ-official only:
-		// phoneNumber: phone_number ?? "",
-		// phoneNumberVerified: phone_number_verified ?? false,
-		// birthdate: birthdate ?? "",
+		phoneNumber: phone_number ?? "",
+		phoneNumberVerified: phone_number_verified ?? false,
+		birthdate: birthdate ?? "",
 		slackId: slack_id ?? "",
 		verificationStatus: verification_status ?? "",
 		yswsEligible: ysws_eligible ?? false,
-		// address: address
-		// 	? {
-		// 			streetAddress: address.street_address || null,
-		// 			locality: address.locality || null,
-		// 			region: address.region || null,
-		// 			postalCode: address.postal_code || null,
-		// 			country: address.country || null,
-		// 		}
-		// 	: null,
+		address: address
+			? {
+					streetAddress: address.street_address || null,
+					locality: address.locality || null,
+					region: address.region || null,
+					postalCode: address.postal_code || null,
+					country: address.country || null,
+				}
+			: undefined,
 	}
 
 	const [, userId] = await db.query<RecordId<"user">[]>(
