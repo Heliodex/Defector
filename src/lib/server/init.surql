@@ -127,10 +127,10 @@ DEFINE FUNCTION OVERWRITE fn::botElo($bot: record<bot>) -> float {
 
 DEFINE FUNCTION OVERWRITE fn::botEloHistory($bot: record<bot>) -> array<float> {
 	LET $id = record::id($bot);
-	SELECT VALUE eloDelta[array::find_index(bots, $bot.id)]
-		FROM battle WHERE $id IN botIds
-		ORDER BY created DESC
-		LIMIT 200;
+	(SELECT eloDelta, bots, created
+	    FROM battle WHERE $bot IN bots
+	    ORDER BY created DESC
+	    LIMIT 200).map(|$x| $x.eloDelta[array::find_index($x.bots, $bot)])
 };
 
 DEFINE FUNCTION OVERWRITE fn::botWins($bot: record<bot>) -> int {
