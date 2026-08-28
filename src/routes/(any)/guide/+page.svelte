@@ -292,7 +292,11 @@ import Head from "#lib/components/Head.svelte"
 </div>
 
 <p>
-	Against <b>alwaysDefect</b>, <b>titForTat</b> cooperates on the first round, but then defects for every subsequent round. Both bots receive 1 point per round, except for the first round where <b>titForTat</b> receives 0 points and <b>alwaysDefect</b> receives 3 points. <b>alwaysDefect</b> wins the battle, but only by a small margin.
+	Against <b>alwaysDefect</b>, <b>titForTat</b> cooperates on the first round,
+	but then defects for every subsequent round. Both bots receive 1 point per
+	round, except for the first round where <b>titForTat</b> receives 0 points
+	and <b>alwaysDefect</b> receives 3 points. <b>alwaysDefect</b> wins the
+	battle, but only by a small margin.
 </p>
 
 <div class="py-4">
@@ -307,32 +311,92 @@ import Head from "#lib/components/Head.svelte"
 </div>
 
 <p class="pb-4">
-	Okay, there's 1 problem with the tit-for-tat strategy, and that's the fact that it can never win a battle. Due to its fairly peaceful-until-provoked nature, it never defects <em>more</em> than its opponent. However, when it does lose, it loses by a only a hair.
+	Okay, there's 1 problem with the tit-for-tat strategy, and that's the fact
+	that it can never win a battle. Due to its fairly peaceful-until-provoked
+	nature, it never defects <em>more</em> than its opponent. However, when it
+	does lose, it loses by a only a hair.
 </p>
 
 <p>
-	Sometimes you want to react to more than the last round. That's what
-	<code>memory</code>
-	is for. Here's a bot that "holds a grudge": once you've defected against it
-	more than a few times, it defects forever.
+	We'll implement a 4th and final bot to demonstrate the use of memory, and to
+	actually be able to win a battle. This bot will "hold a grudge": once its
+	opponent has defected against it once, it will defect forever. This bot will
+	need to keep track of whether its opponent has defected against it, so it
+	will use memory to store that information. We'll call this bot
+	<b>grudger</b>.
 </p>
 
 <Code
-	filename="grudger.ts"
+	filename="grudger.js"
 	code={`
-	export default function bot({ history, memory }: State): [Move, Memory] {
-		const defects = (memory.defects ?? 0) as number
-		const lastOpp = history.at(-1)?.opponent
-		const next = { ...memory, defects: defects + (lastOpp === "D" ? 1 : 0) }
-
-		return [next.defects > 3 ? "D" : "C", next]
+	export default function bot({ history, memory }) {
 	}
 `}
 />
 
-<p class="pb-4">
-	Notice that the new memory object is returned as the second element of the
-	tuple — the tournament stores it and hands it back to you next round.
+<p>
+	Its memory starts off as <code>null</code>, so the first thing we'll do is
+	set it with a variable so that we can know whether our opponent has defected
+	yet.
+</p>
+
+<Code
+	filename="grudger.js"
+	code={`
+	export default function bot({ history, memory }) {
++		// If memory is null, set it to an object with a property to track whether the opponent has defected
++		memory = memory ?? { opponentDefected: false }
+	}
+`}
+/>
+
+<p>
+	Next we'll get the opponent's previous move, and if it's a defection, set
+	the <code>opponentDefected</code> property to <code>true</code>. If it
+	isn't, nothing will happen, so the property will remain what it was before.
+</p>
+
+<Code
+	filename="grudger.js"
+	code={`
+	export default function bot({ history, memory }) {
+		// If memory is null, set it to an object with a property to track whether the opponent has defected
+		memory = memory ?? { opponentDefected: false }
+
++		// Get the opponent's last move
++		const lastOpponentMove = history.at(-1)?.opponent
++		if (lastOpponentMove === "D")
++			memory.opponentDefected = true
+	}
+`}
+/>
+
+<p>
+	Finally, we'll choose our move based on whether the opponent has defected
+	yet, and return our move. We'll also return our updated memory so that we
+	can remember whether the opponent has defected in future rounds.
+</p>
+
+<Code
+	filename="grudger.js"
+	code={`
+	export default function bot({ history, memory }) {
+		// If memory is null, set it to an object with a property to track whether the opponent has defected
+		memory = memory ?? { opponentDefected: false }
+
+		// Get the opponent's last move
+		const lastOpponentMove = history.at(-1)?.opponent
+		if (lastOpponentMove === "D")
+			memory.opponentDefected = true
+
++		const move = memory.opponentDefected ? "D" : "C"
++		return [move, memory]
+	}
+`}
+/>
+
+<p>
+	I'll leave it up to you to decide if this strategy is a good one
 </p>
 
 <h1 class="pt-4">The rules</h1>
