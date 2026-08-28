@@ -185,9 +185,7 @@ export async function fetchHackClubUserInfo(
 		throw new Error(`Failed to fetch user info: ${error}`)
 	}
 
-	const res = await response.json()
-	console.log(res)
-	return res
+	return await response.json()
 }
 
 /**
