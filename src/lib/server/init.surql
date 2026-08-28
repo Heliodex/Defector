@@ -209,7 +209,6 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		LET $rating0 = SELECT VALUE elo FROM ONLY $this.bots[0];
 		LET $rating1 = SELECT VALUE elo FROM ONLY $this.bots[1];
 		LET $expected0 = 1.0 / (1.0 + math::pow(10.0, ($rating1 - $rating0) / 400.0));
-		LET $expected1 = 1.0 - $expected0;
 		LET $total = $scores[0] + $scores[1];
 		LET $actual0 = IF $total > 0.0 {
 			$scores[0] / $total
@@ -217,9 +216,8 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 			# Both scores are 0 (e.g. both bots error, or a 0:0 battle) — fall back to a draw.
 			0.5
 		};
-		LET $actual1 = 1.0 - $actual0;
 
-		[$K * ($actual0 - $expected0), $K * ($actual1 - $expected1)]
+		[$K * ($actual0 - $expected0), $K * ($expected0 - $actual0)] # yes this could be 1 number, no we're not making it that because idk
 	};
 	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
 
