@@ -7,7 +7,7 @@ SELECT
 	fn::botTotalBattles($this.id) AS totalBattles
 	-- SELECT VALUE extraInfo.nickname FROM ONLY $parent<-created<-user AS ownerName
 FROM bot
-WHERE active = true AND IF $id { id == $id } ELSE { true }
+WHERE IF $id { id == $id } ELSE { true }
 ORDER BY elo DESC, wins DESC, name ASC;
 
-count(SELECT 1 FROM bot);
+count(SELECT 1 FROM bot WHERE active);
