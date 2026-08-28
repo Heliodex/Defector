@@ -25,7 +25,7 @@ const name = (i: 0 | 1): string =>
 	{new Date(battle.created).toLocaleString()}
 </p>
 
-<BattleCard {battle} {name} />
+<BattleCard {battle} />
 
 {#if battle.errors.some(Boolean)}
 	<div class="pt-4 max-w-xl">

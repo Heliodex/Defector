@@ -1,13 +1,15 @@
 <script lang="ts">
+import { truncate } from "#lib/truncate.js"
 import type { Battle } from "../../routes/(any)/battle/[id=strid]/battle.remote"
 
-const {
-	battle,
-	name,
-}: {
-	battle: Battle
-	name: (i: 0 | 1) => string
-} = $props()
+type CardBattle = Pick<Battle, "botIds" | "botNames" | "scores" | "winnerIndex">
+
+const { battle }: { battle: CardBattle } = $props()
+
+const name = (i: 0 | 1): string =>
+	battle
+		? truncate(battle.botNames[i] ?? battle.botIds[i] ?? `Bot ${i + 1}`)
+		: ""
 
 function botHref(i: 0 | 1): string | null {
 	if (!battle) return null
