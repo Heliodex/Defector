@@ -1,5 +1,5 @@
 import type { Uuid } from "surrealdb"
-import { Battle, Bot, db, type RecordId } from "#lib/server/db.js"
+import { Battle, db, type RecordId } from "#lib/server/db.js"
 import { query } from "$app/server"
 import leaderboardBattlesQuery from "./leaderboardBattles.surql?raw"
 import leaderboardBotsQuery from "./leaderboardBots.surql?raw"
