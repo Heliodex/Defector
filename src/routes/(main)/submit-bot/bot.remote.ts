@@ -47,6 +47,8 @@ export const newBotForm = form(
 	async ({ name, description, code, codeUrl, active }) => {
 		const { user } = await authorise()
 
+		// TODO: ensure user doesn't have more than 3 bots *before* transpilation maybe?
+
 		let transpiled: string
 		try {
 			transpiled = transpileBot(code)
@@ -58,17 +60,23 @@ export const newBotForm = form(
 			invalid(message)
 		}
 
-		const [, , , id] = await db.query<string[]>(createBotQuery, {
-			user: user.id,
-			name,
-			description,
-			codeUrl,
-			source: code,
-			transpiled,
-			active: active === true,
-		})
+		try {
+			const [, , , , id] = await db.query<string[]>(createBotQuery, {
+				user: user.id,
+				name,
+				description,
+				codeUrl,
+				source: code,
+				transpiled,
+				active: active === true,
+			})
 
-		return { id, name }
+			return { id, name }
+		} catch (e) {
+			const message =
+				e instanceof Error ? e.message : "Could not create your bot"
+			invalid(message)
+		}
 	}
 )
 
@@ -99,7 +107,7 @@ export const toggleActiveForm = form(toggleSchema, async ({ id, active }) => {
 	const { user } = await authorise()
 
 	try {
-		const [, , , , updated] = await db.query<
+		const [, , , , , updated] = await db.query<
 			{ id: string; name: string; active: boolean }[][]
 		>(setBotActiveQuery, {
 			user: user.id,
