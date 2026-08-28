@@ -226,7 +226,9 @@ function formatDuration(seconds: number) {
 
 	<label>
 		<span>How are we doing well?</span>
-		<textarea {...newSubmissionForm.fields.howDoingWell.as("text")}></textarea>
+		<textarea
+			{...newSubmissionForm.fields.howDoingWell.as("text")}
+		></textarea>
 		{#each newSubmissionForm.fields.howDoingWell.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
@@ -234,7 +236,9 @@ function formatDuration(seconds: number) {
 
 	<label>
 		<span>How can we improve?</span>
-		<textarea {...newSubmissionForm.fields.howImprove.as("text")}></textarea>
+		<textarea
+			{...newSubmissionForm.fields.howImprove.as("text")}
+		></textarea>
 		{#each newSubmissionForm.fields.howImprove.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
