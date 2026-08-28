@@ -54,25 +54,13 @@ let battles = $derived(await getBattles())
 									>
 								{/if}
 								<div class="pt-2 text-xs">
-									{#if sub.playableUrl}
-										<a
-											href={sub.playableUrl}
-											target="_blank"
-											rel="noreferrer"
-											class="break-all"
-											>Playable</a
-										>
-										<br>
-									{/if}
-									{#if sub.codeUrl}
-										<a
-											href={sub.codeUrl}
-											target="_blank"
-											rel="noreferrer"
-											class="break-all"
-											>Code</a
-										>
-									{/if}
+									<a
+										href={sub.codeUrl}
+										target="_blank"
+										rel="noreferrer"
+										class="break-all"
+										>Code</a
+									>
 								</div>
 								<p class="pt-2 text-xs text-neutral-600">
 									{sub.created}

@@ -245,7 +245,7 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE name ON hourSubmission TYPE string;
 	DEFINE FIELD OVERWRITE description ON hourSubmission TYPE string;
 	DEFINE FIELD OVERWRITE codeUrl ON hourSubmission TYPE string;
-	DEFINE FIELD OVERWRITE playableUrl ON hourSubmission TYPE string;
+	-- DEFINE FIELD OVERWRITE playableUrl ON hourSubmission TYPE string;
 	DEFINE FIELD OVERWRITE ai ON hourSubmission TYPE bool;
 	DEFINE FIELD OVERWRITE review ON hourSubmission TYPE option<{
 		reviewer: record<user>,

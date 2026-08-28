@@ -58,7 +58,6 @@ type AdminSubmission = {
 	name: string
 	description: string
 	codeUrl: string
-	playableUrl: string
 	ai: boolean
 	image?: { hash: string; updated: Date }
 	status: string

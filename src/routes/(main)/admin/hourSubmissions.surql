@@ -4,7 +4,6 @@ SELECT
 	name,
 	description,
 	codeUrl,
-	playableUrl,
 	ai,
 	image,
 	status,

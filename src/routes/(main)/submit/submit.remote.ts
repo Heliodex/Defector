@@ -19,10 +19,6 @@ const messageCodeUrl = makeMessage(
 	"codeUrl",
 	"please provide a URL to your submission's code"
 )
-const messagePlayableUrl = makeMessage(
-	"playableUrl",
-	"please provide a URL to your submission's playable version"
-)
 const messageTimelapseIds = makeMessage(
 	"timelapseIds",
 	"please select at least one timelapse"
@@ -33,7 +29,6 @@ const schema = type({
 	name: type("string >= 1").configure(messageName[0]),
 	description: type("string >= 1").configure(messageDescription[0]),
 	codeUrl: type("string >= 1").configure(messageCodeUrl[0]),
-	playableUrl: type("string >= 1").configure(messagePlayableUrl[0]),
 	"ai?": "boolean",
 	timelapseIds: type("string[] >= 1").configure(messageTimelapseIds[0]),
 	"howHear?": "string",
@@ -44,7 +39,6 @@ const schema = type({
 	.configure(...messageName)
 	.configure(...messageDescription)
 	.configure(...messageCodeUrl)
-	.configure(...messagePlayableUrl)
 	.configure(...messageTimelapseIds)
 
 export const newSubmissionForm = form(

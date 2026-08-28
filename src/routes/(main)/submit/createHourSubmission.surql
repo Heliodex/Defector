@@ -3,7 +3,6 @@ LET $hourSubmission = CREATE ONLY hourSubmission CONTENT {
 	name: $name,
 	description: $description,
 	codeUrl: $codeUrl,
-	playableUrl: $playableUrl,
 	ai: $ai,
 	howHear: $howHear,
 	howDoingWell: $howDoingWell,
