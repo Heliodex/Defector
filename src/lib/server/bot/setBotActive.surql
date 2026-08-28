@@ -1,3 +1,5 @@
+BEGIN TRANSACTION;
+
 # Toggles whether one of $user's bots is active, enforcing the 3-active cap.
 LET $bot = (SELECT VALUE id FROM $user->created->bot WHERE record::id(id) = $id)[0];
 
@@ -16,3 +18,5 @@ LET $updated = UPDATE ONLY $bot SET active = $active;
 	name: $updated.name,
 	active: $updated.active,
 };
+
+COMMIT TRANSACTION;

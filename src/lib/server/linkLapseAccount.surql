@@ -1,3 +1,5 @@
+BEGIN TRANSACTION;
+
 LET $other = SELECT VALUE id FROM user
 	WHERE lapseData.id = $lapseData.id AND id != $userId;
 
@@ -6,3 +8,5 @@ IF $other {
 };
 
 UPDATE $userId SET lapseData = $lapseData;
+
+COMMIT TRANSACTION;
