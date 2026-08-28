@@ -135,6 +135,9 @@ import { login } from "../data.remote"
 		>
 		so we can verify it for your rewards!</b
 	>
+	The base rate is $4 in grants (spendable at various video game vendors) per
+	verifiable hour tracked building bots. The higher your bots rank on the
+	leaderboard, the more you can earn!
 </p>
 
 <div id="faq" class="pb-24">
