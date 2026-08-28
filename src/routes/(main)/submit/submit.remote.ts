@@ -57,6 +57,8 @@ export const newSubmissionForm = form(
 	}) => {
 		const { user } = await authorise()
 
+		error(403, "The time submission form is not open yet. Come back later!")
+
 		// Verify the selected timelapses total at least one hour of recorded time. Fetch fresh from Lapse so the check reflects current data.
 		let selectedTimelapses: LapseTimelapse[]
 		try {
