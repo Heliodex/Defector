@@ -396,56 +396,68 @@ import Head from "#lib/components/Head.svelte"
 />
 
 <p>
-	I'll leave it up to you to decide if this strategy is a good one
+	I'll leave it up to you to decide if this strategy is a good one, and I
+	encourage you to try it and see how it fares. Also try tweaking this bot or
+	any of the others to see if you can make them perform better!
 </p>
 
 <h1 class="pt-4">The rules</h1>
 
-<p>Your bot must be a <b>pure function</b>:</p>
-
-<ul>
-	<li>
-		No closure state — the same <code>state</code> must give the same
-		result.
-	</li>
-	<li>No globals that change between calls.</li>
-	<li>
-		No <code>fetch</code>, <code>import</code>, <code>eval</code>, or
-		<code>Function</code>.
-	</li>
-	<li>No file or process access.</li>
-</ul>
-
-<p>Bots run in a sandbox with limits to keep the tournament fast:</p>
-
-<ul>
-	<li>10ms per move.</li>
-	<li>~1MB of memory and a small stack.</li>
-	<li>Your code is a single file — you can't import other modules.</li>
-</ul>
-
-<p>
-	If a bot times out, returns an invalid move, or throws, it <b>forfeits</b>
-	the match (its opponent wins). Write something robust!
+<p class="pb-4">
+	Bots run in a sandbox with limits to keep the competition fast and safe.
+	These include measures such as:
 </p>
 
-<h1 class="pt-4">Scoring</h1>
-
-<p>Each round pays out using the classic prisoner's dilemma payoff:</p>
-
-<ul>
-	<li>Both cooperate: <b>+2</b> each.</li>
+<ul class="pb-4">
+	<li>Maximum of 10ms per move.</li>
+	<li>1 MB maximum memory (stack/heap size).</li>
 	<li>
-		You defect, opponent cooperates: <b>+3</b> for you, <b>0</b> for them.
+		Your code must be a single file, or at least be compiled to a single
+		file.
 	</li>
-	<li>
-		You cooperate, opponent defects: <b>0</b> for you, <b>+3</b> for them.
-	</li>
-	<li>Both defect: <b>+1</b> each.</li>
 </ul>
 
+<p class="pb-4">
+	If a bot times out, returns an invalid move, or throws an error, then it
+	forfeits the match and its opponent wins 3:0. Write something robust!
+</p>
+
 <p>
-	The winner is whoever banks more over the whole battle. Every battle adjusts
+	Additionally, you may have a maximum of 3 bots active at the same time. This
+	measure exists to prevent users deploying, for example, 99 bad bots and 1
+	good bot to unfairly climb the leaderboard. You can deactivate or reactivate
+	your bots at any time.
+</p>
+
+<h2 class="pt-4">Scoring</h2>
+
+<p class="pb-4">
+	Each round pays out using a payoff matrix, or score matrix, similar to the
+	original prisoner's dilemma:
+</p>
+
+<ul class="pb-4">
+	<li>Both cooperate: <b>2</b> points each.</li>
+	<li>
+		You defect, opponent cooperates: <b>3</b> points for you,
+		<b>0</b>
+		points for them.
+	</li>
+	<li>
+		You cooperate, opponent defects: <b>0</b> points for you,
+		<b>3</b>
+		points for them.
+	</li>
+	<li>Both defect: <b>1</b> point each.</li>
+</ul>
+
+<p class="pb-4">
+	This may change in future, possibly later on in the competition. Keep your
+	bots flexible!
+</p>
+
+<p>
+	The winner is whoever banks more points over the whole battle. Every battle adjusts
 	both bots' <b>Elo</b> (starting at 1000), which is what the leaderboard
 	ranks.
 </p>
@@ -454,11 +466,6 @@ import Head from "#lib/components/Head.svelte"
 
 <p>
 	Head to <a href="/submit-bot">Submit a bot</a>, paste your code, and flip it
-	active. It'll enter the live tournament within seconds — you can watch it on
-	the <a href="/leaderboard">leaderboard</a> and inspect individual battles.
-</p>
-
-<p>
-	Feeling adventurous? The classic competition is tit-for-tat, but the field
-	is full of surprises. Can you beat it?
+	active. It will enter the live tournament immediately, and you can watch it
+	on the <a href="/leaderboard">leaderboard</a> to inspect individual battles.
 </p>
