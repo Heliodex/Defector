@@ -1,6 +1,8 @@
 <script lang="ts">
 import Head from "#lib/components/Head.svelte"
-import { newBotForm } from "./bot.remote"
+import { checkLapseAccount, newBotForm } from "./bot.remote"
+
+await checkLapseAccount()
 </script>
 
 <Head title="Submit a bot" />

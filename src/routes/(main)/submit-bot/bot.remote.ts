@@ -1,11 +1,12 @@
-import { invalid } from "@sveltejs/kit"
+import { error, invalid } from "@sveltejs/kit"
 import { makeMessage, type } from "#lib/arktype.js"
 import { authorise } from "#lib/server/auth.js"
 import createBotQuery from "#lib/server/bot/createBot.surql?raw"
 import listBotsQuery from "#lib/server/bot/listBots.surql?raw"
 import setBotActiveQuery from "#lib/server/bot/setBotActive.surql?raw"
 import { transpileBot } from "#lib/server/bot/transpile.js"
-import { db, type RecordId } from "#lib/server/db.js"
+import { db } from "#lib/server/db.js"
+import getLapseDataQuery from "#lib/server/getLapseData.surql?raw"
 import { form, query } from "$app/server"
 
 const messageName = makeMessage("name", "please give your bot a name")
@@ -14,6 +15,21 @@ const messageDescription = makeMessage(
 	"please add a description of your bot"
 )
 const messageCode = makeMessage("code", "please paste your bot's code")
+
+export const checkLapseAccount = query(async () => {
+	const { user } = await authorise()
+
+	const [lapse] = await db.query<{ id: string; accessToken: string }[]>(
+		getLapseDataQuery,
+		{ user: user.id }
+	)
+	console.log(lapse)
+	if (!lapse?.id || !lapse?.accessToken)
+		error(
+			401,
+			"Please link your Lapse account to submit a bot! You can do this on the home page."
+		)
+})
 
 const newBotSchema = type({
 	name: type("string >= 1").configure(messageName[0]),

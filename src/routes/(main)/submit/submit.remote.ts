@@ -4,10 +4,10 @@ import sharp from "sharp"
 import { makeMessage, type } from "#lib/arktype.js"
 import { authorise } from "#lib/server/auth.js"
 import { db, type RecordId } from "#lib/server/db.js"
+import getLapseDataQuery from "#lib/server/getLapseData.surql?raw"
 import { LAPSE_TIMELAPSE_SINCE } from "$app/env/private"
 import { form, getRequestEvent, query } from "$app/server"
 import createHourSubmissionQuery from "./createHourSubmission.surql?raw"
-import getLapseDataQuery from "./getLapseData.surql?raw"
 import getLatestHourSubmissionQuery from "./getLatestHourSubmission.surql?raw"
 
 const messageName = makeMessage("name", "please give your submission a name")
@@ -165,11 +165,10 @@ async function fetchLapseTimelapses(user: User): Promise<LapseTimelapse[]> {
 	const since = LAPSE_TIMELAPSE_SINCE
 	const sinceMs = Date.parse(since)
 
-	const [result] = await db.query<{ id: string; accessToken: string }[][]>(
+	const [lapse] = await db.query<{ id: string; accessToken: string }[]>(
 		getLapseDataQuery,
 		{ user: user.id }
 	)
-	const lapse = result?.[0]
 	if (!lapse?.accessToken)
 		error(
 			401,
