@@ -107,14 +107,15 @@ export const toggleActiveForm = form(toggleSchema, async ({ id, active }) => {
 	const { user } = await authorise()
 
 	try {
-		const [, , , , , updated] = await db.query<
-			{ id: string; name: string; active: boolean }[][]
+		const [, updated] = await db.query<
+			{ id: string; name: string; active: boolean }[]
 		>(setBotActiveQuery, {
 			user: user.id,
 			id,
 			active: active === true,
 		})
-		return updated?.[0]
+
+		return updated
 	} catch (e) {
 		const message =
 			e instanceof Error ? e.message : "Could not update the bot"
