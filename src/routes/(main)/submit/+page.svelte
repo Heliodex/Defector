@@ -248,7 +248,8 @@ function formatDuration(seconds: number) {
 		>
 		<input
 			{...newSubmissionForm.fields.howLikelyRecommend.as("number")}
-			min="1"
+			required
+			min="0"
 			max="10"
 			step="1"
 		>

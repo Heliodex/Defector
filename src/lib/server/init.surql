@@ -256,8 +256,8 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE howHear ON hourSubmission TYPE option<string>;
 	DEFINE FIELD OVERWRITE howDoingWell ON hourSubmission TYPE option<string>;
 	DEFINE FIELD OVERWRITE howImprove ON hourSubmission TYPE option<string>;
-	DEFINE FIELD OVERWRITE howLikelyRecommend ON hourSubmission TYPE option<int>
-		ASSERT 1 <= $value AND $value <= 10;
+	DEFINE FIELD OVERWRITE howLikelyRecommend ON hourSubmission TYPE int
+		ASSERT 0 <= $value AND $value <= 10;
 	DEFINE FIELD OVERWRITE lapseTimelapses ON hourSubmission TYPE array<string>;
 	DEFINE FIELD OVERWRITE status ON hourSubmission TYPE string DEFAULT ALWAYS "pending"
 		ASSERT $value IN ["pending", "approved", "rejected"];

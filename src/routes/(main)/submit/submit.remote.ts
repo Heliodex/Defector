@@ -39,7 +39,7 @@ const schema = type({
 	"howHear?": "string",
 	"howDoingWell?": "string",
 	"howImprove?": "string",
-	"howLikelyRecommend?": "(1 <= number.integer <= 10) | undefined",
+	howLikelyRecommend: "0 <= number.integer <= 10",
 })
 	.configure(...messageName)
 	.configure(...messageDescription)
