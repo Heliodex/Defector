@@ -1,6 +1,7 @@
 <script lang="ts">
 import Accordion from "#lib/components/Accordion.svelte"
 import AccordionItem from "#lib/components/AccordionItem.svelte"
+import BattleCard from "#lib/components/BattleCard.svelte"
 import Head from "#lib/components/Head.svelte"
 import { truncate } from "#lib/truncate.js"
 import { page } from "$app/state"
@@ -12,15 +13,6 @@ const name = (i: 0 | 1): string =>
 	battle
 		? truncate(battle.botNames[i] ?? battle.botIds[i] ?? `Bot ${i + 1}`)
 		: ""
-
-function botHref(i: 0 | 1): string | null {
-	if (!battle) return null
-	const id = battle.botIds[i]
-	return id ? `/bot/${id}` : null
-}
-
-// 2 decimal places
-const round = (num: number): number => Math.round(num * 100) / 100
 </script>
 
 <Head title="Battle" />
@@ -33,39 +25,7 @@ const round = (num: number): number => Math.round(num * 100) / 100
 	{new Date(battle.created).toLocaleString()}
 </p>
 
-<div class="shadowcard max-w-xl">
-	<div class="flex items-center justify-between gap-4">
-		<span class={{"font-bold": battle.winnerIndex === 0}}>
-			{#if botHref(0)}
-				<a href={botHref(0)} class="underline">{name(0)}</a>
-			{:else}
-				{name(0)}
-			{/if}
-		</span>
-		<span class="text-2xl font-semibold"
-			>{round(battle.scores[0])}
-			: {round(battle.scores[1])}</span
-		>
-		<span class={{"font-bold": battle.winnerIndex === 1}}>
-			{#if botHref(1)}
-				<a href={botHref(1)} class="underline">{name(1)}</a>
-			{:else}
-				{name(1)}
-			{/if}
-		</span>
-	</div>
-
-	<p class="pt-2 text-center text-sm">
-		{#if battle.winnerIndex !== null}
-			<span class="text-green-600"
-				>{name(battle.winnerIndex)}
-				won</span
-			>
-		{:else}
-			<span class="text-gray-500">Tie</span>
-		{/if}
-	</p>
-</div>
+<BattleCard {battle} {name} />
 
 {#if battle.errors.some(Boolean)}
 	<div class="pt-4 max-w-xl">
