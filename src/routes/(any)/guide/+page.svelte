@@ -1,5 +1,6 @@
 <script lang="ts">
 import Code from "#components/Code.svelte"
+import BattleCard from "#lib/components/BattleCard.svelte"
 import Head from "#lib/components/Head.svelte"
 </script>
 
@@ -154,29 +155,115 @@ import Head from "#lib/components/Head.svelte"
 `}
 />
 
-<h2 class="pt-8">Writing an opponent</h2>
+<h2 class="pt-4">Writing an opponent</h2>
 
 <p>
-	
+	Let's add another bot for our bot to play against. It will be very similar
+	to the <b>alwaysCooperate</b> bot, however it will be a little bit meaner.
+	It will defect every time instead of cooperating every time. We'll call it
+	<b>alwaysDefect</b>.
+</p>
+
+<Code
+	filename="alwaysDefect.js"
+	code={`
+	export default function bot() {
+-		const move = "C" // Cooperate on every move
++		const move = "D" // Defect on every move
+		const memory = null // We don't need to remember anything
+
+		return [move, memory] // Move must come 1st, then memory 2nd
+	}
+`}
+/>
+
+<p>
+	We'll now try battling these 2 bots against each other. You may already be
+	able to guess what will happen. On the 1st round,
+	<b>alwaysCooperate</b>
+	will cooperate and <b>alwaysDefect</b> will defect, so
+	<b>alwaysDefect</b>
+	will get 3 points and <b>alwaysCooperate</b> will get 0 points. On the 2nd
+	round, the same thing will happen, and so on for every round.
+</p>
+
+<div class="py-4">
+	<BattleCard
+		battle={{
+			botIds: [null, null],
+			botNames: ["alwaysCooperate", "alwaysDefect"],
+			scores: [0, 3],
+			winnerIndex: 1,
+		}}
+	/>
+</div>
+
+<p class="pb-4">
+	This battle lasted for 120 rounds, and the scores displayed above are the
+	mean number of points per round earned by each bot. As expected,
+	<b>alwaysDefect</b>
+	won the battle. If many battles between these bots were played, you would
+	see <b>alwaysDefect</b> increase in Elo while
+	<b>alwaysCooperate</b>
+	would fall.
+</p>
+
+<p class="pb-4">
+	You can also write a bot that reacts to its opponent's moves. A classic
+	example is the tit-for-tat strategy. This bot cooperates on the first round,
+	and then copies its opponent's last move for every subsequent round. That
+	is, if the opponent cooperated last round, it will cooperate this round, and
+	if the opponent defected last round, it will defect this round.
 </p>
 
 <p>
-	A classic strategy is <b>tit-for-tat</b>: cooperate first, then just mirror
-	whatever your opponent did last round. It needs no memory at all — the
-	history is enough.
+	We'll call this bot <b>titForTat</b>. It's friendly by default, only
+	retaliates if its opponent does first, and always provides the option of
+	going back to friendly cooperation afterwards. This bot wo'nt need to access any memory, though it will need to look at the history of moves to see what its opponent did last round.
 </p>
 
 <Code
 	filename="titForTat.ts"
 	code={`
-	export default function bot({ history, memory }: State): [Move, Memory] {
-		if (history.length === 0) return ["C", memory]
-
-		const last = history[history.length - 1]
-		return [last.opponent, memory]
+	export default function bot({ history }) {
 	}
 `}
 />
+
+<p>
+	To start with, we check the length of the history. If it's 0, that means this is the first round, so we cooperate.
+</p>
+
+<Code
+	filename="titForTat.ts"
+	code={`
+	export default function bot({ history }) {
++		if (history.length === 0)
++			return ["C", null] // Cooperate on the first round
+	}
+`}
+/>
+
+<p>
+	Next we'll get the opponent's move from the last round, and return that as our next move. We'll also return null for memory, since we don't need to store anything.
+</p>
+
+<Code
+	filename="titForTat.ts"
+	code={`
+	export default function bot({ history }) {
+		if (history.length === 0)
+			return ["C", null] // Cooperate on the first round
+
++		const move = history.at(-1).opponent
++		return [move, null] // Copy the opponent's last move
+	}
+`}
+/>
+
+<p>
+	This bot seems like it has a pretty decent strategy. It will cooperate with other cooperative bots and defend itself against defectors. Let's put it in the arena and see how it fares against the other bots we've written so far. We'll play a battle against <b>alwaysCooperate</b> and a battle against <b>alwaysDefect</b> to see how it does.
+</p>
 
 <p>
 	Sometimes you want to react to more than the last round. That's what
