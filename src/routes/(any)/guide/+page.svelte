@@ -219,7 +219,9 @@ import Head from "#lib/components/Head.svelte"
 <p>
 	We'll call this bot <b>titForTat</b>. It's friendly by default, only
 	retaliates if its opponent does first, and always provides the option of
-	going back to friendly cooperation afterwards. This bot wo'nt need to access any memory, though it will need to look at the history of moves to see what its opponent did last round.
+	going back to friendly cooperation afterwards. This bot wo'nt need to access
+	any memory, though it will need to look at the history of moves to see what
+	its opponent did last round.
 </p>
 
 <Code
@@ -231,7 +233,8 @@ import Head from "#lib/components/Head.svelte"
 />
 
 <p>
-	To start with, we check the length of the history. If it's 0, that means this is the first round, so we cooperate.
+	To start with, we check the length of the history. If it's 0, that means
+	this is the first round, so we cooperate.
 </p>
 
 <Code
@@ -245,7 +248,9 @@ import Head from "#lib/components/Head.svelte"
 />
 
 <p>
-	Next we'll get the opponent's move from the last round, and return that as our next move. We'll also return null for memory, since we don't need to store anything.
+	Next we'll get the opponent's move from the last round, and return that as
+	our next move. We'll also return null for memory, since we don't need to
+	store anything.
 </p>
 
 <Code
@@ -261,8 +266,48 @@ import Head from "#lib/components/Head.svelte"
 `}
 />
 
+<p class="pb-4">
+	This bot seems like it has a pretty decent strategy. It will cooperate with
+	other cooperative bots and defend itself against defectors. Let's put it in
+	the arena and see how it fares against the other bots we've written so far.
+	We'll play a battle against <b>alwaysCooperate</b> and a battle against
+	<b>alwaysDefect</b>
+	to see how it does.
+</p>
+
 <p>
-	This bot seems like it has a pretty decent strategy. It will cooperate with other cooperative bots and defend itself against defectors. Let's put it in the arena and see how it fares against the other bots we've written so far. We'll play a battle against <b>alwaysCooperate</b> and a battle against <b>alwaysDefect</b> to see how it does.
+	Against <b>alwaysCooperate</b>, both bots cooperate for every move, earning
+	2 points each per round.
+</p>
+
+<div class="py-4">
+	<BattleCard
+		battle={{
+			botIds: [null, null],
+			botNames: ["alwaysCooperate", "titForTat"],
+			scores: [2, 2],
+			winnerIndex: null,
+		}}
+	/>
+</div>
+
+<p>
+	Against <b>alwaysDefect</b>, <b>titForTat</b> cooperates on the first round, but then defects for every subsequent round. Both bots receive 1 point per round, except for the first round where <b>titForTat</b> receives 0 points and <b>alwaysDefect</b> receives 3 points. <b>alwaysDefect</b> wins the battle, but only by a small margin.
+</p>
+
+<div class="py-4">
+	<BattleCard
+		battle={{
+			botIds: [null, null],
+			botNames: ["alwaysDefect", "titForTat"],
+			scores: [1.02, 0.99],
+			winnerIndex: 0,
+		}}
+	/>
+</div>
+
+<p class="pb-4">
+	Okay, there's 1 problem with the tit-for-tat strategy, and that's the fact that it can never win a battle. Due to its fairly peaceful-until-provoked nature, it never defects <em>more</em> than its opponent. However, when it does lose, it loses by a only a hair.
 </p>
 
 <p>
