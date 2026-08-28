@@ -61,7 +61,7 @@ export const newBotForm = form(
 		}
 
 		try {
-			const [, , , , id] = await db.query<string[]>(createBotQuery, {
+			const [id] = await db.query<string[]>(createBotQuery, {
 				user: user.id,
 				name,
 				description,
