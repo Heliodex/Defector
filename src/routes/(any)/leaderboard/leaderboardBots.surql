@@ -7,14 +7,14 @@ LET $rows = (SELECT botIds, eloDelta, scores FROM battle)
 		{
 			bot: $b.botIds[0],
 			delta: $b.eloDelta[0],
-			won: fn::b2i$b.scores[0] > $b.scores[1]),
-			lost: fn::b2i$b.scores[0] < $b.scores[1]),
+			won: fn::b2i($b.scores[0] > $b.scores[1]),
+			lost: fn::b2i($b.scores[0] < $b.scores[1]),
 		},
 		{
 			bot: $b.botIds[1],
 			delta: $b.eloDelta[1],
-			won: fn::b2i$b.scores[1] > $b.scores[0]),
-			lost: fn::b2i$b.scores[1] < $b.scores[0]),
+			won: fn::b2i($b.scores[1] > $b.scores[0]),
+			lost: fn::b2i($b.scores[1] < $b.scores[0]),
 		},
 	]).flatten();
 
