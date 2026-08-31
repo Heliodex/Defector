@@ -2,6 +2,7 @@
 	record::id(id) AS id,
 	created,
 	scores,
+	eloDelta,
 	errors,
 	rounds,
 	bots
