@@ -30,29 +30,23 @@ export type LeaderboardData = {
 async function battlesSnapshot(
 	id?: RecordId<"battle", string>
 ): Promise<Pick<LeaderboardData, "battles" | "allBattles">> {
-	const [battles, battleCount] = await db.query<[BattleRow[], number, Uuid]>(
+	const [battles, allBattles] = await db.query<[BattleRow[], number]>(
 		leaderboardBattlesQuery,
 		{ id }
 	)
 
-	return {
-		battles,
-		allBattles: battleCount ?? 0,
-	}
+	return { battles, allBattles }
 }
 
 async function botsSnapshot(
 	id?: RecordId<"bot", string>
 ): Promise<Pick<LeaderboardData, "bots" | "activeBots">> {
-	const [bots, botCount] = await db.query<[BotRow[], number, Uuid]>(
+	const [bots, activeBots] = await db.query<[BotRow[], number]>(
 		leaderboardBotsQuery,
 		{ id }
 	)
 
-	return {
-		bots,
-		activeBots: botCount ?? 0,
-	}
+	return { bots, activeBots }
 }
 
 export const leaderboardData = query.live(
