@@ -128,14 +128,18 @@ DEFINE FUNCTION OVERWRITE fn::botEloHistory($bot: record<bot>) -> array<float> {
 	    LIMIT 200).map(|$x| $x.eloDelta[array::find_index($x.bots, $bot)])
 };
 
+DEFINE FUNCTION OVERWRITE fn::b2i($b: bool) -> int {
+	IF $b { 1 } ELSE { 0 };
+};
+
 # Stats query faster when consolidated into 1 function :rac_lfg:
 DEFINE FUNCTION OVERWRITE fn::botStats($bot: record<bot>) {
 	(SELECT
-        IF scores[array::find_index(bots, $bot)]
-            > scores[1 - array::find_index(bots, $bot)] { 1 } ELSE { 0 }
+        fn::b2i(scores[array::find_index(bots, $bot)]
+            > scores[1 - array::find_index(bots, $bot)])
             AS wins,
-        IF scores[array::find_index(bots, $bot)]
-            < scores[1 - array::find_index(bots, $bot)] { 1 } ELSE { 0 }
+        fn::b2i(scores[array::find_index(bots, $bot)]
+            < scores[1 - array::find_index(bots, $bot)])
             AS losses
         FROM battle
 		WHERE record::id($bot) IN botIds).fold({
