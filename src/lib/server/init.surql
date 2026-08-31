@@ -222,9 +222,6 @@ DEFINE INDEX OVERWRITE battleBotIds ON battle FIELDS botIds.*;
 
 # THIS CANNOT BE A COMPUTED BECAUSE OTHERWISE IT WILL EAT ALL 32GB OF MY RAM
 # though since bot names may change, this can't be a VALUE or DEFAULT ALWAYS either :heavysob:
-#
-# Callers MUST invoke this from a plain expression (e.g. `(SELECT VALUE id FROM battle).map(|$b| fn::battleBotNames($b))`), NOT from a SELECT projection (`SELECT fn::battleBotNames($parent.id) FROM battle`).
-# In a SELECT projection SurrealDB re-fetches each battle's bot records from storage for every row (~10ms per bot, full document decode including `code`), making any per-battle dereference ~100x slower. Record property access (e.g. `$battle.bots[0].name`) is even worse and can trigger recomputation of the bot's VALUE fields, so keep the SELECT VALUE form below.
 DEFINE FUNCTION OVERWRITE fn::battleBotNames($battle: record<battle>) -> array<string, 2> {
 	SELECT VALUE name FROM $battle.bots;
 };

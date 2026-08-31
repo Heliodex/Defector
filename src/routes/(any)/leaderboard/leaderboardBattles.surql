@@ -1,8 +1,8 @@
-# NOTE: fn::battleBotNames() must be called from a plain expression, not a SELECT projection, or SurrealDB re-fetches the bot records for every row (~100x slower).
-# See the comment on fn::battleBotNames in src/lib/server/init.surql.
+# omg my previous advice about plain expressions was completely wrong it's way faster to use battleBotNames() in the SELECT (if we have indices)
 (SELECT
     id,
     created,
+    fn::battleBotNames($this.id) AS botNames,
     bots
 FROM battle
 WHERE IF $id { id == $id } ELSE { true }
@@ -11,7 +11,7 @@ LIMIT 50)
     .map(|$b| {
         id: record::id($b.id),
         created: $b.created,
-        botNames: fn::battleBotNames($b.id),
+        botNames: $b.botNames,
         botIds: $b.bots.map(|$bot| record::id($bot)),
     });
 
