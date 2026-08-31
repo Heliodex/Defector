@@ -114,11 +114,6 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE active ON bot TYPE bool DEFAULT ALWAYS false;
 	DEFINE FIELD OVERWRITE created ON bot TYPE datetime DEFAULT ALWAYS time::now();
 
-REMOVE FIELD IF EXISTS eloHistory ON bot;
-REMOVE FIELD IF EXISTS wins ON bot;
-REMOVE FIELD IF EXISTS losses ON bot;
-REMOVE FIELD IF EXISTS totalBattles ON bot;
-
 DEFINE FUNCTION OVERWRITE fn::botElo($bot: record<bot>) -> float {
 	LET $id = record::id($bot);
 	1000.0 + math::sum(SELECT VALUE eloDelta[array::find_index(bots, $bot)]
@@ -127,8 +122,8 @@ DEFINE FUNCTION OVERWRITE fn::botElo($bot: record<bot>) -> float {
 
 DEFINE FUNCTION OVERWRITE fn::botEloHistory($bot: record<bot>) -> array<float> {
 	LET $id = record::id($bot);
-	(SELECT eloDelta, bots, created
-	    FROM battle WHERE $bot IN bots
+	(SELECT eloDelta, bots, created FROM battle
+		WHERE $id IN botIds
 	    ORDER BY created DESC
 	    LIMIT 200).map(|$x| $x.eloDelta[array::find_index($x.bots, $bot)])
 };
@@ -222,7 +217,8 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
 
 # Index the materialised bot id strings so per-bot stat functions (fn::botElo, fn::botWins, etc.) resolve "which battles involve this bot" via an index lookup instead of a full table scan per bot.
-DEFINE INDEX OVERWRITE battleBotIds ON TABLE battle FIELDS botIds.*;
+DEFINE INDEX OVERWRITE battleBotIds ON battle FIELDS botIds.*;
+-- DEFINE INDEX OVERWRITE battleCount ON battle COUNT; # doesn't really help
 
 # THIS CANNOT BE A COMPUTED BECAUSE OTHERWISE IT WILL EAT ALL 32GB OF MY RAM
 # though since bot names may change, this can't be a VALUE or DEFAULT ALWAYS either :heavysob:
