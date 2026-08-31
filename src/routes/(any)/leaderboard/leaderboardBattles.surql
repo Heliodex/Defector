@@ -2,7 +2,6 @@
 SELECT
     record::id(id) AS id,
     created,
-    bots,
     fn::battleBotNames($this.id) AS botNames,
     bots.map(|$bot| record::id($bot)) AS botIds
 FROM battle
