@@ -40,10 +40,9 @@ async function battlesSnapshot(
 async function botsSnapshot(
 	id?: RecordId<"bot", string>
 ): Promise<Pick<LeaderboardData, "bots" | "activeBots">> {
-	const [bots, activeBots] = await db.query<[BotRow[], number]>(
-		leaderboardBotsQuery,
-		{ id }
-	)
+	const [, , , bots, activeBots] = await db.query<
+		[undefined, undefined, undefined, BotRow[], number]
+	>(leaderboardBotsQuery, { id })
 
 	return { bots, activeBots }
 }
