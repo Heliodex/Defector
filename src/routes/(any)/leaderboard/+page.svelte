@@ -60,9 +60,7 @@ const connected = $derived(dataResult.connected)
 	</p>
 
 	{#if data.bots.length === 0}
-		<p class="pt-4">
-			Loading leaderboard bots...
-		</p>
+		<p class="pt-4">Loading leaderboard bots...</p>
 	{:else}
 		<div class="overflow-x-auto px-4 sm:px-6">
 			<table class="w-full border-collapse text-sm">
