@@ -210,17 +210,22 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		LET $P = $payoff[1][1];
 
 		# --- Absolute (cooperation) component ---
-		# avg == R (both cooperate, score ~= R) => base ~= 0.75 (>0.5, both gain)
-		# avg == P (both defect, score ~= P or S) => base ~= 0.25 (<0.5, both lose)
-		# avg == (R+P)/2 (e.g. T+S/2) => base == 0.5 (neutral)
+		# Reduced-weight to avoid rating inflation. Old formula used
+		#   base = 0.25 + 0.5*((avg-P)/(R-P))  => CC 0.75 (+8), DD 0.25 (-8)
+		#   net +16 Elo per mutual-cooperation battle => unbounded inflation
+		#   (~+900 after 1000 cooperative battles in a cooperative-heavy pool).
+		# New: base = 0.5 +/- $coopWeight. CC still >0.5 (both gain),
+		# DD still <0.5 (both lose), but injection is small and competitive margin remains dominant. Tune $coopWeight 0.05-0.10 (0.06 => CC +1.9).
 		LET $avg = ($scores[0] + $scores[1]) / 2.0;
-		LET $range = $R - $P;
-		LET $baseRaw = IF $range > 0.0 {
-			0.25 + 0.5 * (($avg - $P) / $range)
+		LET $mid = ($R + $P) / 2.0;
+		LET $halfRange = ($R - $P) / 2.0;
+		LET $coopWeight = <float> 0.06;
+		LET $baseRaw = IF $halfRange > 0.0 {
+			0.5 + $coopWeight * (($avg - $mid) / $halfRange)
 		} ELSE {
 			0.5
 		};
-		# clamp base to [0,1] so extreme S/S (=avg 0) doesn't go negative
+		# clamp base to [0,1]; extreme S/S (avg=0) is extrapolated beyond P and will clamp rather than go strongly negative.
 		LET $base = math::clamp($baseRaw, 0.0, 1.0);
 
 		# --- Relative (margin) component ---
