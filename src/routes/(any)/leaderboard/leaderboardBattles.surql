@@ -15,4 +15,4 @@ LIMIT 50)
         botIds: $b.bots.map(|$bot| record::id($bot)),
     });
 
-count(SELECT 1 FROM battle);
+(SELECT count() FROM battle GROUP ALL)[0].count;
