@@ -128,23 +128,23 @@ DEFINE FUNCTION OVERWRITE fn::botEloHistory($bot: record<bot>) -> array<float> {
 	    LIMIT 200).map(|$x| $x.eloDelta[array::find_index($x.bots, $bot)])
 };
 
-DEFINE FUNCTION OVERWRITE fn::botWins($bot: record<bot>) -> int {
-	LET $id = record::id($bot);
-	count(SELECT 1 FROM battle
-		WHERE $id IN botIds
-		AND scores[array::find_index(bots, $bot)] > scores[1 - array::find_index(bots, $bot)]);
-};
-
-DEFINE FUNCTION OVERWRITE fn::botLosses($bot: record<bot>) -> int {
-	LET $id = record::id($bot);
-	count(SELECT 1 FROM battle
-		WHERE $id IN botIds
-		AND scores[array::find_index(bots, $bot)] < scores[1 - array::find_index(bots, $bot)]);
-};
-
-DEFINE FUNCTION OVERWRITE fn::botTotalBattles($bot: record<bot>) -> int {
-	LET $id = record::id($bot);
-	count(SELECT 1 FROM battle WHERE $id IN botIds);
+# Stats query faster when consolidated into 1 function :rac_lfg:
+DEFINE FUNCTION OVERWRITE fn::botStats($bot: record<bot>) {
+	(SELECT
+        IF scores[array::find_index(bots, $bot)]
+            > scores[1 - array::find_index(bots, $bot)] { 1 } ELSE { 0 }
+            AS wins,
+        IF scores[array::find_index(bots, $bot)]
+            < scores[1 - array::find_index(bots, $bot)] { 1 } ELSE { 0 }
+            AS losses
+        FROM battle
+		WHERE record::id($bot) IN botIds).fold({
+            wins: 0, losses: 0, battles: 0, 
+        }, |$a, $b| {
+            wins: $a.wins + $b.wins,
+            losses: $a.losses + $b.losses,
+            battles: $a.battles + 1
+        });
 };
 
 DEFINE FUNCTION OVERWRITE fn::latestMatrix() -> record<matrix> {
