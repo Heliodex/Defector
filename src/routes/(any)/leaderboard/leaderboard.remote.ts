@@ -15,9 +15,7 @@ type BotRow = {
 	id: string
 	name: string
 	elo: number
-	wins: number
-	losses: number
-	totalBattles: number
+	stats: BotStats
 	ownerName?: string
 }
 

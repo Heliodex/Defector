@@ -87,9 +87,7 @@ type MyBot = {
 	active: boolean
 	created: Date
 	elo: number
-	wins: number
-	losses: number
-	totalBattles: number
+	stats: BotStats
 }
 
 export const getMyBots = query(async (): Promise<MyBot[]> => {

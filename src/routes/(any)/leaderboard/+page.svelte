@@ -103,10 +103,10 @@ const connected = $derived(dataResult.connected)
 								{Math.round(bot.elo)}
 							</td>
 							<td class="border-b border-neutral-300 p-3">
-								{bot.wins}-{bot.losses}
+								{bot.stats.wins}-{bot.stats.losses}
 							</td>
 							<td class="border-b border-neutral-300 p-3">
-								{bot.totalBattles}
+								{bot.stats.battles}
 							</td>
 						</tr>
 					{/each}

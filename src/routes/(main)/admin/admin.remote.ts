@@ -15,9 +15,7 @@ type AdminBot = {
 	active: boolean
 	created: Date
 	elo: number
-	wins: number
-	losses: number
-	totalBattles: number
+	stats: BotStats
 	ownerEmail: string | null
 }
 

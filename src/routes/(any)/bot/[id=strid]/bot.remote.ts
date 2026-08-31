@@ -13,9 +13,7 @@ type BotRow = {
 	created: Date
 	elo: number
 	eloHistory: number[]
-	wins: number
-	losses: number
-	totalBattles: number
+	stats: BotStats
 	ownerName: string | null
 	source: string | null
 	updated: Date | null

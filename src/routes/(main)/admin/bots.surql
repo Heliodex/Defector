@@ -4,9 +4,7 @@ SELECT
 	active,
 	created,
 	fn::botElo($this.id) AS elo,
-	fn::botWins($this.id) AS wins,
-	fn::botLosses($this.id) AS losses,
-	fn::botTotalBattles($this.id) AS totalBattles,
+	fn::botStats($this.id) AS stats,
 	(SELECT VALUE email FROM ONLY $parent<-created<-user)[0] AS ownerEmail
 FROM bot
 ORDER BY elo DESC, name ASC;

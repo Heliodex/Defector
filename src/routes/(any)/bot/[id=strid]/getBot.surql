@@ -11,9 +11,7 @@ SELECT
 		[],
 		|$acc, $delta| $acc.append($delta + ($acc[$] ?? 0))
 	) AS eloHistory,
-	fn::botWins($this.id) AS wins,
-	fn::botLosses($this.id) AS losses,
-	fn::botTotalBattles($this.id) AS totalBattles,
+	fn::botStats($this.id) AS stats,
 	(SELECT VALUE extraInfo.name FROM ONLY $parent<-created<-user)[0] AS ownerName,
 	(SELECT VALUE source FROM ONLY $parent.code ORDER BY updated)[$] AS source,
 	(SELECT VALUE updated FROM ONLY $parent.code ORDER BY updated)[$] AS updated

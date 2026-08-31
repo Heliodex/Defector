@@ -1,8 +1,8 @@
 <script lang="ts">
 import Head from "#lib/components/Head.svelte"
+import { truncate } from "#lib/truncate.js"
 import { page } from "$app/state"
 import { getBot } from "./bot.remote"
-import { truncate } from "#lib/truncate.js"
 
 const bot = $derived(await getBot(page.params.id ?? ""))
 </script>
@@ -58,22 +58,22 @@ const bot = $derived(await getBot(page.params.id ?? ""))
 	</div>
 	<div class="shadowcard">
 		<p class="text-xs text-gray-500">Wins</p>
-		<p class="text-xl font-semibold">{bot.wins}</p>
+		<p class="text-xl font-semibold">{bot.stats.wins}</p>
 	</div>
 	<div class="shadowcard">
 		<p class="text-xs text-gray-500">Losses</p>
-		<p class="text-xl font-semibold">{bot.losses}</p>
+		<p class="text-xl font-semibold">{bot.stats.losses}</p>
 	</div>
 	<div class="shadowcard">
 		<p class="text-xs text-gray-500">Win rate</p>
 		<p class="text-xl font-semibold">
-			{bot.totalBattles > 0 ? ((bot.wins / bot.totalBattles) * 100).toFixed(1) : "0.0"}%
+			{bot.stats.battles > 0 ? ((bot.stats.wins / bot.stats.battles) * 100).toFixed(1) : "0.0"}%
 		</p>
 	</div>
 </div>
 
 <p class="pt-1 text-xs text-gray-500 max-w-xl">
-	Total battles: {bot.totalBattles}
+	Total battles: {bot.stats.battles}
 </p>
 
 <div class="pt-6 max-w-xl">

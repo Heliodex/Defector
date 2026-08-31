@@ -85,15 +85,15 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 					</p>
 					<p>
 						<span class="font-semibold">
-							{bot.wins}
+							{bot.stats.wins}
 						</span>
 						wins ·
 						<span class="font-semibold">
-							{bot.losses}
+							{bot.stats.losses}
 						</span>
 						losses ·
 						<span class="font-semibold">
-							{bot.totalBattles}
+							{bot.stats.battles}
 						</span>
 						battles
 					</p>

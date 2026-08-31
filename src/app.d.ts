@@ -31,6 +31,12 @@ declare global {
 		} | null
 	}
 
+	declare type BotStats = {
+		wins: number
+		losses: number
+		battles: number
+	}
+
 	namespace App {
 		interface Locals {
 			session: string | null
