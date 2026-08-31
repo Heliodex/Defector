@@ -139,7 +139,7 @@ DEFINE FUNCTION OVERWRITE fn::botStats($bot: record<bot>) {
             AS losses
         FROM battle
 		WHERE record::id($bot) IN botIds).fold({
-            wins: 0, losses: 0, battles: 0, 
+            wins: 0, losses: 0, battles: 0,
         }, |$a, $b| {
             wins: $a.wins + $b.wins,
             losses: $a.losses + $b.losses,
@@ -204,15 +204,42 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		LET $rating0 = fn::botElo($this.bots[0]);
 		LET $rating1 = fn::botElo($this.bots[1]);
 		LET $expected0 = 1.0 / (1.0 + math::pow(10.0, ($rating1 - $rating0) / 400.0));
-		LET $total = $scores[0] + $scores[1];
-		LET $actual0 = IF $total > 0.0 {
-			$scores[0] / $total
+		LET $expected1 = 1.0 - $expected0;
+
+		LET $R = $payoff[0][0];
+		LET $P = $payoff[1][1];
+
+		# --- Absolute (cooperation) component ---
+		# avg == R (both cooperate, score ~= R) => base ~= 0.75 (>0.5, both gain)
+		# avg == P (both defect, score ~= P or S) => base ~= 0.25 (<0.5, both lose)
+		# avg == (R+P)/2 (e.g. T+S/2) => base == 0.5 (neutral)
+		LET $avg = ($scores[0] + $scores[1]) / 2.0;
+		LET $range = $R - $P;
+		LET $baseRaw = IF $range > 0.0 {
+			0.25 + 0.5 * (($avg - $P) / $range)
 		} ELSE {
-			# Both scores are 0 (e.g. both bots error, or a 0:0 battle) — fall back to a draw.
 			0.5
 		};
+		# clamp base to [0,1] so extreme S/S (=avg 0) doesn't go negative
+		LET $base = math::clamp($baseRaw, 0.0, 1.0);
 
-		[$K * ($actual0 - $expected0), $K * ($expected0 - $actual0)] # yes this could be 1 number, no we're not making it that because idk
+		# --- Relative (margin) component ---
+		# Weighted by how much one bot beats the other: diff = 0 => no swing,
+		# diff == T-S (max exploit) => +/-0.5 swing.
+		LET $denom = $T - $S;
+		LET $margin0 = IF $denom > 0.0 {
+			($scores[0] - $scores[1]) / (2.0 * $denom)
+		} ELSE {
+			0.0
+		};
+		LET $margin1 = 0.0 - $margin0;
+
+		LET $actual0Raw = $base + $margin0;
+		LET $actual1Raw = $base + $margin1;
+		LET $actual0 = math::clamp($actual0Raw, 0.0, 1.0);
+		LET $actual1 = math::clamp($actual1Raw, 0.0, 1.0);
+
+		[$K * ($actual0 - $expected0), $K * ($actual1 - $expected1)];
 	};
 	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
 
