@@ -6,6 +6,7 @@ SELECT
 	-- SELECT VALUE extraInfo.nickname FROM ONLY $parent<-created<-user AS ownerName
 FROM bot
 WHERE IF $id { id == $id } ELSE { true }
-ORDER BY elo DESC, name ASC;
+ORDER BY elo DESC, name ASC
+LIMIT 20;
 
 count(SELECT 1 FROM bot WHERE active);

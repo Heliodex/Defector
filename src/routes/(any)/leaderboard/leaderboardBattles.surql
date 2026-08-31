@@ -6,6 +6,7 @@ SELECT
     bots.map(|$bot| record::id($bot)) AS botIds
 FROM battle
 WHERE IF $id { id == $id } ELSE { true }
-ORDER BY created DESC;
+ORDER BY created DESC
+LIMIT 50;
 
 (SELECT count() FROM battle GROUP ALL)[0].count;
