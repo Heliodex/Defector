@@ -61,8 +61,7 @@ const connected = $derived(dataResult.connected)
 
 	{#if data.bots.length === 0}
 		<p class="pt-4">
-			No active bots yet. Submit one today and it'll start battling in
-			seconds.
+			Loading leaderboard bots...
 		</p>
 	{:else}
 		<div class="overflow-x-auto px-4 sm:px-6">
@@ -118,7 +117,7 @@ const connected = $derived(dataResult.connected)
 	<h2 class="pt-10 text-2xl">Recent battles</h2>
 
 	{#if data.battles.length === 0}
-		<p class="pt-2 text-neutral-600">No battles yet.</p>
+		<p class="pt-2 text-neutral-600">Loading battles...</p>
 	{:else}
 		<ul class="noul flex flex-col gap-2 pt-4">
 			{#each data.battles as battle (battle.id)}
