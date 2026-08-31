@@ -2,7 +2,7 @@ import { type Surreal, ThrownError } from "surrealdb"
 import { type DBBot, runBattle } from "./runner"
 import selectBotsQuery from "./selectBots.surql?raw"
 
-export const battleIntervalMs = Number(process.env.BATTLE_INTERVAL_MS ?? 100)
+export const battleIntervalMs = Number(process.env.BATTLE_INTERVAL_MS ?? 10_000)
 
 /**
  * Runs the live tournament: every `battleIntervalMs` it picks two random active bots and plays a single 1v1 battle. Runs forever; the site and this process only coordinate through the shared database.
