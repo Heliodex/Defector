@@ -9,11 +9,13 @@ const R = $derived(matrix?.[0][0])
 const S = $derived(matrix?.[0][1])
 const T = $derived(matrix?.[1][0])
 const P = $derived(matrix?.[1][1])
+
+const guideName = "Writing a bot"
 </script>
 
-<Head title="Guide - Writing a bot" />
+<Head title="Guide - {guideName}" />
 
-<h1 class="pt-8">Writing a bot</h1>
+<h1 class="pt-8">{guideName}</h1>
 
 <p class="pb-4">
 	This guide will teach you how to write a bot to participate in battles.
