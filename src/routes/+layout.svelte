@@ -38,7 +38,9 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 	<li><a class="navbtn" href="/{link}">{label}</a></li>
 {/snippet}
 
-<nav class={["sm:hidden px-4 py-3", {"pl-40": page.route.id === "/(loggedout)"}]}>
+<nav
+	class={["sm:hidden px-4 py-3", {"pl-40": page.route.id === "/(loggedout)"}]}
+>
 	<ul class="flex flex-wrap gap-5">
 		{#if await user}
 			{@render navlink("home", "Home")}
