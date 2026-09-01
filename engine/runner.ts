@@ -1,6 +1,6 @@
 import { type RecordId, type Surreal, Table } from "surrealdb"
 import type { Memory, Move, State } from "./bots/bot"
-import { callBot } from "./sandbox"
+import { createSandboxedBot } from "./sandbox"
 
 export type DBBot = {
 	id: RecordId<"bot">
@@ -38,43 +38,51 @@ export async function simulateBattle(
 	const history: MovePair[] = []
 	const errors: [string?, string?] = [undefined, undefined]
 
-	// Variable number of rounds, though always at least 100
-	const rounds = Math.floor(100 - 20 * Math.log(1 - Math.random()))
+	// One persistent sandbox per bot, reused for every round of the battle
+	const sandboxedBots = await Promise.all(bots.map(createSandboxedBot))
 
-	for (let i = 0; i < rounds; i++) {
-		const moves: MovePair = ["C", "C"]
-		const memories: [Memory, Memory] = [null, null]
-		let roundErrored = false
+	try {
+		// Variable number of rounds, though always at least 100
+		const rounds = Math.floor(100 - 20 * Math.log(1 - Math.random()))
 
-		for (let j = 0; j < bots.length; j++) {
-			const bot = bots[j]
-			if (!bot) throw new Error("Bot not found")
-			const state = states[j]
-			if (!state) throw new Error("State not found")
+		for (let i = 0; i < rounds; i++) {
+			const moves: MovePair = ["C", "C"]
+			const memories: [Memory, Memory] = [null, null]
+			let roundErrored = false
 
-			let result: [Move, Memory]
-			try {
-				result = await callBot(bot, state)
-			} catch (error) {
-				errors[j] =
-					error instanceof Error
-						? error.message
-						: JSON.stringify(error)
-				roundErrored = true
-				continue
+			for (let j = 0; j < sandboxedBots.length; j++) {
+				const state = states[j]
+				if (!state) throw new Error("State not found")
+
+				const bot = sandboxedBots[j]
+				if (!bot) throw new Error("Bot not found")
+
+				let result: [Move, Memory]
+				try {
+					result = bot.call(state)
+				} catch (error) {
+					errors[j] =
+						error instanceof Error
+							? error.message
+							: JSON.stringify(error)
+					roundErrored = true
+					continue
+				}
+				const [move, memory] = result
+				moves[j] = move
+				memories[j] = memory
 			}
-			const [move, memory] = result
-			moves[j] = move
-			memories[j] = memory
+
+			if (roundErrored) break
+
+			states[0].memory = memories[0]
+			states[1].memory = memories[1]
+			states[0].history.push({ you: moves[0], opponent: moves[1] })
+			states[1].history.push({ you: moves[1], opponent: moves[0] })
+			history.push(moves)
 		}
-
-		if (roundErrored) break
-
-		states[0].memory = memories[0]
-		states[1].memory = memories[1]
-		states[0].history.push({ you: moves[0], opponent: moves[1] })
-		states[1].history.push({ you: moves[1], opponent: moves[0] })
-		history.push(moves)
+	} finally {
+		for (const bot of sandboxedBots) bot.dispose()
 	}
 
 	return { rounds: history, errors }
@@ -89,7 +97,6 @@ export async function runBattle(
 	bots: [DBBot, DBBot]
 ): Promise<void> {
 	const { rounds: history, errors } = await simulateBattle(bots)
-
 	await db.create(new Table("battle")).content({
 		bots: bots.map(bot => bot.id),
 		rounds: history.map(round => round.map(moveToInt)),
