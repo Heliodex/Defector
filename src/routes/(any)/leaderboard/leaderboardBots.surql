@@ -31,7 +31,8 @@ LET $bots = (SELECT id, name FROM bot);
 
 # Merge the aggregates into the bot rows (bots with no battles default to elo 1000 / zeroed stats, matching the old fn::botElo / fn::botStats behaviour).
 SELECT * FROM $bots.map(|$b| {
-	LET $a = $agg.find(|$x| $x.bot == record::id($b.id));
+	LET $a = $agg.find(|$x| $x.bot == record::id($b.id))
+		OR { elo: 1000.0, battles: 0, wins: 0, losses: 0 };
 	{
 		id: record::id($b.id),
 		name: $b.name,
