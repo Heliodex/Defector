@@ -18,8 +18,10 @@ type MyBot = {
 
 export const getMyBots = query(async (): Promise<MyBot[]> => {
 	const { user } = await authorise()
-	const [bots] = await db.query<MyBot[][]>(listBotsQuery, { user: user.id })
-	return bots ?? []
+	const [, , , results] = await db.query<
+		[undefined, undefined, undefined, MyBot[]]
+	>(listBotsQuery, { user: user.id })
+	return results
 })
 
 const toggleSchema = type({
