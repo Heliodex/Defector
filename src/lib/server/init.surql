@@ -221,14 +221,14 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		# New: base = 0.5 +/- weight. CC still >0.5 (both gain),
 		# DD still <0.5 (both lose), but injection is small and competitive margin remains dominant.
 		#
-		# The weight is asymmetric: cooperation earns a small bonus (+0.05) but defection takes a larger penalty (-0.15). Combined with the cooperation-scaled margin below, mutual defection now costs each bot ~-2.4 Elo per battle while mutual cooperation only injects ~+0.8 each, and beating a cooperator by pure defection nets only ~+8 instead of the old ~+16. Always-defect bots bleed rating fast.
+		# The weight is symmetric (+0.10 cooperation bonus / -0.10 defection penalty) so the pool is inflation-neutral: mutual cooperation injects ~+3.2 Elo total per battle and mutual defection drains ~-3.2, matching each other. With the earlier asymmetric weights (0.05/0.15) a defection-heavy tournament deflated the whole pool (~<700 Elo after 1000 battles). Combined with the cooperation-scaled margin below, mutual defection still costs each bot ~-1.6 per battle and beating a cooperator by pure defection nets only ~+8 instead of ~+16. Always-defect bots bleed rating fast.
 		LET $avg = ($scores[0] + $scores[1]) / 2.0;
 		LET $mid = ($R + $P) / 2.0;
 		LET $halfRange = ($R - $P) / 2.0;
-		LET $coopWeight = <float> 0.05;
-		LET $defectWeight = <float> 0.15;
+		LET $coopWeight = <float> 0.10;
+		LET $defectWeight = <float> 0.10;
 		LET $baseRaw = IF $halfRange > 0.0 {
-			# IF-as-expression picks the asymmetric weight (no LET inside IF blocks needed)
+			# IF-as-expression picks the weight by cooperation direction (no LET inside IF blocks needed)
 			0.5 + (IF (($avg - $mid) / $halfRange) >= 0.0 { $coopWeight } ELSE { $defectWeight })
 				* (($avg - $mid) / $halfRange)
 		} ELSE {
