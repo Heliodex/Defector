@@ -8,7 +8,8 @@ import Head from "#lib/components/Head.svelte"
 
 <p class="pb-4">
 	Take a look at the following guides if you're interested in making a bot,
-	learning the logic behind game theory, or want to learn more about how this programme works.
+	learning the logic behind game theory, or want to learn more about how this
+	programme works.
 </p>
 
 <ul>
@@ -16,5 +17,10 @@ import Head from "#lib/components/Head.svelte"
 		<a href="/guide/writing-a-bot">Writing a bot</a>
 		&ndash; covers basic strategies, required bot format, and some
 		limitations of what bots can do.
+	</li>
+	<li>
+		<a href="/guide/js-for-bots">JavaScript for bots</a>
+		&ndash; covers the constructs of JavaScript used in bots for people new to JS or to
+		programming in general.
 	</li>
 </ul>
