@@ -5,7 +5,13 @@ import Head from "#components/Head.svelte"
 import chessboard from "#lib/assets/chessboard.png"
 import { programmeName } from "#lib/assets/config.js"
 import logo from "#lib/assets/logo.svg"
-import { login } from "../data.remote"
+import { getLatestMatrix, login } from "../data.remote"
+
+const matrix = $derived(await getLatestMatrix())
+const R = $derived(matrix?.[0][0])
+const S = $derived(matrix?.[0][1])
+const T = $derived(matrix?.[1][0])
+const P = $derived(matrix?.[1][1])
 </script>
 
 <Head />
@@ -84,43 +90,45 @@ import { login } from "../data.remote"
 	>: in each round both you and your opponent choose to cooperate or defect.
 </p>
 
-<ul>
-	<li>If you both cooperate you each get 2 points.</li>
-	<li>If you both defect you each get 1 point.</li>
-	<li>
-		If one of you defects while the other cooperates, the defector gets 3
-		points and the other gets 0.
-	</li>
-</ul>
+{#if matrix}
+	<ul>
+		<li>If you both cooperate you each get {R} points.</li>
+		<li>If you both defect you each get {P} points.</li>
+		<li>
+			If one of you defects while the other cooperates, the defector gets {T}
+			points and the other gets {S}.
+		</li>
+	</ul>
 
-<p>
-	This makes the payoff matrix (how many points you get for each move) look
-	like this:
-</p>
+	<p>
+		This makes the payoff matrix (how many points you get for each move) look
+		like this:
+	</p>
 
-<div class="py-4">
-	<table class="mx-auto shadowcard">
-		<thead>
-			<tr>
-				<th class="font-normal">You →<br>Opponent ↓</th>
-				<th>Cooperate</th>
-				<th>Defect</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td class="font-bold">Cooperate</td>
-				<td>2, 2</td>
-				<td>0, 3</td>
-			</tr>
-			<tr>
-				<td class="font-bold">Defect</td>
-				<td>3, 0</td>
-				<td>1, 1</td>
-			</tr>
-		</tbody>
-	</table>
-</div>
+	<div class="py-4">
+		<table class="mx-auto shadowcard">
+			<thead>
+				<tr>
+					<th class="font-normal">You →<br>Opponent ↓</th>
+					<th>Cooperate</th>
+					<th>Defect</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="font-bold">Cooperate</td>
+					<td>{R}, {R}</td>
+					<td>{S}, {T}</td>
+				</tr>
+				<tr>
+					<td class="font-bold">Defect</td>
+					<td>{T}, {S}</td>
+					<td>{P}, {P}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+{/if}
 
 <p>
 	Over at least 100 rounds, the accumulated score decides the winner. Elo

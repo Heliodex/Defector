@@ -2,6 +2,13 @@
 import Code from "#components/Code.svelte"
 import BattleCard from "#lib/components/BattleCard.svelte"
 import Head from "#lib/components/Head.svelte"
+import { getLatestMatrix } from "../../data.remote"
+
+const matrix = $derived(await getLatestMatrix())
+const R = $derived(matrix?.[0][0])
+const S = $derived(matrix?.[0][1])
+const T = $derived(matrix?.[1][0])
+const P = $derived(matrix?.[1][1])
 </script>
 
 <Head title="Guide" />
@@ -419,7 +426,7 @@ import Head from "#lib/components/Head.svelte"
 
 <p class="pb-4">
 	If a bot times out, returns an invalid move, or throws an error, then it
-	forfeits the match and its opponent wins 3:0. Write something robust!
+	forfeits the match and its opponent wins {T}:{S}. Write something robust!
 </p>
 
 <p>
