@@ -13,8 +13,8 @@ export async function start(db: Surreal): Promise<never> {
 	for (;;) {
 		try {
 			// selectBots.surql throws when fewer than 2 bots are active.
-			const [, , , bots] =
-				await db.query<[DBBot, DBBot][]>(selectBotsQuery)
+			const results = await db.query<[DBBot, DBBot][]>(selectBotsQuery)
+			const bots = results.at(-1)
 
 			if (!bots) throw new Error("Query returned no bots")
 
