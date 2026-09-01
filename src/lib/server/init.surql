@@ -172,14 +172,14 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> DEFAULT ALWAYS
 		fn::calculateScore($this);
 	DEFINE FIELD OVERWRITE eloDelta ON battle TYPE array<float, 2> DEFAULT ALWAYS {
-		LET $matrix: record<matrix> = (SELECT VALUE matrix FROM ONLY $this) OR fn::latestMatrix();
-		LET $payoff: array<array<float, 2>, 2> = SELECT VALUE payoff FROM ONLY $matrix;
+		LET $payoff: array<array<float, 2>, 2> = SELECT VALUE payoff FROM ONLY (($this.matrix) OR fn::latestMatrix());
 		IF $payoff == NONE {
 			THROW "eloDelta: payoff is NONE";
 		};
 
 		LET $T = $payoff[1][0];
 		LET $S = $payoff[0][1];
+		# Scores are recomputed here (rather than read from `$this.scores`) because DEFAULT ALWAYS fields are not guaranteed to be evaluated in definition order, so `$this.scores` can be NONE when this runs. The original code re-fetched the matrix/payoff a second time inside this block; here we reuse the $payoff already resolved above, leaving just one matrix fetch.
 		LET $errors = $this.errors;
 		LET $e0 = $errors[0] != NONE;
 		LET $e1 = $errors[1] != NONE;
@@ -190,12 +190,6 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		} ELSE IF $e1 {
 			[$T, $S];
 		} ELSE {
-			LET $matrix: record<matrix> = (SELECT VALUE matrix FROM ONLY $this) OR fn::latestMatrix();
-			LET $payoff: array<array<float, 2>, 2> = SELECT VALUE payoff FROM ONLY $matrix;
-			IF $payoff == NONE {
-				THROW "eloDelta: payoff is NONE in scores";
-			};
-
 			LET $rounds = SELECT VALUE rounds FROM ONLY $this;
 			IF $rounds == NONE {
 				THROW "eloDelta: rounds is NONE";
