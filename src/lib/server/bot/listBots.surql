@@ -25,17 +25,18 @@ LET $agg = (SELECT
 		(SELECT
 			botIds[0] AS botId,
 			math::sum(eloDelta[0]) AS eloSum,
-			math::sum(IF scores[0] > scores[1] { 1 } ELSE { 0 }) AS wins,
-			math::sum(IF scores[0] < scores[1] { 1 } ELSE { 0 }) AS losses,
+			math::sum(fn::b2i(scores[0] > scores[1])) AS wins,
+			math::sum(fn::b2i(scores[0] < scores[1])) AS losses,
 			count() AS battles
 		FROM battle
 		WHERE botIds CONTAINSANY $ids
 		GROUP BY botIds[0])
-		+ (SELECT
+		+
+		(SELECT
 			botIds[1] AS botId,
 			math::sum(eloDelta[1]) AS eloSum,
-			math::sum(IF scores[1] > scores[0] { 1 } ELSE { 0 }) AS wins,
-			math::sum(IF scores[1] < scores[0] { 1 } ELSE { 0 }) AS losses,
+			math::sum(fn::b2i(scores[1] > scores[0])) AS wins,
+			math::sum(fn::b2i(scores[1] < scores[0])) AS losses,
 			count() AS battles
 		FROM battle
 		WHERE botIds CONTAINSANY $ids
