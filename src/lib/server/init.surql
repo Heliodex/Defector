@@ -209,29 +209,11 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		LET $R = $payoff[0][0];
 		LET $P = $payoff[1][1];
 
-		# --- Absolute (cooperation) component ---
-		# Reduced-weight to avoid rating inflation. Old formula used
-		#   base = 0.25 + 0.5*((avg-P)/(R-P))  => CC 0.75 (+8), DD 0.25 (-8)
-		#   net +16 Elo per mutual-cooperation battle => unbounded inflation
-		#   (~+900 after 1000 cooperative battles in a cooperative-heavy pool).
-		# New: base = 0.5 +/- weight. CC still >0.5 (both gain),
-		# DD still <0.5 (both lose), but injection is small and competitive margin remains dominant.
-		#
-		# The weight is symmetric (+0.10 cooperation bonus / -0.10 defection penalty) so the pool is inflation-neutral: mutual cooperation injects ~+3.2 Elo total per battle and mutual defection drains ~-3.2, matching each other. With the earlier asymmetric weights (0.05/0.15) a defection-heavy tournament deflated the whole pool (~<700 Elo after 1000 battles). Combined with the cooperation-scaled margin below, mutual defection still costs each bot ~-1.6 per battle and beating a cooperator by pure defection nets only ~+8 instead of ~+16. Always-defect bots bleed rating fast.
+		# --- Zero-sum base ---
+		# base is a constant 0.5 so Elo is strictly zero-sum: for every battle actual0 + actual1 == 1 (the margin components below cancel), so a closed pool conserves its total Elo and the mean stays ~1000 forever, regardless of how cooperative or defection-heavy the population is.
+		# The previous design used base = 0.5 +/- weight to reward cooperation and penalise defection absolutely, but that injected Elo on cooperative battles and only drained it on defection battles. In a pool that co-operated more than it defected, injection exceeded drain and the whole ladder crept upward — past ~3000 after 8000 self-play battles. Cooperation vs defection still shapes *relative* standings, but via the zero-sum margin component below (strong wins outrank flat draws) instead of by inflating the pool total.
 		LET $avg = ($scores[0] + $scores[1]) / 2.0;
-		LET $mid = ($R + $P) / 2.0;
-		LET $halfRange = ($R - $P) / 2.0;
-		LET $coopWeight = <float> 0.10;
-		LET $defectWeight = <float> 0.10;
-		LET $baseRaw = IF $halfRange > 0.0 {
-			# IF-as-expression picks the weight by cooperation direction (no LET inside IF blocks needed)
-			0.5 + (IF (($avg - $mid) / $halfRange) >= 0.0 { $coopWeight } ELSE { $defectWeight })
-				* (($avg - $mid) / $halfRange)
-		} ELSE {
-			0.5
-		};
-		# clamp base to [0,1]; extreme S/S (avg=0) is extrapolated beyond P and will clamp rather than go strongly negative.
-		LET $base = math::clamp($baseRaw, 0.0, 1.0);
+		LET $base = <float> 0.5;
 
 		# --- Relative (margin) component ---
 		# Weighted by how much one bot beats the other: diff = 0 => no swing,
@@ -243,8 +225,11 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		#   DD battle (avg == P)      => factor 0.0  (no rating movement at all)
 		# This stops always-defect bots from grinding up the leaderboard on margin alone while making their mutual-defection battles fully flat.
 		LET $denom = $T - $S;
-		LET $rawMargin0 = IF $denom > 0.0 {
-			($scores[0] - $scores[1]) / (2.0 * $denom)
+		# Bind these to plain variables so the division is unambiguous: the WASM engine mis-parses `diff / (2.0 * $denom)` inside the IF expression as `diff / 2.0 * $denom` (it ignores the parentheses), which inflated the margin 9x and pushed the win into the 1.0 clamp (exploitation showed ~+16 instead of the intended ~+8, effectively halving the defection penalty).
+		LET $scoreDiff = $scores[0] - $scores[1];
+		LET $twiceDenom = 2.0 * $denom;
+		LET $rawMargin0 = IF $twiceDenom > 0.0 {
+			$scoreDiff / $twiceDenom
 		} ELSE {
 			0.0
 		};
