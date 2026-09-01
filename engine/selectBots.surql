@@ -7,11 +7,27 @@ IF count(SELECT 1 FROM bot WHERE active) <= 1 {
 # w = 1 / (battles + 1), floored at 0.02 so long-lived battle-hardened bots still get some play instead of starving forever.
 #
 # (SurrealDB's WASM engine — used in the tests — only allows ORDER BY on a projected field, hence the projected `score` column; callers ignore it.)
+#
+# Battle counts are computed in one pass over the battle table instead of a correlated count subquery per bot: bots are flattened out of each battle via its two botIds array slots and aggregated with GROUP BY, reusing the battleBotIds index. This is exactly the two-indexed-scan trick from listBots.surql (N correlated count subqueries before, ~2 scans now).
+LET $ids = (SELECT VALUE record::id(id) FROM bot WHERE active);
+
+LET $battleCounts = (SELECT
+		botId,
+		math::sum(battles) AS battles
+	FROM (
+		(SELECT botIds[0] AS botId, count() AS battles
+			FROM battle WHERE botIds CONTAINSANY $ids GROUP BY botIds[0])
+		+
+		(SELECT botIds[1] AS botId, count() AS battles
+			FROM battle WHERE botIds CONTAINSANY $ids GROUP BY botIds[1])
+	)
+	GROUP BY botId);
+
+# Battles fought so far (0 if never battled); looked up per bot from $battleCounts via a correlated subquery on the in-memory array (no battle-table scan per bot).
 LET $bots = (SELECT
 	id, codeHash, latestCode, name,
-	# Battles fought so far (0 if never battled); the subquery uses the battleBotIds index (botIds holds record::id strings).
 	math::max([
-		1.0 / (((SELECT count() FROM battle WHERE record::id($parent.id) IN botIds GROUP ALL)[0].count ?? 0) + 1),
+		1.0 / ((SELECT VALUE battles FROM $battleCounts WHERE botId == record::id($parent.id))[0] ?? 0 + 1),
 		0.02
 	]) AS w
 	FROM bot WHERE active);
