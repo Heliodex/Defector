@@ -29,6 +29,10 @@ const lines = $derived(
 					<code class="bg-red-100" style={padding}>
 						{line.substring(1)}
 					</code>
+				{:else if line.startsWith("~")}
+					<code class="bg-yellow-100" style={padding}>
+						{line.substring(1)}
+					</code>
 				{:else}
 					<code style={padding}>{line}</code>
 				{/if}
