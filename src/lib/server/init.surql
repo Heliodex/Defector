@@ -218,14 +218,19 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		#   base = 0.25 + 0.5*((avg-P)/(R-P))  => CC 0.75 (+8), DD 0.25 (-8)
 		#   net +16 Elo per mutual-cooperation battle => unbounded inflation
 		#   (~+900 after 1000 cooperative battles in a cooperative-heavy pool).
-		# New: base = 0.5 +/- $coopWeight. CC still >0.5 (both gain),
-		# DD still <0.5 (both lose), but injection is small and competitive margin remains dominant. Tune $coopWeight 0.05-0.10 (0.06 => CC +1.9).
+		# New: base = 0.5 +/- weight. CC still >0.5 (both gain),
+		# DD still <0.5 (both lose), but injection is small and competitive margin remains dominant.
+		#
+		# The weight is asymmetric: cooperation earns a small bonus (+0.05) but defection takes a larger penalty (-0.15). Combined with the cooperation-scaled margin below, mutual defection now costs each bot ~-2.4 Elo per battle while mutual cooperation only injects ~+0.8 each, and beating a cooperator by pure defection nets only ~+8 instead of the old ~+16. Always-defect bots bleed rating fast.
 		LET $avg = ($scores[0] + $scores[1]) / 2.0;
 		LET $mid = ($R + $P) / 2.0;
 		LET $halfRange = ($R - $P) / 2.0;
-		LET $coopWeight = <float> 0.06;
+		LET $coopWeight = <float> 0.05;
+		LET $defectWeight = <float> 0.15;
 		LET $baseRaw = IF $halfRange > 0.0 {
-			0.5 + $coopWeight * (($avg - $mid) / $halfRange)
+			# IF-as-expression picks the asymmetric weight (no LET inside IF blocks needed)
+			0.5 + (IF (($avg - $mid) / $halfRange) >= 0.0 { $coopWeight } ELSE { $defectWeight })
+				* (($avg - $mid) / $halfRange)
 		} ELSE {
 			0.5
 		};
@@ -235,12 +240,25 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		# --- Relative (margin) component ---
 		# Weighted by how much one bot beats the other: diff = 0 => no swing,
 		# diff == T-S (max exploit) => +/-0.5 swing.
+		#
+		# The margin swing is then scaled by a *cooperation factor* so that winning through defection is worth less than winning through mutual cooperation. factor = (avg - P) / (R - P):
+		#   CC battle (avg == R)      => factor 1.0  (full swing, cooperation rewarded)
+		#   exploiter vs cooperator   => factor ~0.5 (halved swing, defection discounted)
+		#   DD battle (avg == P)      => factor 0.0  (no rating movement at all)
+		# This stops always-defect bots from grinding up the leaderboard on margin alone while making their mutual-defection battles fully flat.
 		LET $denom = $T - $S;
-		LET $margin0 = IF $denom > 0.0 {
+		LET $rawMargin0 = IF $denom > 0.0 {
 			($scores[0] - $scores[1]) / (2.0 * $denom)
 		} ELSE {
 			0.0
 		};
+		LET $coopDenom = $R - $P;
+		LET $coopFactor = IF $coopDenom > 0.0 {
+			math::clamp(($avg - $P) / $coopDenom, 0.0, 1.0)
+		} ELSE {
+			0.0
+		};
+		LET $margin0 = $rawMargin0 * $coopFactor;
 		LET $margin1 = 0.0 - $margin0;
 
 		LET $actual0Raw = $base + $margin0;
