@@ -11,9 +11,7 @@ const T = $derived(matrix?.[1][0])
 const P = $derived(matrix?.[1][1])
 </script>
 
-<Head title="Guide" />
-
-<a href="/">Back to the homepage</a>
+<Head title="Guide - Writing a bot" />
 
 <h1 class="pt-8">Writing a bot</h1>
 
@@ -443,20 +441,22 @@ const P = $derived(matrix?.[1][1])
 	original prisoner's dilemma:
 </p>
 
-<ul class="pb-4">
-	<li>Both cooperate: <b>2</b> points each.</li>
-	<li>
-		You defect, opponent cooperates: <b>3</b> points for you,
-		<b>0</b>
-		points for them.
-	</li>
-	<li>
-		You cooperate, opponent defects: <b>0</b> points for you,
-		<b>3</b>
-		points for them.
-	</li>
-	<li>Both defect: <b>1</b> point each.</li>
-</ul>
+{#if matrix}
+	<ul class="pb-4">
+		<li>Both cooperate: <b>{R}</b> points each.</li>
+		<li>
+			You defect, opponent cooperates: <b>{T}</b> points for you,
+			<b>{S}</b>
+			points for them.
+		</li>
+		<li>
+			You cooperate, opponent defects: <b>{S}</b> points for you,
+			<b>{T}</b>
+			points for them.
+		</li>
+		<li>Both defect: <b>{P}</b> point each.</li>
+	</ul>
+{/if}
 
 <p class="pb-4">
 	This may change in future, possibly later on in the competition. Keep your
@@ -464,9 +464,9 @@ const P = $derived(matrix?.[1][1])
 </p>
 
 <p>
-	The winner is whoever banks more points over the whole battle. Every battle adjusts
-	both bots' <b>Elo</b> (starting at 1000), which is what the leaderboard
-	ranks.
+	The winner is whoever banks more points over the whole battle. Every battle
+	adjusts both bots' <b>Elo</b> (starting at 1000), which is what the
+	leaderboard ranks.
 </p>
 
 <h1 class="pt-4">Submitting</h1>
