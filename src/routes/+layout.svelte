@@ -17,7 +17,7 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 	<!-- Privacy-friendly analytics by Plausible -->
 	<script
 		async
-		src="https://plausible.io/js/pa-twHcZYCXszjlsDQhYOAJl.js"
+		src="https://plausible.io/js/pa-dpZgF7oXDdxIc2vD_Vtps.js"
 	></script>
 	<script>
 	;(window.plausible =
