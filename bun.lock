@@ -18,6 +18,7 @@
       },
       "devDependencies": {
         "@biomejs/biome": "^2.5.11",
+        "@surrealdb/wasm": "^3.0.3",
         "@types/bun": "^1.4.0",
         "@typescript/native": "npm:typescript@^7.0.2",
         "svelte-check": "^4.7.6",
@@ -155,6 +156,8 @@
     "@surrealdb/cbor": ["@surrealdb/cbor@2.0.0-alpha.4", "", {}, "sha512-l/hNZ3ZCOJq8rzwx1y5ZV/8b2bYCWdhGqRVY33Pu50NAHyAW5qLsMn3ZBkZow77mAKwNCsbDsRGnyYEuU95mjw=="],
 
     "@surrealdb/sqon": ["@surrealdb/sqon@0.1.0", "", { "dependencies": { "@surrealdb/cbor": "2.0.0-alpha.4", "uuidv7": "^1.0.1" }, "peerDependencies": { "tslib": "^2.6.3", "typescript": "^5.0.0" } }, "sha512-pooKLZ0W6mN8XHzJQavGOdfZOZksycmIjhwFwvG0kdCAt4I5U6KKPHcXQwFkTDNKFKFKdufczLRnzHapPIslQw=="],
+
+    "@surrealdb/wasm": ["@surrealdb/wasm@3.0.3", "", { "peerDependencies": { "surrealdb": "^2.0.1" } }, "sha512-7tUOiQB2eZY80oNKfLvwqZLgANun04ubKXqfanAZmAnwJMB/nKetk7eh6dRd+PFzmLla1Ns2m6Fku+H/DSFjbA=="],
 
     "@sveltejs/acorn-typescript": ["@sveltejs/acorn-typescript@1.0.13", "", { "peerDependencies": { "acorn": "^8.9.0" } }, "sha512-wgKggnhZVL9Bfx1OaKKTrYY9BFRk6C8UAkQNUcIv1+llzYrIqy+RZm5HPKzn0NpEBvTVhTqB4kQyllZywsRBRQ=="],
 
