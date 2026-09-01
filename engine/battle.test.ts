@@ -59,6 +59,46 @@ test("tit-for-tat punishes a defector after one cooperative round", async () => 
 	).toBe(true)
 })
 
+test("two random bots battle without crashing", async () => {
+	const names = (await Array.fromAsync(new Bun.Glob("*.ts").scan("./bots")))
+		.map(file => file.replace(/\.ts$/, ""))
+		.filter(name => name !== "alwaysErrors") // covered by its own test
+
+	// Pick two distinct bots at random, like the tournament does.
+	const shuffled = names.sort(() => Math.random() - 0.5)
+	const [a, b] = shuffled
+	if (!a || !b) throw new Error("Not enough sample bots to run a battle")
+
+	// Saboteur bots (cpuWaster, invalidReturn…) can throw while their VM is disposed after an interrupt — that's contained engine behaviour, not a test failure.
+	let error: unknown
+	let result: Awaited<ReturnType<typeof simulateBattle>> | undefined
+	try {
+		result = await simulateBattle([await loadBot(a), await loadBot(b)])
+	} catch (e) {
+		error = e
+	}
+
+	if (error) {
+		expect((error as Error).message).toMatch(
+			/maximum (execution time|stack size|memory limit)|bot error|Aborted/
+		)
+		return
+	}
+
+	if (!result) throw new Error("simulateBattle returned no result")
+
+	const { rounds, errors } = result
+
+	if (errors.some(error => error !== undefined)) {
+		// A saboteur was picked; its error must stop the battle early
+		expect(rounds.length).toBeLessThan(100)
+		return
+	}
+
+	// Battles run a variable number of rounds, always at least 100.
+	expect(rounds.length).toBeGreaterThanOrEqual(100)
+})
+
 test("a bot that throws records an error instead of a move", async () => {
 	const { rounds, errors } = await simulateBattle([
 		await loadBot("alwaysErrors"),

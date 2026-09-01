@@ -107,10 +107,11 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 		DEFINE FIELD OVERWRITE code.*.source ON bot TYPE string;
 		DEFINE FIELD OVERWRITE code.*.transpiled ON bot TYPE string;
 		DEFINE FIELD OVERWRITE code.*.updated ON bot TYPE datetime DEFAULT ALWAYS time::now();
+	# Bots only ever get a single code entry on creation, so "latest" is just the last element. (The original ORDER BY updated subquery isn't accepted by the WASM engine used in tests, and there is no code-update path anyway.)
 	DEFINE FIELD OVERWRITE codeHash ON bot TYPE string VALUE
-		crypto::sha256((SELECT VALUE transpiled FROM $this.code ORDER BY updated)[$]);
+		crypto::sha256(array::last($this.code).transpiled);
 	DEFINE FIELD OVERWRITE latestCode ON bot TYPE string VALUE
-		(SELECT VALUE transpiled FROM $this.code ORDER BY updated)[$];
+		array::last($this.code).transpiled;
 	DEFINE FIELD OVERWRITE active ON bot TYPE bool DEFAULT ALWAYS false;
 	DEFINE FIELD OVERWRITE created ON bot TYPE datetime DEFAULT ALWAYS time::now();
 
@@ -152,7 +153,8 @@ DEFINE FUNCTION OVERWRITE fn::botStats($bot: record<bot>) {
 };
 
 DEFINE FUNCTION OVERWRITE fn::latestMatrix() -> record<matrix> {
-	(SELECT VALUE id FROM matrix ORDER BY created)[$];
+	# (The WASM engine used in tests requires the ORDER BY field to appear in the projection.)
+	(SELECT id, created FROM matrix ORDER BY created)[$].id;
 };
 
 DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
