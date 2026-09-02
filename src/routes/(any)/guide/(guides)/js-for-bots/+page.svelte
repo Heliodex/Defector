@@ -384,7 +384,10 @@ const guideName = "JavaScript for bots"
 	destructured from the function parameter, it's reassignable by default) to
 	an object with a property <code>strategy</code> set to <code>"C"</code>.
 	Otherwise, we set this strategy property to <code>"D"</code>.<br>
-	Objects are the equivalent of what other languages may call "dictionaries", "maps", or "hashmaps". They store pairs of keys and values. The keys can be text strings, numbers, or other applicable types, and the values can be any type.
+	Objects are the equivalent of what other languages may call "dictionaries",
+	"maps", or "hashmaps". They store pairs of keys and values. The keys can be
+	text strings, numbers, or other applicable types, and the values can be any
+	type.
 </p>
 
 <p class="pb-4">
@@ -414,9 +417,13 @@ const guideName = "JavaScript for bots"
 />
 
 <p class="pb-4">
-	This bot is designed to cooperate well with bots using tit-for-tat strategies, and to exploit bots that always cooperate. It will also defend itself as much as it can against bots which are random/unpredictable or always defect.
+	This bot is designed to cooperate well with bots using tit-for-tat
+	strategies, and to exploit bots that always cooperate. It will also defend
+	itself as much as it can against bots which are random/unpredictable or
+	always defect.
 </p>
 
 <p>
-	Can you figure out what its weaknesses are? Try to build a bot that can beat this one, or try to improve on this version of the detective strategy.
+	Can you figure out what its weaknesses are? Try to build a bot that can beat
+	this one, or try to improve on this version of the detective strategy.
 </p>
