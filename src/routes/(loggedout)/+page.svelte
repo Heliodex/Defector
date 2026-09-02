@@ -15,8 +15,8 @@ const P = $derived(matrix?.[1][1])
 </script>
 
 <Head
-	title="Iterated Prisoner's Dilemma bot competition"
-	description="Defector is a free Hack Club competition: write a bot that plays a Prisoner's Dilemma-like strategy game, battle other bots on a live Elo leaderboard, and win video game grants. Every few seconds two bots battle and the winner climbs the ladder."
+	title="Live Prisoner's Dilemma bot competition"
+	description="Defector is a competition by Hack Club: write a bot that plays a Prisoner's Dilemma-like strategy game, battle other bots on a live leaderboard, and win video game grants. Every few seconds 2 bots battle and the winner climbs the ladder."
 	schema={{
 		"@context": "https://schema.org",
 		"@type": "WebSite",
