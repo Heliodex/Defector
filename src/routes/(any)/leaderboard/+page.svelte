@@ -69,7 +69,7 @@ const connected = $derived(dataResult.connected)
 						<th class="border-b border-neutral-200 p-3">#</th>
 						<th class="border-b border-neutral-200 p-3">Bot</th>
 						<!-- <th class="border-b border-neutral-200 p-3">Owner</th> -->
-						<th class="border-b border-neutral-200 p-3">Elo</th>
+						<th class="border-b border-neutral-200 p-3">Avg score</th>
 						<th class="border-b border-neutral-200 p-3">W-L</th>
 						<th class="border-b border-neutral-200 p-3">Battles</th>
 					</tr>
@@ -97,7 +97,7 @@ const connected = $derived(dataResult.connected)
 							<td
 								class="border-b border-neutral-300 p-3 font-bold"
 							>
-								{Math.round(bot.elo)}
+								{bot.meanScore.toFixed(3)}
 							</td>
 							<td class="border-b border-neutral-300 p-3">
 								{bot.stats.wins}-{bot.stats.losses}

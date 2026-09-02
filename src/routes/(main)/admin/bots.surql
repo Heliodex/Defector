@@ -3,8 +3,8 @@ SELECT
 	name,
 	active,
 	created,
-	fn::botElo($this.id) AS elo,
+	fn::botMeanScore($this.id) AS meanScore,
 	fn::botStats($this.id) AS stats,
 	(SELECT VALUE email FROM ONLY $parent<-created<-user)[0] AS ownerEmail
 FROM bot
-ORDER BY elo DESC, name ASC;
+ORDER BY meanScore DESC, name ASC;

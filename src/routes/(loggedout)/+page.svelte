@@ -63,15 +63,15 @@ const P = $derived(matrix?.[1][1])
 	You write a tiny function that, given your history with an opponent, picks a
 	move: <b>cooperate (C)</b> or <b>defect (D)</b>. Your bot gets a new
 	opponent every battle and earns points per round. Better bots win more
-	battles and climb the Elo ladder.
+	battles and climb the leaderboard.
 </p>
 
 <ul>
 	<li>Write a bot in TypeScript or JavaScript, no frameworks needed.</li>
 	<li>You may have up to 3 active bots in the live tournament at once.</li>
 	<li>
-		Your bots' Elo starts at 1000 and updates automatically after each
-		battle.
+		Your bots are ranked by their mean score per round, which updates
+		automatically after each battle.
 	</li>
 </ul>
 
@@ -131,8 +131,8 @@ const P = $derived(matrix?.[1][1])
 {/if}
 
 <p>
-	Over at least 100 rounds, the accumulated score decides the winner. Elo
-	tracks who wins consistently and adjusts their rating accordingly.
+	Over at least 100 rounds, the accumulated score decides the winner. Each bot
+	is ranked by its mean score per round, averaged across all of its battles.
 </p>
 
 <p class="pt-4">

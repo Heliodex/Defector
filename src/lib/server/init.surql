@@ -68,7 +68,7 @@ DEFINE FUNCTION OVERWRITE fn::initialMatrix() {
 };
 
 # Seed the matrix only if it isn't already present (keeps re-runs idempotent).
-IF count(matrix) < 1 {
+IF (SELECT count() FROM matrix GROUP ALL)[0].count < 1 {
 	CREATE matrix CONTENT {
 		payoff: fn::initialMatrix()
 	};
@@ -115,18 +115,25 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE active ON bot TYPE bool DEFAULT ALWAYS false;
 	DEFINE FIELD OVERWRITE created ON bot TYPE datetime DEFAULT ALWAYS time::now();
 
-DEFINE FUNCTION OVERWRITE fn::botElo($bot: record<bot>) -> float {
+DEFINE FUNCTION OVERWRITE fn::botMeanScore($bot: record<bot>) -> float {
 	LET $id = record::id($bot);
-	1000.0 + math::sum(SELECT VALUE eloDelta[array::find_index(bots, $bot)]
-		FROM battle WHERE $id IN botIds);
+	# The score a bot earns for itself in a battle is scores[its slot]; the rating is the mean of those per-battle scores across every battle it fought ON THE CURRENT MATRIX. Each battle permanently records the matrix it was played on, so pushing a new matrix scopes the average to the new games and effectively resets the ladder (bots that haven't battled yet on it => 0.0).
+	LET $rows = SELECT VALUE scores[array::find_index(bots, $bot)]
+		FROM battle WHERE $id IN botIds AND matrix = fn::latestMatrix();
+	IF array::len($rows) == 0 {
+		RETURN 0.0;
+	};
+	math::sum($rows) / <float> array::len($rows);
 };
 
-DEFINE FUNCTION OVERWRITE fn::botEloHistory($bot: record<bot>) -> array<float> {
+DEFINE FUNCTION OVERWRITE fn::botScoreHistory($bot: record<bot>) -> array<float> {
 	LET $id = record::id($bot);
-	(SELECT eloDelta, bots, created FROM battle
-		WHERE $id IN botIds
-	    ORDER BY created DESC
-	    LIMIT 200).map(|$x| $x.eloDelta[array::find_index($x.bots, $bot)])
+	# Same matrix scoping as fn::botMeanScore: the sparkline shows the bot's
+	# scores on the current matrix only. Most recent 200, in chronological order.
+	array::reverse((SELECT scores, bots, created FROM battle
+		WHERE $id IN botIds AND matrix = fn::latestMatrix()
+		ORDER BY created DESC
+		LIMIT 200).map(|$x| $x.scores[array::find_index($x.bots, $bot)]))
 };
 
 DEFINE FUNCTION OVERWRITE fn::b2i($b: bool) -> int {
@@ -171,87 +178,9 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE errors ON battle TYPE array<option<string>, 2>;
 	DEFINE FIELD OVERWRITE scores ON battle TYPE array<float, 2> DEFAULT ALWAYS
 		fn::calculateScore($this);
-	DEFINE FIELD OVERWRITE eloDelta ON battle TYPE array<float, 2> DEFAULT ALWAYS {
-		LET $payoff: array<array<float, 2>, 2> = SELECT VALUE payoff FROM ONLY (($this.matrix) OR fn::latestMatrix());
-		IF $payoff == NONE {
-			THROW "eloDelta: payoff is NONE";
-		};
-
-		LET $T = $payoff[1][0];
-		LET $S = $payoff[0][1];
-		# Scores are recomputed here (rather than read from `$this.scores`) because DEFAULT ALWAYS fields are not guaranteed to be evaluated in definition order, so `$this.scores` can be NONE when this runs. The original code re-fetched the matrix/payoff a second time inside this block; here we reuse the $payoff already resolved above, leaving just one matrix fetch.
-		LET $errors = $this.errors;
-		LET $e0 = $errors[0] != NONE;
-		LET $e1 = $errors[1] != NONE;
-		LET $scores = IF $e0 AND $e1 {
-			[$S, $S];
-		} ELSE IF $e0 {
-			[$S, $T];
-		} ELSE IF $e1 {
-			[$T, $S];
-		} ELSE {
-			LET $rounds = SELECT VALUE rounds FROM ONLY $this;
-			IF $rounds == NONE {
-				THROW "eloDelta: rounds is NONE";
-			};
-
-			LET $pts = $rounds.map(|$r| [$payoff[$r[0]][$r[1]], $payoff[$r[1]][$r[0]]]);
-
-			LET $c = <float> count($pts);
-			[math::sum($pts.map(|$p| $p[0])) / $c, math::sum($pts.map(|$p| $p[1])) / $c];
-		};
-		LET $K = <float> 32;
-		LET $rating0 = fn::botElo($this.bots[0]);
-		LET $rating1 = fn::botElo($this.bots[1]);
-		LET $expected0 = 1.0 / (1.0 + math::pow(10.0, ($rating1 - $rating0) / 400.0));
-		LET $expected1 = 1.0 - $expected0;
-
-		LET $R = $payoff[0][0];
-		LET $P = $payoff[1][1];
-
-		# --- Zero-sum base ---
-		# base is a constant 0.5 so Elo is strictly zero-sum: for every battle actual0 + actual1 == 1 (the margin components below cancel), so a closed pool conserves its total Elo and the mean stays ~1000 forever, regardless of how cooperative or defection-heavy the population is.
-		# The previous design used base = 0.5 +/- weight to reward cooperation and penalise defection absolutely, but that injected Elo on cooperative battles and only drained it on defection battles. In a pool that co-operated more than it defected, injection exceeded drain and the whole ladder crept upward — past ~3000 after 8000 self-play battles. Cooperation vs defection still shapes *relative* standings, but via the zero-sum margin component below (strong wins outrank flat draws) instead of by inflating the pool total.
-		LET $avg = ($scores[0] + $scores[1]) / 2.0;
-		LET $base = <float> 0.5;
-
-		# --- Relative (margin) component ---
-		# Weighted by how much one bot beats the other: diff = 0 => no swing,
-		# diff == T-S (max exploit) => +/-0.5 swing.
-		#
-		# The margin swing is then scaled by a *cooperation factor* so that winning through defection is worth less than winning through mutual cooperation. factor = (avg - P) / (R - P):
-		#   CC battle (avg == R)      => factor 1.0  (full swing, cooperation rewarded)
-		#   exploiter vs cooperator   => factor ~0.5 (halved swing, defection discounted)
-		#   DD battle (avg == P)      => factor 0.0  (no rating movement at all)
-		# This stops always-defect bots from grinding up the leaderboard on margin alone while making their mutual-defection battles fully flat.
-		LET $denom = $T - $S;
-		# Bind these to plain variables so the division is unambiguous: the WASM engine mis-parses `diff / (2.0 * $denom)` inside the IF expression as `diff / 2.0 * $denom` (it ignores the parentheses), which inflated the margin 9x and pushed the win into the 1.0 clamp (exploitation showed ~+16 instead of the intended ~+8, effectively halving the defection penalty).
-		LET $scoreDiff = $scores[0] - $scores[1];
-		LET $twiceDenom = 2.0 * $denom;
-		LET $rawMargin0 = IF $twiceDenom > 0.0 {
-			$scoreDiff / $twiceDenom
-		} ELSE {
-			0.0
-		};
-		LET $coopDenom = $R - $P;
-		LET $coopFactor = IF $coopDenom > 0.0 {
-			math::clamp(($avg - $P) / $coopDenom, 0.0, 1.0)
-		} ELSE {
-			0.0
-		};
-		LET $margin0 = $rawMargin0 * $coopFactor;
-		LET $margin1 = 0.0 - $margin0;
-
-		LET $actual0Raw = $base + $margin0;
-		LET $actual1Raw = $base + $margin1;
-		LET $actual0 = math::clamp($actual0Raw, 0.0, 1.0);
-		LET $actual1 = math::clamp($actual1Raw, 0.0, 1.0);
-
-		[$K * ($actual0 - $expected0), $K * ($actual1 - $expected1)];
-	};
 	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
 
-# Index the materialised bot id strings so per-bot stat functions (fn::botElo, fn::botWins, etc.) resolve "which battles involve this bot" via an index lookup instead of a full table scan per bot.
+# Index the materialised bot id strings so per-bot stat functions (fn::botMeanScore, fn::botStats, etc.) resolve "which battles involve this bot" via an index lookup instead of a full table scan per bot.
 DEFINE INDEX OVERWRITE battleBotIds ON battle FIELDS botIds.*;
 # Lets "ORDER BY created DESC LIMIT n" walk the index instead of scanning and
 # sorting every battle in the table.
