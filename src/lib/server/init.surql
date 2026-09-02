@@ -68,7 +68,7 @@ DEFINE FUNCTION OVERWRITE fn::initialMatrix() {
 };
 
 # Seed the matrix only if it isn't already present (keeps re-runs idempotent).
-IF count(matrix) < 1 {
+IF (SELECT count() FROM matrix GROUP ALL)[0].count < 1 {
 	CREATE matrix CONTENT {
 		payoff: fn::initialMatrix()
 	};
