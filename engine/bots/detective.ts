@@ -5,7 +5,7 @@ export default function bot({ history, memory }) {
 	if (currentRound === 1) return ["D", null]
 	if (currentRound === 2) return ["C", null]
 
-	if (!memory) {
+	if (memory == null) {
 		const opp0 = history[0].opponent
 		const opp1 = history[1].opponent
 		const opp2 = history[2].opponent
