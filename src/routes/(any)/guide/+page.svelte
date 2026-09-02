@@ -2,7 +2,10 @@
 import Head from "#lib/components/Head.svelte"
 </script>
 
-<Head title="Guides" />
+<Head
+	title="Guides"
+	description="Learn how to write a Defector bot: game theory basics, required bot format, and examples of winning strategies."
+/>
 
 <h1 class="pt-8">Guides</h1>
 
@@ -20,7 +23,7 @@ import Head from "#lib/components/Head.svelte"
 	</li>
 	<li>
 		<a href="/guide/js-for-bots">JavaScript for bots</a>
-		&ndash; covers the constructs of JavaScript used in bots for people new to JS or to
-		programming in general.
+		&ndash; covers the constructs of JavaScript used in bots for people new
+		to JS or to programming in general.
 	</li>
 </ul>

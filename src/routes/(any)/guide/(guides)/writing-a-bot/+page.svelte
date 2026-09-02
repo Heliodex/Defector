@@ -13,7 +13,10 @@ const P = $derived(matrix?.[1][1])
 const guideName = "Writing a bot"
 </script>
 
-<Head title="Guide - {guideName}" />
+<Head
+	title="Guide - {guideName}"
+	description="A step-by-step guide to writing a Defector bot: choose cooperate or defect based on your history with an opponent, and climb the Elo leaderboard."
+/>
 
 <h1 class="pt-8">{guideName}</h1>
 

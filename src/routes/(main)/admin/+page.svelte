@@ -8,7 +8,7 @@ let bots = $derived(await getBots())
 let battles = $derived(await getBattles())
 </script>
 
-<Head title="Admin" />
+<Head title="Admin" noindex />
 
 <h1>Admin dashboard</h1>
 

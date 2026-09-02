@@ -5,7 +5,7 @@ import { checkLapseAccount, newBotForm } from "./bot.remote"
 await checkLapseAccount()
 </script>
 
-<Head title="Submit a bot" />
+<Head title="Submit a bot" noindex />
 
 <h1 class="text-2xl">Submit a bot</h1>
 

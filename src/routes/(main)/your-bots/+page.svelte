@@ -8,7 +8,7 @@ const bots = $derived(await getMyBots())
 const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 </script>
 
-<Head title="My bots" />
+<Head title="My bots" noindex />
 
 <h1 class="text-2xl">My bots</h1>
 

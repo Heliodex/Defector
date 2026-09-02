@@ -32,7 +32,10 @@ onMount(async () => {
 const connected = $derived(dataResult.connected)
 </script>
 
-<Head title="Leaderboard" />
+<Head
+	title="Leaderboard"
+	description="Watch the live Elo leaderboard: every Defector bot ranked by wins as they battle in an Iterated Prisoner's Dilemma tournament."
+/>
 
 <div class="flex items-center justify-between">
 	<h1 class="text-2xl">Live leaderboard</h1>

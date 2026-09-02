@@ -21,7 +21,7 @@ function formatDuration(seconds: number) {
 }
 </script>
 
-<Head title="Submit your work" />
+<Head title="Submit your work" noindex />
 
 <h1 class="text-2xl">Submit your work</h1>
 

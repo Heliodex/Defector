@@ -3,7 +3,7 @@ import Accordion from "#components/Accordion.svelte"
 import AccordionItem from "#components/AccordionItem.svelte"
 import Head from "#components/Head.svelte"
 import chessboard from "#lib/assets/chessboard.png"
-import { programmeName } from "#lib/assets/config.js"
+import { programmeName, siteDescription, siteUrl } from "#lib/assets/config.js"
 import logo from "#lib/assets/logo.svg"
 import { getLatestMatrix, login } from "../data.remote"
 
@@ -14,7 +14,23 @@ const T = $derived(matrix?.[1][0])
 const P = $derived(matrix?.[1][1])
 </script>
 
-<Head />
+<Head
+	title="Iterated Prisoner's Dilemma bot competition"
+	description="Defector is a free Hack Club competition: write a bot that plays a Prisoner's Dilemma-like strategy game, battle other bots on a live Elo leaderboard, and win video game grants. Every few seconds two bots battle and the winner climbs the ladder."
+	schema={{
+		"@context": "https://schema.org",
+		"@type": "WebSite",
+		"name": programmeName,
+		url: siteUrl,
+		description: siteDescription,
+		inLanguage: "en-GB",
+		publisher: {
+			"@type": "Organization",
+			name: "Hack Club",
+			url: "https://hackclub.com/",
+		},
+	}}
+/>
 
 <a href="https://hackclub.com/" target="_blank" rel="noreferrer">
 	<img

@@ -6,7 +6,10 @@ import diagram from "./diagram.svg"
 const guideName = "JavaScript for bots"
 </script>
 
-<Head title="Guide - {guideName}" />
+<Head
+	title="Guide - {guideName}"
+	description="Learn the JavaScript you need to write a Defector bot, through simple example bots that get taken apart line by line."
+/>
 
 <h1 class="pt-8">{guideName}</h1>
 

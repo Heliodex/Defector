@@ -5,7 +5,7 @@ import { getLapseData, lapseLogin, logout } from "../api.remote"
 const lapseData = $derived(await getLapseData())
 </script>
 
-<Head title="Home" />
+<Head title="Home" noindex />
 
 <h1>You're ready to play</h1>
 

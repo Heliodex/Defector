@@ -2,7 +2,7 @@
 import Head from "#lib/components/Head.svelte"
 </script>
 
-<Head title="Submission received!" />
+<Head title="Submission received!" noindex />
 
 <div class="flex flex-col items-center pt-16 text-center">
 	<div

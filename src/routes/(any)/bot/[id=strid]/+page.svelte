@@ -7,7 +7,12 @@ import { getBot } from "./bot.remote"
 const bot = $derived(await getBot(page.params.id ?? ""))
 </script>
 
-<Head title={`Bot: ${truncate(bot.name)}`} />
+<Head
+	title={`Bot: ${truncate(bot.name)}`}
+	description={bot.description ||
+		`${truncate(bot.name)} is a Defector bot${bot.ownerName ? ` by ${bot.ownerName}` : ""}, rated Elo ${bot.elo} in the live Iterated Prisoner's Dilemma tournament.`}
+	type="article"
+/>
 
 <a href="/leaderboard" class="text-sm hover:underline">Back to leaderboard</a>
 
