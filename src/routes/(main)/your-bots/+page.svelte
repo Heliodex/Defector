@@ -79,7 +79,7 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 				<div class="pt-3 text-sm">
 					<p>
 						<span class="font-semibold">
-							{bot.meanScore.toFixed(2)}
+							{bot.meanScore.toFixed(3)}
 						</span>
 						Avg score
 					</p>

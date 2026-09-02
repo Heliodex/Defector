@@ -194,7 +194,7 @@ let battles = $derived(await getBattles())
 						{bot.active ? "Yes" : "No"}
 					</td>
 					<td class="border-b border-neutral-300 p-3">
-						{bot.meanScore.toFixed(2)}
+						{bot.meanScore.toFixed(3)}
 					</td>
 					<td class="border-b border-neutral-300 p-3">
 						{bot.stats.wins}-{bot.stats.losses}

@@ -54,7 +54,7 @@ const bot = $derived(await getBot(page.params.id ?? ""))
 <div class="pt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-xl">
 	<div class="shadowcard">
 		<p class="text-xs text-gray-500">Avg score</p>
-		<p class="text-xl font-semibold">{bot.meanScore.toFixed(2)}</p>
+		<p class="text-xl font-semibold">{bot.meanScore.toFixed(3)}</p>
 	</div>
 	<div class="shadowcard">
 		<p class="text-xs text-gray-500">Wins</p>
@@ -105,7 +105,7 @@ const bot = $derived(await getBot(page.params.id ?? ""))
 					stroke-width="1.5"
 				/>
 			</svg>
-			<p class="pt-1 text-xs text-gray-500 text-right">Avg: {bot.meanScore.toFixed(2)}</p>
+			<p class="pt-1 text-xs text-gray-500 text-right">Avg: {bot.meanScore.toFixed(3)}</p>
 		</div>
 	{:else}
 		<p class="pt-1 text-gray-500">Not enough battles for a chart yet.</p>
