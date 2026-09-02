@@ -5,12 +5,8 @@ SELECT
 	codeUrl,
 	active,
 	created,
-	fn::botElo($this.id) AS elo,
-	-- convert list of deltas into list of cumulative ELOs
-	fn::botEloHistory($this.id).fold(
-		[],
-		|$acc, $delta| $acc.append($delta + ($acc[$] ?? 0))
-	) AS eloHistory,
+	fn::botMeanScore($this.id) AS meanScore,
+	fn::botScoreHistory($this.id) AS scoreHistory,
 	fn::botStats($this.id) AS stats,
 	(SELECT VALUE extraInfo.name FROM ONLY $parent<-created<-user)[0] AS ownerName,
 	(SELECT VALUE source FROM ONLY $parent.code ORDER BY updated)[$] AS source,

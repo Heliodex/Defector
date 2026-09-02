@@ -13,7 +13,7 @@ export type BattleRow = {
 type BotRow = {
 	id: string
 	name: string
-	elo: number
+	meanScore: number
 	stats: BotStats
 	ownerName?: string
 }

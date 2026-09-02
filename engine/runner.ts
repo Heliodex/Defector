@@ -89,8 +89,8 @@ export async function simulateBattle(
 }
 
 /**
- * Plays a match and persists the resulting `battle` row. All scoring and Elo
- * computation is left to SurrealDB's computed fields.
+ * Plays a match and persists the resulting `battle` row. All scoring is left
+ * to SurrealDB's computed fields.
  */
 export async function runBattle(
 	db: Surreal,

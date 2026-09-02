@@ -112,7 +112,7 @@ test("the picked bots battle and the battle persists with computed scores", asyn
 	}
 
 	// runBattle persists the battle row (only if the battle actually ran);
-	// scoring/elo come from computed fields
+	// scoring comes from computed fields
 	if (result) await runBattle(db, picked)
 
 	const battles = await db.select(new Table("battle"))
@@ -124,5 +124,4 @@ test("the picked bots battle and the battle persists with computed scores", asyn
 
 	expect(battle.botIds).toEqual(picked.map(bot => bot.id.id))
 	expect(battle.scores).toHaveLength(2)
-	expect(battle.eloDelta).toHaveLength(2)
 })

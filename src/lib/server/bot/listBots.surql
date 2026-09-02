@@ -17,14 +17,14 @@ LET $ids = $bots.map(|$b| $b.id);
 # Each battle is aggregated once per array slot, then the two partial aggregates are merged per bot.
 LET $agg = (SELECT
 		botId,
-		math::sum(eloSum) AS eloSum,
+		math::sum(scoreSum) AS scoreSum,
 		math::sum(wins) AS wins,
 		math::sum(losses) AS losses,
 		math::sum(battles) AS battles
 	FROM (
 		(SELECT
 			botIds[0] AS botId,
-			math::sum(eloDelta[0]) AS eloSum,
+			math::sum(scores[0]) AS scoreSum,
 			math::sum(fn::b2i(scores[0] > scores[1])) AS wins,
 			math::sum(fn::b2i(scores[0] < scores[1])) AS losses,
 			count() AS battles
@@ -34,7 +34,7 @@ LET $agg = (SELECT
 		+
 		(SELECT
 			botIds[1] AS botId,
-			math::sum(eloDelta[1]) AS eloSum,
+			math::sum(scores[1]) AS scoreSum,
 			math::sum(fn::b2i(scores[1] > scores[0])) AS wins,
 			math::sum(fn::b2i(scores[1] < scores[0])) AS losses,
 			count() AS battles
@@ -53,7 +53,7 @@ $bots.map(|$bot| {
 		active: $bot.active,
 		created: $bot.created,
 		# 0 defaults for bots that have never battled
-		elo: 1000.0 + ($a.eloSum ?? 0.0),
+		meanScore: ($a.scoreSum ?? 0.0) / ($a.battles ?? 1),
 		stats: {
 			wins: $a.wins ?? 0,
 			losses: $a.losses ?? 0,

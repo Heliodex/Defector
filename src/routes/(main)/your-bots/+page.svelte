@@ -79,9 +79,9 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 				<div class="pt-3 text-sm">
 					<p>
 						<span class="font-semibold">
-							{bot.elo.toFixed(0)}
+							{bot.meanScore.toFixed(2)}
 						</span>
-						Elo
+						Avg score
 					</p>
 					<p>
 						<span class="font-semibold">
