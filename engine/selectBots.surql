@@ -11,7 +11,7 @@ IF count(SELECT 1 FROM bot WHERE active) <= 1 {
 # (SurrealDB's WASM engine — used in the tests — only allows ORDER BY on a projected field, hence the projected `score` column; callers ignore it.)
 LET $bots = (SELECT
 	id, codeHash, latestCode, name,
-	math::max([1.0 / (battles + 1), 0.02]) AS w
+	math::max([1.0 / ((battles ?? 0) + 1), 0.02]) AS w
 	FROM bot WHERE active);
 
 LET $bot1 = (SELECT id, codeHash, latestCode, name,

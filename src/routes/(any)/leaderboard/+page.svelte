@@ -17,6 +17,8 @@ const data = $state<LeaderboardData>({
 
 onMount(async () => {
 	for await (const msg of dataResult) {
+		// keep-alive from the idle server generator, not data
+		if ("heartbeat" in msg) continue
 		if (msg.og) {
 			Object.assign(data, msg)
 			continue
