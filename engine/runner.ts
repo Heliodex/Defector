@@ -97,9 +97,11 @@ export async function runBattle(
 	bots: [DBBot, DBBot]
 ): Promise<void> {
 	const { rounds: history, errors } = await simulateBattle(bots)
+	console.time("create")
 	await db.create(new Table("battle")).content({
 		bots: bots.map(bot => bot.id),
 		rounds: history.map(round => round.map(moveToInt)),
 		errors,
 	})
+	console.timeEnd("create")
 }
