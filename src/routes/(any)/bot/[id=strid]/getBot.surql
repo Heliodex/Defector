@@ -5,7 +5,7 @@ SELECT
 	codeUrl,
 	active,
 	created,
-	fn::botMeanScore($this.id) AS meanScore,
+	meanScore,
 	fn::botScoreHistory($this.id) AS scoreHistory,
 	fn::botStats($this.id) AS stats,
 	(SELECT VALUE extraInfo.name FROM ONLY $parent<-created<-user)[0] AS ownerName,

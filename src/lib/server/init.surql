@@ -114,22 +114,21 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 		array::last($this.code).transpiled;
 	DEFINE FIELD OVERWRITE active ON bot TYPE bool DEFAULT ALWAYS false;
 	DEFINE FIELD OVERWRITE created ON bot TYPE datetime DEFAULT ALWAYS time::now();
-
-DEFINE FUNCTION OVERWRITE fn::botMeanScore($bot: record<bot>) -> float {
-	LET $id = record::id($bot);
-	# The score a bot earns for itself in a battle is scores[its slot]; the rating is the mean of those per-battle scores across every battle it fought ON THE CURRENT MATRIX. Each battle permanently records the matrix it was played on, so pushing a new matrix scopes the average to the new games and effectively resets the ladder (bots that haven't battled yet on it => 0.0).
-	LET $rows = SELECT VALUE scores[array::find_index(bots, $bot)]
-		FROM battle WHERE $id IN botIds AND matrix = fn::latestMatrix();
-	IF array::len($rows) == 0 {
-		RETURN 0.0;
-	};
-	math::sum($rows) / <float> array::len($rows);
-};
+	# ---- Cached ladder stats ----
+	# Every per-bot aggregate lives on the bot record itself, so leaderboard and bot-page reads are plain lookups instead of scans over the battle table.
+	# The battle CREATE/DELETE events below maintain them incrementally (eachbattle write costs two point-updates; each read costs zero battle scans).wins/losses/battles are all-time; cur* only cover battles played on the CURRENT matrix, so pushing a new matrix resets the ladder (see the matrix CREATE event), exactly like the old per-request matrix-scoped scans did.
+	# NOTE: field expressions evaluate in alphabetical order, so meanScore (m) always sees the fresh cur* values (c) within the same write.
+	DEFINE FIELD OVERWRITE wins ON bot TYPE option<int>;
+	DEFINE FIELD OVERWRITE losses ON bot TYPE option<int>;
+	DEFINE FIELD OVERWRITE battles ON bot TYPE option<int>;
+	DEFINE FIELD OVERWRITE curBattles ON bot TYPE option<int>;
+	DEFINE FIELD OVERWRITE curScoreSum ON bot TYPE option<float>;
+	DEFINE FIELD OVERWRITE meanScore ON bot TYPE float VALUE
+		($this.curScoreSum ?? 0.0) / math::max([($this.curBattles ?? 0), 1]);
 
 DEFINE FUNCTION OVERWRITE fn::botScoreHistory($bot: record<bot>) -> array<float> {
 	LET $id = record::id($bot);
-	# Same matrix scoping as fn::botMeanScore: the sparkline shows the bot's
-	# scores on the current matrix only. Most recent 200, in chronological order.
+	# Same matrix scoping as the cached meanScore field: the sparkline shows the bot's scores on the current matrix only. Most recent 200, in chronological order. This is the one ladder stat that cannot be a single cached number, so it still scans - but the battleBotIds + battleCreated indexes keep it to an index lookup bounded at 200 rows, only on the individual bot page.
 	array::reverse((SELECT scores, bots, created FROM battle
 		WHERE $id IN botIds AND matrix = fn::latestMatrix()
 		ORDER BY created DESC
@@ -142,21 +141,36 @@ DEFINE FUNCTION OVERWRITE fn::b2i($b: bool) -> int {
 
 # Stats query faster when consolidated into 1 function :rac_lfg:
 DEFINE FUNCTION OVERWRITE fn::botStats($bot: record<bot>) {
-	(SELECT
-        fn::b2i(scores[array::find_index(bots, $bot)]
-            > scores[1 - array::find_index(bots, $bot)])
-            AS wins,
-        fn::b2i(scores[array::find_index(bots, $bot)]
-            < scores[1 - array::find_index(bots, $bot)])
-            AS losses
-        FROM battle
-		WHERE record::id($bot) IN botIds).fold({
-            wins: 0, losses: 0, battles: 0,
-        }, |$a, $b| {
-            wins: $a.wins + $b.wins,
-            losses: $a.losses + $b.losses,
-            battles: $a.battles + 1
-        });
+	# All-time aggregates, now cached directly on the bot record by the battle CREATE/DELETE events (see the cached ladder stats fields on the bot table) - this just reshapes them into the object consumers expect.
+	{
+		wins: $bot.wins ?? 0,
+		losses: $bot.losses ?? 0,
+		battles: $bot.battles ?? 0,
+	};
+};
+
+# One indexed pass over a bot's battles computing every cached aggregate at once. Only used by the migration backfill below; steady-state maintenance goes through the battle CREATE/DELETE events instead.
+DEFINE FUNCTION OVERWRITE fn::botCache($bot: record<bot>) {
+	LET $id = record::id($bot);
+	LET $m = fn::latestMatrix();
+	LET $rows = (SELECT
+		scores[array::find_index(bots, $bot)] AS s,
+		fn::b2i(scores[array::find_index(bots, $bot)]
+			> scores[1 - array::find_index(bots, $bot)]) AS won,
+		fn::b2i(scores[array::find_index(bots, $bot)]
+			< scores[1 - array::find_index(bots, $bot)]) AS lost,
+		fn::b2i(matrix = $m) AS cur
+		FROM battle WHERE $id IN botIds);
+	IF array::len($rows) == 0 {
+		RETURN { wins: 0, losses: 0, battles: 0, curBattles: 0, curScoreSum: 0.0 };
+	};
+	{
+		wins: math::sum($rows.map(|$r| $r.won)),
+		losses: math::sum($rows.map(|$r| $r.lost)),
+		battles: array::len($rows),
+		curBattles: math::sum($rows.map(|$r| $r.cur)),
+		curScoreSum: math::sum($rows.map(|$r| $r.s * $r.cur)),
+	};
 };
 
 DEFINE FUNCTION OVERWRITE fn::latestMatrix() -> record<matrix> {
@@ -180,7 +194,7 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		fn::calculateScore($this);
 	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
 
-# Index the materialised bot id strings so per-bot stat functions (fn::botMeanScore, fn::botStats, etc.) resolve "which battles involve this bot" via an index lookup instead of a full table scan per bot.
+# Index the materialised bot id strings so the remaining per-bot scans (fn::botScoreHistory, fn::botCache) resolve "which battles involve this bot" via an index lookup instead of a full table scan per bot.
 DEFINE INDEX OVERWRITE battleBotIds ON battle FIELDS botIds.*;
 # Lets "ORDER BY created DESC LIMIT n" walk the index instead of scanning and
 # sorting every battle in the table.
@@ -193,6 +207,69 @@ DEFINE INDEX OVERWRITE battleCreated ON battle FIELDS created; # idx if this hel
 DEFINE FUNCTION OVERWRITE fn::battleBotNames($battle: record<battle>) -> array<string, 2> {
 	SELECT VALUE name FROM $battle.bots;
 };
+
+# ---------------------------------------------------------------------------
+# Cached ladder stats: migration backfill + maintenance events
+# ---------------------------------------------------------------------------
+
+# Backfill the cached stats on bot records that predate them. Guarded by `wins = NONE`, so this full rebuild only ever runs once (the first init after this migration); from then on the events below keep the caches current - even for battles the engine inserts while the site is down, since events live in the database, not in the app. It sits before the DEFINE EVENT statements so a battle landing mid-init can never be double counted. (One guarded UPDATE rather than a FOR loop: the WASM engine used in tests errors when a FOR source subquery returns empty. The repeated botCache calls only run on bots that predate the cache fields, so this full rebuild is a once-per-bot cost.)
+IF (SELECT VALUE count() FROM bot WHERE wins = NONE GROUP ALL)[0] > 0 {
+	UPDATE bot SET
+		wins = fn::botCache($this.id).wins,
+		losses = fn::botCache($this.id).losses,
+		battles = fn::botCache($this.id).battles,
+		curBattles = fn::botCache($this.id).curBattles,
+		curScoreSum = fn::botCache($this.id).curScoreSum
+	WHERE wins = NONE;
+};
+
+# Keep the cached ladder stats on bot in sync as battles come and go: a battle write now pays two point-updates (which also recompute meanScore), so reads never rescan the battle table. Battles are never edited in place (scores are derived once at CREATE), so UPDATE is deliberately not handled here.
+# NB: bots are never deleted; if that changes, these UPDATEs would resurrect deleted records and would need an existence guard.
+DEFINE EVENT OVERWRITE battleCacheAdd ON battle WHEN $event = "CREATE" THEN {
+	LET $s0 = $after.scores[0];
+	LET $s1 = $after.scores[1];
+	LET $w = fn::b2i($s0 > $s1);
+	LET $l = fn::b2i($s0 < $s1);
+	LET $cur = fn::b2i($after.matrix = fn::latestMatrix());
+	UPDATE $after.bots[0] SET
+		wins = (wins ?? 0) + $w,
+		losses = (losses ?? 0) + $l,
+		battles = (battles ?? 0) + 1,
+		curBattles = (curBattles ?? 0) + $cur,
+		curScoreSum = (curScoreSum ?? 0.0) + $s0 * $cur;
+	UPDATE $after.bots[1] SET
+		wins = (wins ?? 0) + $l,
+		losses = (losses ?? 0) + $w,
+		battles = (battles ?? 0) + 1,
+		curBattles = (curBattles ?? 0) + $cur,
+		curScoreSum = (curScoreSum ?? 0.0) + $s1 * $cur;
+};
+
+# Deleting a battle (admin cleanup) reverses the same increments. Only current-matrix battles ever contributed to the cur* counters - pushing a new matrix resets them - so only those may be subtracted again.
+DEFINE EVENT OVERWRITE battleCacheRemove ON battle WHEN $event = "DELETE" THEN {
+	LET $s0 = $before.scores[0];
+	LET $s1 = $before.scores[1];
+	LET $w = fn::b2i($s0 > $s1);
+	LET $l = fn::b2i($s0 < $s1);
+	LET $cur = fn::b2i($before.matrix = fn::latestMatrix());
+	UPDATE $before.bots[0] SET
+		wins = (wins ?? 0) - $w,
+		losses = (losses ?? 0) - $l,
+		battles = (battles ?? 0) - 1,
+		curBattles = (curBattles ?? 0) - $cur,
+		curScoreSum = (curScoreSum ?? 0.0) - $s0 * $cur;
+	UPDATE $before.bots[1] SET
+		wins = (wins ?? 0) - $l,
+		losses = (losses ?? 0) - $w,
+		battles = (battles ?? 0) - 1,
+		curBattles = (curBattles ?? 0) - $cur,
+		curScoreSum = (curScoreSum ?? 0.0) - $s1 * $cur;
+};
+
+# Pushing a new matrix resets the ladder: every bot's current-matrix counters drop to 0 (and meanScore recomputes to 0.0) until it battles on the new matrix, mirroring how the old matrix-scoped scans dropped older games.
+DEFINE EVENT OVERWRITE matrixReset ON matrix WHEN $event = "CREATE" THEN (
+	UPDATE bot SET curBattles = 0, curScoreSum = 0.0
+);
 
 DEFINE TABLE OVERWRITE submittedHours SCHEMAFULL TYPE RELATION FROM user TO hourSubmission ENFORCED;
 	DEFINE FIELD OVERWRITE id ON submittedHours TYPE string;

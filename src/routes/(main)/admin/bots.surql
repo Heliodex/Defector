@@ -3,7 +3,7 @@ SELECT
 	name,
 	active,
 	created,
-	fn::botMeanScore($this.id) AS meanScore,
+	meanScore,
 	fn::botStats($this.id) AS stats,
 	(SELECT VALUE email FROM ONLY $parent<-created<-user)[0] AS ownerEmail
 FROM bot
