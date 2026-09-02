@@ -30,6 +30,7 @@ const P = $derived(matrix?.[1][1])
 
 	<h1 class="text-6xl! pb-0!">{programmeName}</h1>
 	<p class="text-center pb-8">
+		a Prisoner's Dilemma-like competition<br>
 		by
 		<a
 			href="https://hackclub.enterprise.slack.com/team/U07JH9LU1NC"
