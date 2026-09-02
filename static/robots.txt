@@ -1,3 +1,10 @@
 # allow crawling everything by default
 User-agent: *
 Disallow: /admin
+Disallow: /home
+Disallow: /submit
+Disallow: /submit-bot
+Disallow: /submitted
+Disallow: /your-bots
+
+Sitemap: https://defector.hackclub.com/sitemap.xml
