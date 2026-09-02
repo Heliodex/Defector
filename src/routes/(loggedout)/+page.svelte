@@ -95,14 +95,15 @@ const P = $derived(matrix?.[1][1])
 		<li>If you both cooperate you each get {R} points.</li>
 		<li>If you both defect you each get {P} points.</li>
 		<li>
-			If one of you defects while the other cooperates, the defector gets {T}
+			If one of you defects while the other cooperates, the defector gets
+			{T}
 			points and the other gets {S}.
 		</li>
 	</ul>
 
 	<p>
-		This makes the payoff matrix (how many points you get for each move) look
-		like this:
+		This makes the payoff matrix (how many points you get for each move)
+		look like this:
 	</p>
 
 	<div class="py-4">
