@@ -1,5 +1,6 @@
 # Lists the current user's bots, together with their live ladder stats.
-# The old version called fn::botElo + fn::botStats per bot, i.e. 2N indexed scans of `battle` (N = number of bots), with per-row function calls and a fold. This instead aggregates straight off the battle table with GROUP BY: two indexed scans total (one per bots-array slot), all summing done natively by the engine.
+# Wins/losses/battles are all-time, but the mean score is scoped to the CURRENT matrix (each battle records the matrix it was played on, so pushing a new matrix resets each bot's average to the games on the new matrix).
+# Aggregated straight off the battle table with GROUP BY: two indexed scans total (one per bots-array slot), all summing done natively by the engine.
 # Note: this assumes a bot never battles itself (bots = [x, x]), otherwise a self-battle would be counted at both array slots.
 
 LET $bots = (SELECT
@@ -12,19 +13,24 @@ FROM $user->created->bot
 ORDER BY created DESC);
 
 LET $ids = $bots.map(|$b| $b.id);
+LET $current = fn::latestMatrix();
 
 # botIds (not bots) is used so these scans can use the battleBotIds index.
-# Each battle is aggregated once per array slot, then the two partial aggregates are merged per bot.
+# Each battle is aggregated once per array slot, then the two partial aggregates
+# are merged per bot. scoreSum/curBattles only count current-matrix battles
+# (fn::b2i gates on matrix), while wins/losses/battles stay all-time.
 LET $agg = (SELECT
 		botId,
 		math::sum(scoreSum) AS scoreSum,
+		math::sum(curBattles) AS curBattles,
 		math::sum(wins) AS wins,
 		math::sum(losses) AS losses,
 		math::sum(battles) AS battles
 	FROM (
 		(SELECT
 			botIds[0] AS botId,
-			math::sum(scores[0]) AS scoreSum,
+			math::sum(fn::b2i((matrix = $current)) * scores[0]) AS scoreSum,
+			math::sum(fn::b2i((matrix = $current))) AS curBattles,
 			math::sum(fn::b2i(scores[0] > scores[1])) AS wins,
 			math::sum(fn::b2i(scores[0] < scores[1])) AS losses,
 			count() AS battles
@@ -34,7 +40,8 @@ LET $agg = (SELECT
 		+
 		(SELECT
 			botIds[1] AS botId,
-			math::sum(scores[1]) AS scoreSum,
+			math::sum(fn::b2i((matrix = $current)) * scores[1]) AS scoreSum,
+			math::sum(fn::b2i((matrix = $current))) AS curBattles,
 			math::sum(fn::b2i(scores[1] > scores[0])) AS wins,
 			math::sum(fn::b2i(scores[1] < scores[0])) AS losses,
 			count() AS battles
@@ -52,8 +59,8 @@ $bots.map(|$bot| {
 		description: $bot.description,
 		active: $bot.active,
 		created: $bot.created,
-		# 0 defaults for bots that have never battled
-		meanScore: ($a.scoreSum ?? 0.0) / ($a.battles ?? 1),
+		# mean over current-matrix battles only; 0 for bots with none
+		meanScore: ($a.scoreSum ?? 0.0) / math::max([($a.curBattles ?? 0), 1]),
 		stats: {
 			wins: $a.wins ?? 0,
 			losses: $a.losses ?? 0,

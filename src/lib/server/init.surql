@@ -117,10 +117,9 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 
 DEFINE FUNCTION OVERWRITE fn::botMeanScore($bot: record<bot>) -> float {
 	LET $id = record::id($bot);
-	# The score a bot earns for itself in a battle is scores[its slot]; the
-	# rating is the mean of those per-battle scores across every battle it fought.
+	# The score a bot earns for itself in a battle is scores[its slot]; the rating is the mean of those per-battle scores across every battle it fought ON THE CURRENT MATRIX. Each battle permanently records the matrix it was played on, so pushing a new matrix scopes the average to the new games and effectively resets the ladder (bots that haven't battled yet on it => 0.0).
 	LET $rows = SELECT VALUE scores[array::find_index(bots, $bot)]
-		FROM battle WHERE $id IN botIds;
+		FROM battle WHERE $id IN botIds AND matrix = fn::latestMatrix();
 	IF array::len($rows) == 0 {
 		RETURN 0.0;
 	};
@@ -129,10 +128,10 @@ DEFINE FUNCTION OVERWRITE fn::botMeanScore($bot: record<bot>) -> float {
 
 DEFINE FUNCTION OVERWRITE fn::botScoreHistory($bot: record<bot>) -> array<float> {
 	LET $id = record::id($bot);
-	# Most recent 200 battles, in chronological order so the sparkline reads
-	# oldest -> newest left to right.
+	# Same matrix scoping as fn::botMeanScore: the sparkline shows the bot's
+	# scores on the current matrix only. Most recent 200, in chronological order.
 	array::reverse((SELECT scores, bots, created FROM battle
-		WHERE $id IN botIds
+		WHERE $id IN botIds AND matrix = fn::latestMatrix()
 		ORDER BY created DESC
 		LIMIT 200).map(|$x| $x.scores[array::find_index($x.bots, $bot)]))
 };
