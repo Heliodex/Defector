@@ -58,8 +58,8 @@ const bot = $derived(await getBot(page.params.id ?? ""))
 
 <div class="pt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-xl">
 	<div class="shadowcard">
-		<p class="text-xs text-gray-500">Elo</p>
-		<p class="text-xl font-semibold">{Math.round(bot.elo)}</p>
+		<p class="text-xs text-gray-500">Avg score</p>
+		<p class="text-xl font-semibold">{bot.meanScore.toFixed(3)}</p>
 	</div>
 	<div class="shadowcard">
 		<p class="text-xs text-gray-500">Wins</p>
@@ -82,23 +82,23 @@ const bot = $derived(await getBot(page.params.id ?? ""))
 </p>
 
 <div class="pt-6 max-w-xl">
-	<h2 class="font-semibold">Elo history</h2>
-	{#if bot.eloHistory.length > 1}
-		{let elos = bot.eloHistory}
-		{let min = Math.min(...elos)}
-		{let max = Math.max(...elos)}
-		{let len = elos.length}
+	<h2 class="font-semibold">Score history</h2>
+	{#if bot.scoreHistory.length > 1}
+		{let scores = bot.scoreHistory}
+		{let min = Math.min(...scores)}
+		{let max = Math.max(...scores)}
+		{let len = scores.length}
 		{let span = max - min || 1}
-		{let points = elos
-			.map((elo, i) => {
+		{let points = scores
+			.map((score, i) => {
 				const x = (i / (len - 1)) * 100
-				const y = 29 - ((elo - min) / span) * 28 // 1 unit padding top and bottom
+				const y = 29 - ((score - min) / span) * 28 // 1 unit padding top and bottom
 				return `${x},${y}`
 			})
 			.join(" ")}
 		<div class="shadowcard">
 			<svg
-				aria-label="Elo history"
+				aria-label="Score history"
 				viewBox="0 0 100 30"
 				preserveAspectRatio="none"
 				class="w-full h-16"
@@ -110,7 +110,7 @@ const bot = $derived(await getBot(page.params.id ?? ""))
 					stroke-width="1.5"
 				/>
 			</svg>
-			<p class="pt-1 text-xs text-gray-500 text-right">Now: {bot.elo}</p>
+			<p class="pt-1 text-xs text-gray-500 text-right">Avg: {bot.meanScore.toFixed(3)}</p>
 		</div>
 	{:else}
 		<p class="pt-1 text-gray-500">Not enough battles for a chart yet.</p>

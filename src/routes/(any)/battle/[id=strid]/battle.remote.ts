@@ -8,7 +8,6 @@ type BattleRow = {
 	id: string
 	created: Date
 	scores: number[]
-	eloDelta: number[]
 	errors: (string | null)[]
 	rounds: number[][]
 	botNames: (string | null)[]
@@ -19,7 +18,6 @@ export type Battle = {
 	id: string
 	created: Date
 	scores: number[]
-	eloDelta: number[]
 	errors: (string | null)[]
 	rounds: [string, string][]
 	botNames: (string | null)[]
@@ -52,7 +50,6 @@ export const getBattle = query(
 			id: row.id,
 			created: new Date(row.created),
 			scores: row.scores.map(Number),
-			eloDelta: row.eloDelta.map(Number),
 			errors: row.errors,
 			rounds,
 			botNames: row.botNames,

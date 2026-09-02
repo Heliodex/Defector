@@ -212,10 +212,10 @@ const guideName = "Writing a bot"
 	This battle lasted for 120 rounds, and the scores displayed above are the
 	mean number of points per round earned by each bot. As expected,
 	<b>alwaysDefect</b>
-	won the battle. If many battles between these bots were played, you would
-	see <b>alwaysDefect</b> increase in Elo while
-	<b>alwaysCooperate</b>
-	would fall.
+	won the battle. If many battles between these bots were played,
+	<b>alwaysDefect</b>'s mean score would stay high while
+	<b>alwaysCooperate</b>'s
+	would stay near 0.
 </p>
 
 <p class="pb-4">
@@ -469,9 +469,9 @@ const guideName = "Writing a bot"
 </p>
 
 <p>
-	The winner is whoever banks more points over the whole battle. Every battle
-	adjusts both bots' <b>Elo</b> (starting at 1000), which is what the
-	leaderboard ranks.
+	The winner is whoever banks more points over the whole battle. The
+	leaderboard ranks bots by their <b>mean score</b> per round, averaged across
+	all of their battles.
 </p>
 
 <h1 class="pt-4">Submitting</h1>

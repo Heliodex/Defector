@@ -89,17 +89,19 @@ export async function simulateBattle(
 }
 
 /**
- * Plays a match and persists the resulting `battle` row. All scoring and Elo
- * computation is left to SurrealDB's computed fields.
+ * Plays a match and persists the resulting `battle` row. All scoring is left
+ * to SurrealDB's computed fields.
  */
 export async function runBattle(
 	db: Surreal,
 	bots: [DBBot, DBBot]
 ): Promise<void> {
 	const { rounds: history, errors } = await simulateBattle(bots)
+	console.time("create")
 	await db.create(new Table("battle")).content({
 		bots: bots.map(bot => bot.id),
 		rounds: history.map(round => round.map(moveToInt)),
 		errors,
 	})
+	console.timeEnd("create")
 }
