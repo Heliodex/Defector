@@ -19,11 +19,6 @@ import Head from "#lib/components/Head.svelte"
 	</p>
 
 	<div class="mt-8 flex gap-4">
-		<a
-			href="/home"
-			class="btn btn-primary"
-		>
-			Back to home
-		</a>
+		<a href="/home" class="btn btn-primary"> Back to home </a>
 	</div>
 </div>
