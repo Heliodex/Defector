@@ -18,11 +18,9 @@ type MyBot = {
 
 export const getMyBots = query(async (): Promise<MyBot[]> => {
 	const { user } = await authorise()
-	console.time("bots")
-	const [, , , results] = await db.query<
-		[undefined, undefined, undefined, MyBot[]]
+	const [, , , , results] = await db.query<
+		[undefined, undefined, undefined, undefined, MyBot[]]
 	>(listBotsQuery, { user: user.id })
-	console.timeEnd("bots")
 	return results
 })
 
