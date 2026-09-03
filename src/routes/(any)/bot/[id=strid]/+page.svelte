@@ -1,6 +1,7 @@
 <script lang="ts">
 import BattleRow from "#lib/components/BattleRow.svelte"
 import Head from "#lib/components/Head.svelte"
+import ScoreSparkline from "#lib/components/ScoreSparkline.svelte"
 import { truncate } from "#lib/truncate.js"
 import { page } from "$app/state"
 import { getBot, getBotBattles } from "./bot.remote"
@@ -86,32 +87,8 @@ const battles = $derived(await getBotBattles(page.params.id ?? ""))
 <div class="pt-6 max-w-xl">
 	<h2 class="font-semibold">Score history</h2>
 	{#if bot.curScores.length > 1}
-		{let scores = bot.curScores}
-		{let min = Math.min(...scores)}
-		{let max = Math.max(...scores)}
-		{let len = scores.length}
-		{let span = max - min || 1}
-		{let points = scores
-			.map((score, i) => {
-				const x = (i / (len - 1)) * 100
-				const y = 29 - ((score - min) / span) * 28 // 1 unit padding top and bottom
-				return `${x},${y}`
-			})
-			.join(" ")}
 		<div class="shadowcard">
-			<svg
-				aria-label="Score history"
-				viewBox="0 0 100 30"
-				preserveAspectRatio="none"
-				class="w-full h-16"
-			>
-				<polyline
-					{points}
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-				/>
-			</svg>
+			<ScoreSparkline scores={bot.curScores} meanScore={bot.meanScore} />
 			<p class="pt-1 text-xs text-gray-500 text-right">Avg: {bot.meanScore.toFixed(3)}</p>
 		</div>
 	{:else}
