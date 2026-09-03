@@ -25,7 +25,7 @@ const messageTimelapseIds = makeMessage(
 )
 
 const schema = type({
-	"image?": type("Blob").as<File>(),
+	image: type("Blob").as<File>(),
 	name: type("string >= 1").configure(messageName[0]),
 	description: type("string >= 1").configure(messageDescription[0]),
 	codeUrl: type("string >= 1").configure(messageCodeUrl[0]),
@@ -58,6 +58,8 @@ export const newSubmissionForm = form(
 		const { user } = await authorise()
 
 		error(403, "The time submission form is not open yet. Come back later!")
+
+		if (image.size > 20e6) invalid("Image must be less than 20MB in size.")
 
 		// Verify the selected timelapses total at least one hour of recorded time. Fetch fresh from Lapse so the check reflects current data.
 		let selectedTimelapses: LapseTimelapse[]
