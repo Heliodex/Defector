@@ -10,8 +10,7 @@ const urls: Array<{ loc: string; changefreq: string; priority: string }> = [
 	{ loc: "/guide/js-for-bots", changefreq: "daily", priority: "0.7" },
 ]
 
-export const GET: RequestHandler = ({ url }) => {
-	const origin = url.origin || siteUrl
+export const GET: RequestHandler = () => {
 	const lastmod = new Date().toISOString().slice(0, 10)
 
 	const body = `<?xml version="1.0" encoding="UTF-8"?>
@@ -20,7 +19,7 @@ ${urls
 	.map(
 		u =>
 			`	<url>
-		<loc>${origin}${u.loc}</loc>
+		<loc>${siteUrl}${u.loc}</loc>
 		<lastmod>${lastmod}</lastmod>
 		<changefreq>${u.changefreq}</changefreq>
 		<priority>${u.priority}</priority>
