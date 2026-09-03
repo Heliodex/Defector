@@ -3,6 +3,7 @@ import { type } from "#lib/arktype.js"
 import { db, Record } from "#lib/server/db.js"
 import { query } from "$app/server"
 import getBotQuery from "./getBot.surql?raw"
+import getBotBattlesQuery from "./getBotBattles.surql?raw"
 
 type BotRow = {
 	id: string
@@ -32,3 +33,23 @@ export const getBot = query(type.string, async (id: string): Promise<Bot> => {
 		source: row.source ?? "",
 	}
 })
+
+export type BotBattle = {
+	id: string
+	created: Date
+	botNames: [string, string]
+	botIds: [string, string]
+}
+
+export const getBotBattles = query(
+	type.string,
+	async (id: string): Promise<BotBattle[]> => {
+		const bot = Record("bot", id)
+
+		const [battles] = await db.query<[BotBattle[]]>(
+			getBotBattlesQuery,
+			{ bot }
+		)
+		return battles ?? []
+	}
+)

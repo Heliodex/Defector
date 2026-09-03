@@ -1,10 +1,12 @@
 <script lang="ts">
+import BattleRow from "#lib/components/BattleRow.svelte"
 import Head from "#lib/components/Head.svelte"
 import { truncate } from "#lib/truncate.js"
 import { page } from "$app/state"
-import { getBot } from "./bot.remote"
+import { getBot, getBotBattles } from "./bot.remote"
 
 const bot = $derived(await getBot(page.params.id ?? ""))
+const battles = $derived(await getBotBattles(page.params.id ?? ""))
 </script>
 
 <Head
@@ -114,6 +116,21 @@ const bot = $derived(await getBot(page.params.id ?? ""))
 		</div>
 	{:else}
 		<p class="pt-1 text-gray-500">Not enough battles for a chart yet.</p>
+	{/if}
+</div>
+
+<div class="pt-6 max-w-xl">
+	<h2 class="font-semibold">Recent battles</h2>
+	{#if battles.length === 0}
+		<p class="pt-1 text-gray-500">No battles yet.</p>
+	{:else}
+		<ul class="noul flex flex-col gap-2 pt-2">
+			{#each battles as battle (battle.id)}
+				<li>
+					<BattleRow {battle} />
+				</li>
+			{/each}
+		</ul>
 	{/if}
 </div>
 
