@@ -9,7 +9,7 @@ SELECT
 FROM bot
 # Hide under-experienced bots (fewer than 10 battles): reads the cached all-time `battles` counter maintained by the battle events, so this is a plain field check per bot - the old correlated "SELECT count() FROM battle WHERE $parent.id IN bots" scanned the battle table once per bot instead.
 # (?? 0 because never-battled bots have battles = NONE until their first battle.)
-WHERE (battles ?? 0) >= 10
+WHERE (battles ?? 0) >= 10 AND active
 ORDER BY meanScore DESC, name ASC
 LIMIT 20;
 
