@@ -85,8 +85,8 @@ const battles = $derived(await getBotBattles(page.params.id ?? ""))
 
 <div class="pt-6 max-w-xl">
 	<h2 class="font-semibold">Score history</h2>
-	{#if bot.scoreHistory.length > 1}
-		{let scores = bot.scoreHistory}
+	{#if bot.curScores.length > 1}
+		{let scores = bot.curScores}
 		{let min = Math.min(...scores)}
 		{let max = Math.max(...scores)}
 		{let len = scores.length}

@@ -6,7 +6,7 @@ SELECT
 	active,
 	created,
 	meanScore,
-	fn::botScoreHistory($this.id) AS scoreHistory,
+	curScores,
 	fn::botStats($this.id) AS stats,
 	(SELECT VALUE extraInfo.name FROM ONLY $parent<-created<-user)[0] AS ownerName,
 	(SELECT VALUE source FROM ONLY $parent.code ORDER BY updated)[$] AS source,

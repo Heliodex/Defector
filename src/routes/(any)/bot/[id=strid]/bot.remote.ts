@@ -13,16 +13,14 @@ type BotRow = {
 	active: boolean
 	created: Date
 	meanScore: number
-	scoreHistory: number[]
+	curScores: number[]
 	stats: BotStats
 	ownerName: string | null
 	source: string | null
 	updated: Date | null
 }
 
-export type Bot = BotRow & { scoreHistory: number[] }
-
-export const getBot = query(type.string, async (id: string): Promise<Bot> => {
+export const getBot = query(type.string, async (id: string): Promise<BotRow> => {
 	const bot = Record("bot", id)
 
 	const [row] = await db.query<[BotRow]>(getBotQuery, { bot })

@@ -171,13 +171,13 @@ DEFINE FUNCTION OVERWRITE fn::botCache($bot: record<bot>) {
 			> scores[1 - array::find_index(bots, $bot)]) AS won,
 		fn::b2i(scores[array::find_index(bots, $bot)]
 			< scores[1 - array::find_index(bots, $bot)]) AS lost,
-		fn::b2i(matrix = $m) AS cur,
+		matrix = $m AS cur,
 		created AS created
 		FROM battle WHERE $id IN botIds);
 	IF array::len($rows) == 0 {
 		RETURN { wins: 0, losses: 0, battles: 0, curBattles: 0, curScoreSum: 0.0, curScores: [] };
 	};
-	LET $curRows = $rows.filter(|$r| $r.cur == 1).sort(|$a, $b| if $a.created < $b.created { -1 } else if $a.created > $b.created { 1 } else { 0 });
+	LET $curRows = $rows.filter(|$r| $r.cur).sort(|$a, $b| if $a.created < $b.created { -1 } else if $a.created > $b.created { 1 } else { 0 });
 	LET $window = $curRows.slice(math::max([array::len($curRows) - 200, 0]), 200).map(|$r| $r.s);
 	{
 		wins: math::sum($rows.map(|$r| $r.won)),
