@@ -129,7 +129,7 @@ UPDATE bot SET active = IF active == true { "active" } ELSE { "inactive" } WHERE
 	# Rolling window of at most 200 most recent current-matrix scores (chronological order).
 	# curScores length is the window size; meanScore is derived from it.
 	# curBattles/curScoreSum mirror the window (count/sum) for backwards compat.
-	DEFINE FIELD OVERWRITE curScores ON bot TYPE array<float> DEFAULT [];
+	DEFINE FIELD OVERWRITE curScores ON bot TYPE option<array<float>> DEFAULT [];
 	DEFINE FIELD OVERWRITE curBattles ON bot TYPE option<int>;
 	DEFINE FIELD OVERWRITE curScoreSum ON bot TYPE option<float>;
 	DEFINE FIELD OVERWRITE meanScore ON bot TYPE float VALUE
