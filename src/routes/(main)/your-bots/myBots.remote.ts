@@ -1,9 +1,8 @@
-import { invalid } from "@sveltejs/kit"
 import { type } from "#lib/arktype.js"
 import { authorise } from "#lib/server/auth.js"
 import listBotsQuery from "#lib/server/bot/listBots.surql?raw"
-import setBotActiveQuery from "#lib/server/bot/setBotActive.surql?raw"
 import { db } from "#lib/server/db.js"
+import setBotActive from "#lib/server/setBotActive.js"
 import { form, query } from "$app/server"
 
 type MyBot = {
@@ -30,21 +29,5 @@ const toggleSchema = type({
 })
 
 export const toggleActiveForm = form(toggleSchema, async ({ id, active }) => {
-	const { user } = await authorise()
-
-	try {
-		const [, updated] = await db.query<
-			{ id: string; name: string; active: boolean }[]
-		>(setBotActiveQuery, {
-			user: user.id,
-			id,
-			active: active === true,
-		})
-
-		return updated
-	} catch (e) {
-		const message =
-			e instanceof Error ? e.message : "Could not update the bot"
-		invalid(message)
-	}
+	return setBotActive(id, active)
 })
