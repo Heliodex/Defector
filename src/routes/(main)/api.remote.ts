@@ -3,7 +3,7 @@
 import { redirect } from "@sveltejs/kit"
 import {
 	authorise,
-	cookieName,
+	sessionCookieName,
 	generatePkcePair,
 	getLapseAuthUrl,
 	invalidateSession,
@@ -17,7 +17,7 @@ export const logout = form(async () => {
 	const { session } = await authorise()
 
 	await invalidateSession(session)
-	cookies.delete(cookieName, {})
+	cookies.delete(sessionCookieName, {})
 
 	redirect(302, "/")
 })

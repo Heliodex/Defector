@@ -4,8 +4,8 @@
 import type { Handle, HandleServerError, ServerInit } from "@sveltejs/kit/hooks"
 import pc from "picocolors"
 import {
-	cookieName,
-	cookieOptions,
+	sessionCookieName,
+	sessionCookieOptions,
 	validateSessionToken,
 } from "#lib/server/auth.js"
 import { reconnect } from "#lib/server/db.js"
@@ -81,11 +81,11 @@ const finish: Handle = async ({ event, resolve }) => {
 export const handle: Handle = async e => {
 	const { event } = e
 
-	const token = event.cookies.get(cookieName)
+	const token = event.cookies.get(sessionCookieName)
 	if (!token) {
 		event.locals.session = null
 		event.locals.user = null
-		event.cookies.delete(cookieName, { path: "/" })
+		event.cookies.delete(sessionCookieName, { path: "/" })
 
 		return await finish(e)
 	}
@@ -95,7 +95,7 @@ export const handle: Handle = async e => {
 
 	event.locals.session = session
 	event.locals.user = user
-	event.cookies.set(cookieName, session, cookieOptions)
+	event.cookies.set(sessionCookieName, session, sessionCookieOptions)
 
 	return await finish(e)
 }

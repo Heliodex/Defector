@@ -50,10 +50,18 @@ export async function invalidateAllSessions(user: string): Promise<void> {
 	})
 }
 
-export const cookieName = "session"
-export const cookieOptions = Object.freeze({
-	secure: !dev,
+// Default options for cookies in SvelteKit are as follows:
+// path: /
+// secure: true in prod, false in dev
+export const sessionCookieName = "session"
+export const sessionCookieOptions = Object.freeze({
 	maxAge: 30 * 24 * 60 * 60, // 30 days
+})
+
+export const hcaCookieName = "hca_state"
+export const hcaCookieOptions = Object.freeze({
+	maxAge: 60 * 10, // 10 minutes
+	sameSite: "lax",
 })
 
 /**
@@ -98,12 +106,7 @@ export function startHackClubAuth(): never {
 
 	const state = crypto.randomUUID()
 
-	cookies.set("hca_state", state, {
-		httpOnly: true,
-		maxAge: 60 * 10, // 10 minutes
-		sameSite: "lax",
-		secure: !dev,
-	})
+	cookies.set(hcaCookieName, state, hcaCookieOptions)
 
 	redirect(302, getHackClubAuthUrl(state), { external: true })
 }
