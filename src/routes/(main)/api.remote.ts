@@ -72,3 +72,11 @@ export const getLapseData = query(async () => {
 		profilePictureUrl: lapseData.profilePictureUrl,
 	}
 })
+
+export const lapseDisconnect = form(async () => {
+	const { user } = await authorise()
+
+	await db.update(user.id).merge({ lapseData: undefined })
+
+	await getLapseData().refresh()
+})

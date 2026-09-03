@@ -1,6 +1,6 @@
 <script lang="ts">
 import Head from "#lib/components/Head.svelte"
-import { getLapseData, lapseLogin, logout } from "../api.remote"
+import { getLapseData, lapseDisconnect, lapseLogin, logout } from "../api.remote"
 
 const lapseData = $derived(await getLapseData())
 </script>
@@ -38,6 +38,14 @@ const lapseData = $derived(await getLapseData())
 				<p class="text-sm text-neutral-600">@{lapseData.handle}</p>
 			</div>
 		</div>
+		<div class="flex gap-2 pt-4">
+			<form {...lapseLogin}>
+				<button class="btn btn-secondary" type="submit">Change Lapse account</button>
+			</form>
+			<form {...lapseDisconnect}>
+				<button class="btn btn-danger-secondary" type="submit">Disconnect Lapse account</button>
+			</form>
+		</div>
 	</div>
 {:else}
 	<div class="pt-8">
@@ -47,11 +55,11 @@ const lapseData = $derived(await getLapseData())
 			this event.
 		</p>
 		<form {...lapseLogin}>
-			<button class="btn btn-primary">Link Lapse account</button>
+			<button class="btn btn-primary" type="submit">Link Lapse account</button>
 		</form>
 	</div>
 {/if}
 
 <form {...logout} class="pt-8">
-	<button class="btn btn-danger">Log out</button>
+	<button class="btn btn-danger" type="submit">Log out</button>
 </form>
