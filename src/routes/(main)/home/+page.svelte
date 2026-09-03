@@ -1,6 +1,11 @@
 <script lang="ts">
 import Head from "#lib/components/Head.svelte"
-import { getLapseData, lapseDisconnect, lapseLogin, logout } from "../api.remote"
+import {
+	getLapseData,
+	lapseDisconnect,
+	lapseLogin,
+	logout,
+} from "../api.remote"
 
 const lapseData = $derived(await getLapseData())
 </script>
@@ -22,10 +27,36 @@ const lapseData = $derived(await getLapseData())
 	</a>
 </div>
 
-{#if lapseData}
-	<div class="pt-8">
-		<h2 class="text-2xl">Your Lapse account</h2>
-		<div class="flex items-center gap-3 pt-2">
+<div class="pt-8">
+	<h2 class="text-2xl">
+		{#if lapseData}
+			Your Lapse account
+		{:else}
+			Track your hours with Lapse
+		{/if}
+	</h2>
+
+	<div
+		class="bg-amber-200 border-2 border-amber-500 px-6 py-4 rounded-xl text-amber-900"
+	>
+		<small>NOTICE </small>
+		<p class="py-2">
+			Creating a Lapse timelapse may show a warning saying
+			<span class="font-light">"Do not use Lapse for code!"</span>
+			or
+			<span class="font-light">
+				"If you're writing code, track it with Hackatime instead!"
+			</span>
+		</p>
+
+		<p>
+			<b>Ignore this!</b>
+			Lapse is the only way to track time for coding in Defector.
+		</p>
+	</div>
+
+	{#if lapseData}
+		<div class="flex items-center gap-3 pt-4">
 			{#if lapseData.profilePictureUrl}
 				<img
 					src={lapseData.profilePictureUrl}
@@ -40,25 +71,28 @@ const lapseData = $derived(await getLapseData())
 		</div>
 		<div class="flex gap-2 pt-4">
 			<form {...lapseLogin}>
-				<button class="btn btn-secondary" type="submit">Change Lapse account</button>
+				<button class="btn btn-secondary" type="submit">
+					Change Lapse account
+				</button>
 			</form>
 			<form {...lapseDisconnect}>
-				<button class="btn btn-danger-secondary" type="submit">Disconnect Lapse account</button>
+				<button class="btn btn-danger-secondary" type="submit">
+					Disconnect Lapse account
+				</button>
 			</form>
 		</div>
-	</div>
-{:else}
-	<div class="pt-8">
-		<h2 class="text-2xl">Track your hours with Lapse</h2>
-		<p class="pb-2 text-sm text-neutral-600">
+	{:else}
+		<p class="pt-4 pb-2 text-sm text-neutral-600">
 			Connect your Lapse account so we can verify the time you spend on
 			this event.
 		</p>
 		<form {...lapseLogin}>
-			<button class="btn btn-primary" type="submit">Link Lapse account</button>
+			<button class="btn btn-primary" type="submit">
+				Link Lapse account
+			</button>
 		</form>
-	</div>
-{/if}
+	{/if}
+</div>
 
 <form {...logout} class="pt-8">
 	<button class="btn btn-danger" type="submit">Log out</button>
