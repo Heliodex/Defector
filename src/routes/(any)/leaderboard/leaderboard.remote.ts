@@ -9,6 +9,7 @@ export type BattleRow = {
 	created: Date
 	botNames: [string, string]
 	botIds: [string, string]
+	scores: [number, number]
 }
 
 type BotRow = {
@@ -53,10 +54,11 @@ async function botsSnapshot(): Promise<
 	return { bots, activeBots }
 }
 
-// The battle fields carried on every live notification.
+// The battle fields carried on every live notification (scores is a stored field, so it arrives on the CREATE notification just like botIds does).
 type LiveBattle = {
 	created: Date
 	botIds: [string, string]
+	scores: [number, number]
 }
 
 export const leaderboardData = query.live(async function* (): AsyncGenerator<
@@ -151,6 +153,7 @@ export const leaderboardData = query.live(async function* (): AsyncGenerator<
 						botId => botNames.get(botId) ?? ""
 					) as [string, string],
 					botIds: battle.botIds,
+					scores: battle.scores,
 				})),
 				allBattles,
 				...updatedBots,

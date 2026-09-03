@@ -41,6 +41,7 @@ export type BotBattle = {
 	created: Date
 	botNames: [string, string]
 	botIds: [string, string]
+	scores: [number, number]
 }
 
 export const getBotBattles = query(
