@@ -85,6 +85,10 @@ a:not(.btn, .navbtn) {
 	@apply text-white font-bold bg-red-600 hover:bg-red-700 active:bg-red-500 shadow-red-300 shadow-md hover:shadow-sm inset-shadow-red-800 inset-shadow-sm hover:inset-shadow-xs;
 }
 
+.btn-danger-secondary {
+	@apply text-black font-bold bg-red-100 hover:bg-red-200 active:bg-red-300 shadow-red-200 shadow-md hover:shadow-sm inset-shadow-red-100 inset-shadow-sm hover:inset-shadow-xs;	
+}
+
 .sidebar a.btn,
 .sidebar button.btn {
 	@apply block w-full text-left;
