@@ -20,17 +20,20 @@ type BotRow = {
 	updated: Date | null
 }
 
-export const getBot = query(type.string, async (id: string): Promise<BotRow> => {
-	const bot = Record("bot", id)
+export const getBot = query(
+	type.string,
+	async (id: string): Promise<BotRow> => {
+		const bot = Record("bot", id)
 
-	const [row] = await db.query<[BotRow]>(getBotQuery, { bot })
-	if (!row) error(404, "Bot not found")
+		const [row] = await db.query<[BotRow]>(getBotQuery, { bot })
+		if (!row) error(404, "Bot not found")
 
-	return {
-		...row,
-		source: row.source ?? "",
+		return {
+			...row,
+			source: row.source ?? "",
+		}
 	}
-})
+)
 
 export type BotBattle = {
 	id: string
