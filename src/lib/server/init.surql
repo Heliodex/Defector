@@ -240,15 +240,6 @@ IF (SELECT VALUE count() FROM bot WHERE wins = NONE GROUP ALL)[0] > 0 {
 	} WHERE wins = NONE;
 };
 
-# Lightweight backfill for bots that already have wins/losses but predate the rolling-window curScores field: initialise the window from their last 200 current-matrix battles (same query as the sparkline). curBattles/curScoreSum mirror the window for backwards compat.
-IF (SELECT VALUE count() FROM bot WHERE curScores = [] GROUP ALL)[0] > 0 {
-	UPDATE bot MERGE {
-		curScores: fn::botScoreHistory($this.id),
-		curBattles: array::len(fn::botScoreHistory($this.id)),
-		curScoreSum: math::sum(fn::botScoreHistory($this.id))
-	} WHERE curScores = [];
-};
-
 # Keep the cached ladder stats on bot in sync as battles come and go: a battle write now pays two point-updates (which also recompute meanScore), so reads never rescan the battle table. Battles are never edited in place (scores are derived once at CREATE), so UPDATE is deliberately not handled here.
 # NB: bots are never deleted; if that changes, these UPDATEs would resurrect deleted records and would need an existence guard.
 DEFINE EVENT OVERWRITE battleCacheAdd ON battle WHEN $event = "CREATE" THEN {
