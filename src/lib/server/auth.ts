@@ -378,8 +378,6 @@ export async function linkLapseAccount(
 		refreshToken: tokenResponse.refresh_token,
 	}
 
-	console.log("linking lapse account", lapseData)
-
 	await db.query(linkLapseAccountQuery, {
 		userId: user,
 		lapseData,

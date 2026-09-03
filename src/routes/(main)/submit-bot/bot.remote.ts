@@ -21,7 +21,7 @@ export const checkLapseAccount = query(async () => {
 		getLapseDataQuery,
 		{ user: user.id }
 	)
-	console.log(lapse)
+
 	if (!lapse?.id || !lapse?.accessToken)
 		error(
 			401,
@@ -77,7 +77,3 @@ export const newBotForm = form(
 		}
 	}
 )
-
-
-
-
