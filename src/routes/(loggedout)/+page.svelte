@@ -93,7 +93,7 @@ const P = $derived(matrix?.[1][1])
 </ul>
 
 <p class="pt-4 pb-8">
-	See the <a href="/guide">Guide</a> for bot examples, and how to write a bot
+	See the <a href="/guide">Guides</a> for bot examples, and how to write a bot
 	in 3 lines of code.
 </p>
 
@@ -186,7 +186,7 @@ const P = $derived(matrix?.[1][1])
 			</AccordionItem>
 
 			<AccordionItem title="Do I need to know how to code JavaScript?">
-				Nope! The <a href="/guide">Guide</a> will walk you through the
+				Nope! The <a href="/guide">Guides</a> will walk you through the
 				basics of writing a bot. It starts with the simplest bots, only
 				a few lines of code, then gradually shows how to build bots with
 				more advanced strategy.
@@ -200,7 +200,7 @@ const P = $derived(matrix?.[1][1])
 				<br>
 				If you don't know game theory now, you will by the end of the
 				programme! If you want to learn the easy way, check out the
-				<a href="/guide">Guide</a>.
+				<a href="/guide">Guides</a>.
 			</AccordionItem>
 
 			<AccordionItem title="What are the prizes?">

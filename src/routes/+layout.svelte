@@ -61,7 +61,7 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 				</form>
 			</li>
 		{/if}
-		{@render navlink("guide", "Guide")}
+		{@render navlink("guide", "Guides")}
 	</ul>
 </nav>
 

@@ -14,7 +14,7 @@ await checkLapseAccount()
 	and fight to the top of the ladder. You can have up to 3 active bots at
 	once.<br>
 	Don't know how? Check out the
-	<a href="/guide">Guide</a>. Already have bots?
+	<a href="/guide">Guides</a>. Already have bots?
 	<a href="/your-bots">View your bots</a>.
 </p>
 
