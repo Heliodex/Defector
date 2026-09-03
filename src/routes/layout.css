@@ -86,7 +86,7 @@ a:not(.btn, .navbtn) {
 }
 
 .btn-danger-secondary {
-	@apply text-black font-bold bg-red-100 hover:bg-red-200 active:bg-red-300 shadow-red-200 shadow-md hover:shadow-sm inset-shadow-red-100 inset-shadow-sm hover:inset-shadow-xs;	
+	@apply text-black font-bold bg-red-100 hover:bg-red-200 active:bg-red-300 shadow-red-200 shadow-md hover:shadow-sm inset-shadow-red-100 inset-shadow-sm hover:inset-shadow-xs;
 }
 
 .sidebar a.btn,
@@ -98,7 +98,7 @@ p {
 	@apply text-pretty;
 }
 
-form label {
+form label:not(.nolabel) {
 	display: flex;
 	flex-direction: column;
 	@apply pb-6;
