@@ -86,10 +86,12 @@ const battles = $derived(await getBotBattles(page.params.id ?? ""))
 
 <div class="pt-6 max-w-xl">
 	<h2 class="font-semibold">Score history</h2>
-	{#if bot.curScores.length > 1}
+	{#if bot.curScores && bot.curScores.length > 1}
 		<div class="shadowcard">
 			<ScoreSparkline scores={bot.curScores} meanScore={bot.meanScore} />
-			<p class="pt-1 text-xs text-gray-500 text-right">Avg: {bot.meanScore.toFixed(3)}</p>
+			<p class="pt-1 text-xs text-gray-500 text-right">
+				Avg: {bot.meanScore.toFixed(3)}
+			</p>
 		</div>
 	{:else}
 		<p class="pt-1 text-gray-500">Not enough battles for a chart yet.</p>
