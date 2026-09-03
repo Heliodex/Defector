@@ -248,20 +248,22 @@ DEFINE EVENT OVERWRITE battleCacheAdd ON battle WHEN $event = "CREATE" THEN {
 	LET $w = fn::b2i($s0 > $s1);
 	LET $l = fn::b2i($s0 < $s1);
 	LET $cur = fn::b2i($after.matrix = fn::latestMatrix());
-	UPDATE $after.bots[0] SET
-		wins = (wins ?? 0) + $w,
-		losses = (losses ?? 0) + $l,
-		battles = (battles ?? 0) + 1,
-		curScores = fn::nextScores(curScores, $s0, $cur),
-		curBattles = array::len(fn::nextScores(curScores, $s0, $cur)),
-		curScoreSum = math::sum(fn::nextScores(curScores, $s0, $cur));
-	UPDATE $after.bots[1] SET
-		wins = (wins ?? 0) + $l,
-		losses = (losses ?? 0) + $w,
-		battles = (battles ?? 0) + 1,
-		curScores = fn::nextScores(curScores, $s1, $cur),
-		curBattles = array::len(fn::nextScores(curScores, $s1, $cur)),
-		curScoreSum = math::sum(fn::nextScores(curScores, $s1, $cur));
+	UPDATE $after.bots[0] MERGE {
+		wins: (wins ?? 0) + $w,
+		losses: (losses ?? 0) + $l,
+		battles: (battles ?? 0) + 1,
+		curScores: fn::nextScores(curScores, $s0, $cur),
+		curBattles: array::len(fn::nextScores(curScores, $s0, $cur)),
+		curScoreSum: math::sum(fn::nextScores(curScores, $s0, $cur))
+	};
+	UPDATE $after.bots[1] MERGE {
+		wins: (wins ?? 0) + $l,
+		losses: (losses ?? 0) + $w,
+		battles: (battles ?? 0) + 1,
+		curScores: fn::nextScores(curScores, $s1, $cur),
+		curBattles: array::len(fn::nextScores(curScores, $s1, $cur)),
+		curScoreSum: math::sum(fn::nextScores(curScores, $s1, $cur))
+	};
 };
 
 # Deleting a battle (admin cleanup) reverses wins/losses and recomputes the rolling window from source (rare path, so a scan is acceptable).
@@ -272,20 +274,22 @@ DEFINE EVENT OVERWRITE battleCacheRemove ON battle WHEN $event = "DELETE" THEN {
 	LET $l = fn::b2i($s0 < $s1);
 	LET $c0 = fn::botCache($before.bots[0]);
 	LET $c1 = fn::botCache($before.bots[1]);
-	UPDATE $before.bots[0] SET
-		wins = (wins ?? 0) - $w,
-		losses = (losses ?? 0) - $l,
-		battles = (battles ?? 0) - 1,
-		curScores = $c0.curScores,
-		curBattles = $c0.curBattles,
-		curScoreSum = $c0.curScoreSum;
-	UPDATE $before.bots[1] SET
-		wins = (wins ?? 0) - $l,
-		losses = (losses ?? 0) - $w,
-		battles = (battles ?? 0) - 1,
-		curScores = $c1.curScores,
-		curBattles = $c1.curBattles,
-		curScoreSum = $c1.curScoreSum;
+	UPDATE $before.bots[0] MERGE {
+		wins: (wins ?? 0) - $w,
+		losses: (losses ?? 0) - $l,
+		battles: (battles ?? 0) - 1,
+		curScores: $c0.curScores,
+		curBattles: $c0.curBattles,
+		curScoreSum: $c0.curScoreSum
+	};
+	UPDATE $before.bots[1] MERGE {
+		wins: (wins ?? 0) - $l,
+		losses: (losses ?? 0) - $w,
+		battles: (battles ?? 0) - 1,
+		curScores: $c1.curScores,
+		curBattles: $c1.curBattles,
+		curScoreSum: $c1.curScoreSum
+	};
 };
 
 # Pushing a new matrix resets the ladder: every bot's window is cleared (meanScore recomputes to 0).
