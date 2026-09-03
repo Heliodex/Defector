@@ -112,7 +112,12 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 		crypto::sha256(array::last($this.code).transpiled);
 	DEFINE FIELD OVERWRITE latestCode ON bot TYPE string VALUE
 		array::last($this.code).transpiled;
-	DEFINE FIELD OVERWRITE active ON bot TYPE bool DEFAULT ALWAYS false;
+	DEFINE FIELD OVERWRITE active ON bot TYPE string | bool DEFAULT ALWAYS "inactive";
+	-- DEFINE FIELD OVERWRITE active ON bot TYPE string ASSERT $value IN ["active", "inactive", "archived"] DEFAULT ALWAYS "inactive";
+	# One-time migration from the pre-archive boolean `active` (true/false) to the string states ("active"/"inactive"). Guarded so it only ever runs once: afterwards no rows match the WHERE.
+IF (SELECT VALUE count() FROM bot WHERE active == true OR active == false GROUP ALL)[0] > 0 {
+UPDATE bot SET active = IF active == true { "active" } ELSE { "inactive" } WHERE active == true OR active == false;
+};
 	DEFINE FIELD OVERWRITE created ON bot TYPE datetime DEFAULT ALWAYS time::now();
 	# ---- Cached ladder stats ----
 	# Every per-bot aggregate lives on the bot record itself, so leaderboard and bot-page reads are plain lookups instead of scans over the battle table.

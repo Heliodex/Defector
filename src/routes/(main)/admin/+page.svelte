@@ -176,7 +176,7 @@ let battles = $derived(await getBattles())
 			<tr class="text-left text-neutral-600">
 				<th class="border-b border-neutral-200 p-3">Bot</th>
 				<th class="border-b border-neutral-200 p-3">Owner</th>
-				<th class="border-b border-neutral-200 p-3">Active</th>
+				<th class="border-b border-neutral-200 p-3">Status</th>
 				<th class="border-b border-neutral-200 p-3">Avg score</th>
 				<th class="border-b border-neutral-200 p-3">W-L</th>
 			</tr>
@@ -190,8 +190,8 @@ let battles = $derived(await getBattles())
 					<td class="border-b border-neutral-300 p-3">
 						{bot.ownerEmail ?? "—"}
 					</td>
-					<td class="border-b border-neutral-300 p-3">
-						{bot.active ? "Yes" : "No"}
+					<td class="border-b border-neutral-300 p-3 capitalize">
+						{bot.active}
 					</td>
 					<td class="border-b border-neutral-300 p-3">
 						{bot.meanScore.toFixed(3)}

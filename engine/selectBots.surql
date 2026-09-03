@@ -1,4 +1,4 @@
-IF count(SELECT 1 FROM bot WHERE active) <= 1 {
+IF count(SELECT 1 FROM bot WHERE active = "active") <= 1 {
 	THROW "Not enough bots to play";
 };
 
@@ -9,7 +9,7 @@ IF count(SELECT 1 FROM bot WHERE active) <= 1 {
 LET $bots = (SELECT
 	id, codeHash, latestCode, name,
 	math::max([1.0 / ((battles ?? 0) + 1), 0.05]) AS w
-	FROM bot WHERE active);
+	FROM bot WHERE active = "active");
 
 LET $bot1 = (SELECT id, codeHash, latestCode, name,
 	math::pow(rand(), 1.0 / w) AS score FROM $bots

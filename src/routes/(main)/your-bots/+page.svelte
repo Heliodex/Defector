@@ -1,11 +1,14 @@
 <script lang="ts">
+import { botStatuses } from "#lib/botStatus.js"
 import Head from "#lib/components/Head.svelte"
 import { truncate } from "#lib/truncate.js"
-import { getMyBots, toggleActiveForm } from "./myBots.remote"
+import { getMyBots, setStatusForm } from "./myBots.remote"
 
 const bots = $derived(await getMyBots())
 
-const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
+const activeCount = $derived(
+	bots?.filter(b => b.active === "active").length ?? 0
+)
 </script>
 
 <Head title="My bots" noindex />
@@ -29,11 +32,16 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 		<a href="/submit-bot" class="btn btn-primary">
 			Submit your first bot
 		</a>
+		<p class="pt-4">
+			<a href="/your-bots/archived" class="text-blue-400 hover:underline"
+				>View archived bots</a
+			>
+		</p>
 	</div>
 {:else}
 	<ul class="noul grid gap-4 pt-4 sm:grid-cols-2">
 		{#each bots as bot (bot.id)}
-			{let botForm = toggleActiveForm.for(bot.id)}
+			{let botForm = setStatusForm.for(bot.id)}
 			<li
 				class="rounded-lg border border-neutral-300 bg-white p-4 flex flex-col"
 			>
@@ -61,7 +69,7 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 							Created {new Date(bot.created).toLocaleDateString()}
 						</p>
 					</div>
-					{#if bot.active}
+					{#if bot.active === "active"}
 						<span
 							class="rounded bg-green-600 text-white px-2 py-0.5 text-xs font-bold"
 							>Active</span
@@ -76,50 +84,62 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 
 				<p class="pt-2 text-sm text-neutral-600">{bot.description}</p>
 
-				<div class="pt-3 text-sm">
-					<p>
-						<span class="font-semibold">
-							{bot.meanScore.toFixed(3)}
-						</span>
-						Avg score
-					</p>
-					<p>
-						<span class="font-semibold">
-							{bot.stats.wins}
-						</span>
-						wins ·
-						<span class="font-semibold">
-							{bot.stats.losses}
-						</span>
-						losses ·
-						<span class="font-semibold">
-							{bot.stats.battles}
-						</span>
-						battles
-					</p>
-				</div>
-
-				<div
-					class="flex items-center justify-between gap-4 pt-3 mt-auto"
-				>
-					<a
-						href="/bot/{bot.id}"
-						class="text-sm text-blue-400 hover:underline"
-					>
-						View
-					</a>
-
-					<form {...botForm} class="inline-flex items-center gap-2">
-						<input {...botForm.fields.id.as("hidden", bot.id)}>
-						<label class="pb-0! pt-3 px-4">
-							<span>
-								<input
-									{...botForm.fields.active.as("checkbox")}
-									checked={bot.active}
-								>
-								<span class="pl-2">Active</span>
+				<div class="flex justify-between ">
+					<div class="pt-3 text-sm">
+						<p>
+							<span class="font-semibold">
+								{bot.meanScore.toFixed(3)}
 							</span>
-						</label>
+							Avg score
+						</p>
+						<p>
+							<span class="font-semibold">
+								{bot.stats.wins}
+							</span>
+							wins
+						</p>
+						<p>
+							<span class="font-semibold">
+								{bot.stats.losses}
+							</span>
+							losses
+						</p>
+						<p>
+							<span class="font-semibold">
+								{bot.stats.battles}
+							</span>
+							battles
+						</p>
+
+						<div class="pt-4">
+							<a
+								href="/bot/{bot.id}"
+								class="text-sm text-blue-400 hover:underline"
+							>
+								View
+							</a>
+						</div>
+					</div>
+
+					<form {...botForm}>
+						<input {...botForm.fields.id.as("hidden", bot.id)}>
+						<fieldset class="flex flex-col text-sm pb-4">
+							<legend class="sr-only">Bot status</legend>
+							{#each botStatuses as status}
+								<label class="nolabel">
+									<input
+										{...botForm.fields.status.as(
+											"radio",
+											status
+										)}
+										checked={bot.active === status}
+									>
+									<span class="capitalize pt-1.5"
+										>{status}</span
+									>
+								</label>
+							{/each}
+						</fieldset>
 						<button
 							class="btn btn-primary text-sm px-3 py-1"
 							type="submit"
@@ -132,9 +152,12 @@ const activeCount = $derived(bots?.filter(b => b.active).length ?? 0)
 		{/each}
 	</ul>
 
-	<p class="pt-6">
+	<p class="pt-6 flex gap-4">
 		<a href="/submit-bot" class="text-blue-400 hover:underline"
 			>Submit a new bot</a
+		>
+		<a href="/your-bots/archived" class="text-blue-400 hover:underline"
+			>View archived bots</a
 		>
 	</p>
 {/if}

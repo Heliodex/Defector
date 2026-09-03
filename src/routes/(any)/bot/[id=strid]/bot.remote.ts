@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { type } from "#lib/arktype.js"
+import type { BotStatus } from "#lib/botStatus.js"
 import { db, Record } from "#lib/server/db.js"
 import setBotActive from "#lib/server/setBotActive.js"
 import { form, getRequestEvent, query } from "$app/server"
@@ -11,7 +12,7 @@ type BotRow = {
 	name: string
 	description: string | null
 	codeUrl: string | null
-	active: boolean
+	active: BotStatus
 	created: Date
 	meanScore: number
 	curScores: number[]
@@ -68,13 +69,13 @@ export const isBotOwner = query(type.string, async (id: string) => {
 	return (rows?.length ?? 0) > 0
 })
 
-const toggleSchema = type({
+const statusSchema = type({
 	id: "string",
-	"active?": "boolean",
+	status: "'active'|'inactive'|'archived'",
 })
 
-export const toggleActiveForm = form(toggleSchema, async ({ id, active }) => {
-	const res = await setBotActive(id, active)
+export const setStatusForm = form(statusSchema, async ({ id, status }) => {
+	const res = await setBotActive(id, status)
 	await getBot(id).refresh()
 	return res
 })

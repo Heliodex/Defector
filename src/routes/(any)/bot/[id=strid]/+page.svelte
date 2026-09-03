@@ -1,15 +1,16 @@
 <script lang="ts">
+import { botStatuses } from "#lib/botStatus.js"
 import BattleRow from "#lib/components/BattleRow.svelte"
 import Head from "#lib/components/Head.svelte"
 import ScoreSparkline from "#lib/components/ScoreSparkline.svelte"
 import { truncate } from "#lib/truncate.js"
 import { page } from "$app/state"
-import { getBot, getBotBattles, isBotOwner, toggleActiveForm } from "./bot.remote"
+import { getBot, getBotBattles, isBotOwner, setStatusForm } from "./bot.remote"
 
 const bot = $derived(await getBot(page.params.id ?? ""))
 const battles = $derived(await getBotBattles(page.params.id ?? ""))
 const owner = $derived(await isBotOwner(page.params.id ?? ""))
-const botForm = $derived(toggleActiveForm.for(page.params.id ?? ""))
+const botForm = $derived(setStatusForm.for(page.params.id ?? ""))
 </script>
 
 <Head
@@ -32,10 +33,15 @@ const botForm = $derived(toggleActiveForm.for(page.params.id ?? ""))
 </p>
 
 <p class="pt-2">
-	{#if bot.active}
+	{#if bot.active === "active"}
 		<span
 			class="inline-block px-2 py-0.5 rounded bg-green-500 text-white text-sm"
 			>Active</span
+		>
+	{:else if bot.active === "archived"}
+		<span
+			class="inline-block px-2 py-0.5 rounded bg-amber-500 text-white text-sm"
+			>Archived</span
 		>
 	{:else}
 		<span
@@ -61,15 +67,18 @@ const botForm = $derived(toggleActiveForm.for(page.params.id ?? ""))
 
 	<form {...botForm} class="inline-flex items-center gap-2 pt-4">
 		<input {...botForm.fields.id.as("hidden", bot.id)}>
-		<label class="pb-0! pt-3 px-4">
-			<span>
-				<input
-					{...botForm.fields.active.as("checkbox")}
-					checked={bot.active}
-				>
-				<span class="pl-2">Active</span>
-			</span>
-		</label>
+		<fieldset class="flex items-center gap-3">
+			<legend class="sr-only">Bot status</legend>
+			{#each botStatuses as status}
+				<label class="inline-flex items-center gap-1 text-sm">
+					<input
+						{...botForm.fields.status.as("radio", status)}
+						checked={bot.active === status}
+					>
+					<span class="capitalize">{status}</span>
+				</label>
+			{/each}
+		</fieldset>
 		<button class="btn btn-primary text-sm px-3 py-1" type="submit">
 			Save
 		</button>

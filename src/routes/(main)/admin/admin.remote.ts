@@ -1,5 +1,6 @@
 import { redirect } from "@sveltejs/kit"
 import { makeMessage, type } from "#lib/arktype.js"
+import type { BotStatus } from "#lib/botStatus.js"
 import { isAdmin } from "#lib/server/admin.js"
 import { authorise } from "#lib/server/auth.js"
 import { db, Record } from "#lib/server/db.js"
@@ -12,7 +13,7 @@ import reviewHourSubmissionQuery from "./reviewHourSubmission.surql?raw"
 type AdminBot = {
 	id: string
 	name: string
-	active: boolean
+	active: BotStatus
 	created: Date
 	meanScore: number
 	stats: BotStats

@@ -50,7 +50,7 @@ test("adds all sample bots to the database", async () => {
 			name: bot.name,
 			description: "",
 			code: [{ source: bot.source, transpiled: bot.transpiled }],
-			active: true,
+			active: "active",
 		})
 	}
 
