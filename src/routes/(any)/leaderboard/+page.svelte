@@ -2,8 +2,8 @@
 import { onMount } from "svelte"
 import { flip } from "svelte/animate"
 import { fly } from "svelte/transition"
+import BattleRow from "#lib/components/BattleRow.svelte"
 import Head from "#lib/components/Head.svelte"
-import TimeAgo from "#lib/components/TimeAgo.svelte"
 import { truncate } from "#lib/truncate.js"
 import { type LeaderboardData, leaderboardData } from "./leaderboard.remote"
 
@@ -74,7 +74,9 @@ const connected = $derived(dataResult.connected)
 						<th class="border-b border-neutral-200 p-3">#</th>
 						<th class="border-b border-neutral-200 p-3">Bot</th>
 						<!-- <th class="border-b border-neutral-200 p-3">Owner</th> -->
-						<th class="border-b border-neutral-200 p-3">Avg score</th>
+						<th class="border-b border-neutral-200 p-3">
+							Avg score
+						</th>
 						<th class="border-b border-neutral-200 p-3">W-L</th>
 						<th class="border-b border-neutral-200 p-3">Battles</th>
 					</tr>
@@ -129,23 +131,7 @@ const connected = $derived(dataResult.connected)
 					out:fly={{ y: 100, duration: 400 }}
 					animate:flip={{ duration: 300 }}
 				>
-					<a
-						href="/battle/{battle.id}"
-						class="btn flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border border-neutral-300 bg-white px-4 py-2 hover:border-blue-600"
-					>
-						<span>
-							<span class="font-semibold"
-								>{truncate(battle.botNames[0])}</span
-							>
-							<span class="text-neutral-600"> vs </span>
-							<span class="font-semibold"
-								>{truncate(battle.botNames[1])}</span
-							>
-						</span>
-						<span class="text-xs text-neutral-600">
-							<TimeAgo date={battle.created} />
-						</span>
-					</a>
+					<BattleRow {battle} />
 				</li>
 			{/each}
 		</ul>
