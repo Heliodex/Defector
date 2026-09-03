@@ -133,7 +133,7 @@ UPDATE bot SET active = IF active == true { "active" } ELSE { "inactive" } WHERE
 	DEFINE FIELD OVERWRITE curBattles ON bot TYPE option<int>;
 	DEFINE FIELD OVERWRITE curScoreSum ON bot TYPE option<float>;
 	DEFINE FIELD OVERWRITE meanScore ON bot TYPE float VALUE
-		IF $this.curScores == [] { 0.0 } ELSE { math::sum($this.curScores) / <float> array::len($this.curScores) };
+		IF $this.curScores == NONE OR $this.curScores == [] { 0.0 } ELSE { math::sum($this.curScores) / <float> array::len($this.curScores) };
 
 DEFINE FUNCTION OVERWRITE fn::b2i($b: bool) -> int {
 	IF $b { 1 } ELSE { 0 };
