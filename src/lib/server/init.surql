@@ -130,15 +130,6 @@ DEFINE TABLE OVERWRITE bot SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE meanScore ON bot TYPE float VALUE
 		IF $this.curScores == [] { 0.0 } ELSE { math::sum($this.curScores) / <float> array::len($this.curScores) };
 
-DEFINE FUNCTION OVERWRITE fn::botScoreHistory($bot: record<bot>) -> array<float> {
-	-- LET $id = record::id($bot);
-	# Same matrix scoping as the cached meanScore field: the sparkline shows the bot's scores on the current matrix only. Most recent 200, in chronological order. This is the one ladder stat that cannot be a single cached number, so it still scans - but the battleBotIds + battleCreated indexes keep it to an index lookup bounded at 200 rows, only on the individual bot page.
-	array::reverse((SELECT scores, bots, created FROM battle
-		WHERE $bot IN bots AND matrix = fn::latestMatrix()
-		ORDER BY created DESC
-		LIMIT 200).map(|$x| $x.scores[array::find_index($x.bots, $bot)]))
-};
-
 DEFINE FUNCTION OVERWRITE fn::b2i($b: bool) -> int {
 	IF $b { 1 } ELSE { 0 };
 };
@@ -210,7 +201,7 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 		fn::calculateScore($this);
 	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
 
-# Index the materialised bot id strings so the remaining per-bot scans (fn::botScoreHistory, fn::botCache) resolve "which battles involve this bot" via an index lookup instead of a full table scan per bot.
+# Index the materialised bot id strings so the remaining per-bot scans (fn::botCache) resolve "which battles involve this bot" via an index lookup instead of a full table scan per bot.
 DEFINE INDEX OVERWRITE battleBotIds ON battle FIELDS botIds.*;
 # Lets "ORDER BY created DESC LIMIT n" walk the index instead of scanning and
 # sorting every battle in the table.
