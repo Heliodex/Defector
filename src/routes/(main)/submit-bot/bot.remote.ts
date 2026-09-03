@@ -32,7 +32,7 @@ export const checkLapseAccount = query(async () => {
 const newBotSchema = type({
 	name: type("string >= 1").configure(messageName[0]),
 	description: type("string >= 1").configure(messageDescription[0]),
-	code: type("string >= 1").configure(messageCode[0]),
+	code: type("1 <= string <= 50000").configure(messageCode[0]),
 	codeUrl: "string | undefined",
 	"active?": "boolean",
 })
