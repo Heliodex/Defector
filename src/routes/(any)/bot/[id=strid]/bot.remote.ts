@@ -73,7 +73,7 @@ const toggleSchema = type({
 })
 
 export const toggleActiveForm = form(toggleSchema, async ({ id, active }) => {
-	const res = setBotActive(id, active)
+	const res = await setBotActive(id, active)
 	await getBot(id).refresh()
 	return res
 })
