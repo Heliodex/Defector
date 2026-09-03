@@ -203,12 +203,12 @@ DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE created ON battle TYPE datetime DEFAULT ALWAYS time::now();
 
 # Index the materialised bot id strings so the remaining per-bot scans (fn::botCache) resolve "which battles involve this bot" via an index lookup instead of a full table scan per bot.
-DEFINE INDEX OVERWRITE battleBotIds ON battle FIELDS botIds.*;
+DEFINE INDEX IF NOT EXISTS battleBotIds ON battle FIELDS botIds.*;
 # Lets "ORDER BY created DESC LIMIT n" walk the index instead of scanning and
 # sorting every battle in the table.
-DEFINE INDEX OVERWRITE battleCreated ON battle FIELDS created; # idx if this helps rly
+DEFINE INDEX IF NOT EXISTS battleCreated ON battle FIELDS created; # idx if this helps rly
 -- REMOVE INDEX IF EXISTS battleCreated ON battle;
--- DEFINE INDEX OVERWRITE battleCount ON battle COUNT; # doesn't really help
+-- DEFINE INDEX IF NOT EXISTS battleCount ON battle COUNT; # doesn't really help
 
 # THIS CANNOT BE A COMPUTED BECAUSE OTHERWISE IT WILL EAT ALL 32GB OF MY RAM
 # though since bot names may change, this can't be a VALUE or DEFAULT ALWAYS either :heavysob:
