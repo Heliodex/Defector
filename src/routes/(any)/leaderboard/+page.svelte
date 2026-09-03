@@ -131,7 +131,7 @@ const connected = $derived(dataResult.connected)
 				>
 					<a
 						href="/battle/{battle.id}"
-						class="btn flex items-center justify-between rounded-lg border border-neutral-300 bg-white px-4 py-2 hover:border-blue-600"
+						class="btn flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border border-neutral-300 bg-white px-4 py-2 hover:border-blue-600"
 					>
 						<span>
 							<span class="font-semibold"
