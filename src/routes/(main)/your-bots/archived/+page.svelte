@@ -17,7 +17,7 @@ const bots = $derived(await getArchivedBots())
 
 <p class="pb-2">
 	<a href="/your-bots" class="text-sm text-blue-400 hover:underline">
-		Back to My bots
+		Back to Your bots
 	</a>
 </p>
 

@@ -11,9 +11,9 @@ const activeCount = $derived(
 )
 </script>
 
-<Head title="My bots" noindex />
+<Head title="Your bots" noindex />
 
-<h1 class="text-2xl">My bots</h1>
+<h1 class="text-2xl">Your bots</h1>
 
 <p class="pt-2 pb-2 text-sm text-neutral-600">
 	You may have at most 3 active bots at once ({activeCount}/3 active).

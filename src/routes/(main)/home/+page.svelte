@@ -15,8 +15,8 @@ const lapseData = $derived(await getLapseData())
 </p>
 
 <div class="grid gap-4 pt-2 sm:grid-cols-2">
-	<a href="/submit-bot" class="btn btn-primary text-center"> Submit a bot </a>
-	<a href="/your-bots" class="btn btn-secondary text-center"> My bots </a>
+	<a href="/submit-bot" class="btn btn-primary text-center">Submit a bot</a>
+	<a href="/your-bots" class="btn btn-secondary text-center">Your bots</a>
 	<a href="/submit" class="btn btn-secondary text-center">
 		Submit work & hours
 	</a>
