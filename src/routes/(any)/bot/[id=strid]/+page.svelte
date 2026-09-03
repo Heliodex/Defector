@@ -4,10 +4,12 @@ import Head from "#lib/components/Head.svelte"
 import ScoreSparkline from "#lib/components/ScoreSparkline.svelte"
 import { truncate } from "#lib/truncate.js"
 import { page } from "$app/state"
-import { getBot, getBotBattles } from "./bot.remote"
+import { getBot, getBotBattles, isBotOwner, toggleActiveForm } from "./bot.remote"
 
 const bot = $derived(await getBot(page.params.id ?? ""))
 const battles = $derived(await getBotBattles(page.params.id ?? ""))
+const owner = $derived(await isBotOwner(page.params.id ?? ""))
+const botForm = $derived(toggleActiveForm.for(page.params.id ?? ""))
 </script>
 
 <Head
@@ -42,6 +44,37 @@ const battles = $derived(await getBotBattles(page.params.id ?? ""))
 		>
 	{/if}
 </p>
+
+{#if owner}
+	{#if botForm.fields.allIssues()?.length}
+		<div class="pt-4 max-w-xl" role="alert">
+			<p class="font-bold text-red-500">
+				Please fix the following issues:
+			</p>
+			<ul class="list-disc pl-6 text-sm text-red-500">
+				{#each botForm.fields.allIssues() ?? [] as issue}
+					<li>{issue.message}</li>
+				{/each}
+			</ul>
+		</div>
+	{/if}
+
+	<form {...botForm} class="inline-flex items-center gap-2 pt-4">
+		<input {...botForm.fields.id.as("hidden", bot.id)}>
+		<label class="pb-0! pt-3 px-4">
+			<span>
+				<input
+					{...botForm.fields.active.as("checkbox")}
+					checked={bot.active}
+				>
+				<span class="pl-2">Active</span>
+			</span>
+		</label>
+		<button class="btn btn-primary text-sm px-3 py-1" type="submit">
+			Save
+		</button>
+	</form>
+{/if}
 
 {#if bot.description}
 	<p class="pt-4">{bot.description}</p>

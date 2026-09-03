@@ -1,7 +1,8 @@
 import { error } from "@sveltejs/kit"
 import { type } from "#lib/arktype.js"
 import { db, Record } from "#lib/server/db.js"
-import { query } from "$app/server"
+import setBotActive from "#lib/server/setBotActive.js"
+import { form, getRequestEvent, query } from "$app/server"
 import getBotQuery from "./getBot.surql?raw"
 import getBotBattlesQuery from "./getBotBattles.surql?raw"
 
@@ -47,10 +48,32 @@ export const getBotBattles = query(
 	async (id: string): Promise<BotBattle[]> => {
 		const bot = Record("bot", id)
 
-		const [battles] = await db.query<[BotBattle[]]>(
-			getBotBattlesQuery,
-			{ bot }
-		)
+		const [battles] = await db.query<[BotBattle[]]>(getBotBattlesQuery, {
+			bot,
+		})
 		return battles ?? []
 	}
 )
+
+export const isBotOwner = query(type.string, async (id: string) => {
+	const { locals } = getRequestEvent()
+	const user = locals.user
+	if (!user) return false
+
+	const [rows] = await db.query<unknown[][]>(
+		"SELECT VALUE id FROM $user->created->bot WHERE record::id(id) = $id",
+		{ user: user.id, id }
+	)
+	return (rows?.length ?? 0) > 0
+})
+
+const toggleSchema = type({
+	id: "string",
+	"active?": "boolean",
+})
+
+export const toggleActiveForm = form(toggleSchema, async ({ id, active }) => {
+	const res = setBotActive(id, active)
+	await getBot(id).refresh()
+	return res
+})
