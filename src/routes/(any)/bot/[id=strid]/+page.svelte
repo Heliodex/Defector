@@ -65,12 +65,12 @@ const botForm = $derived(setStatusForm.for(page.params.id ?? ""))
 		</div>
 	{/if}
 
-	<form {...botForm} class="inline-flex items-center gap-2 pt-4">
+	<form {...botForm} class="flex gap-8 pt-8 items-end">
 		<input {...botForm.fields.id.as("hidden", bot.id)}>
-		<fieldset class="flex items-center gap-3">
-			<legend class="sr-only">Bot status</legend>
+		<fieldset class="flex flex-col">
+			<legend class="font-bold">Bot status</legend>
 			{#each botStatuses as status}
-				<label class="inline-flex items-center gap-1 text-sm">
+				<label class="nolabel">
 					<input
 						{...botForm.fields.status.as("radio", status)}
 						checked={bot.active === status}
@@ -79,14 +79,17 @@ const botForm = $derived(setStatusForm.for(page.params.id ?? ""))
 				</label>
 			{/each}
 		</fieldset>
-		<button class="btn btn-primary text-sm px-3 py-1" type="submit">
-			Save
-		</button>
+
+		<div>
+			<button class="btn btn-primary text-sm px-3 py-1" type="submit">
+				Save
+			</button>
+		</div>
 	</form>
 {/if}
 
 {#if bot.description}
-	<p class="pt-4">{bot.description}</p>
+	<p class="pt-8">{bot.description}</p>
 {/if}
 
 {#if bot.codeUrl}
