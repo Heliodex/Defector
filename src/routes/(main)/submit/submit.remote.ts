@@ -3,12 +3,13 @@ import { error, invalid, isHttpError, redirect } from "@sveltejs/kit"
 import sharp from "sharp"
 import { makeMessage, type } from "#lib/arktype.js"
 import { authorise } from "#lib/server/auth.js"
-import { db, type RecordId } from "#lib/server/db.js"
+import { db, Record, type RecordId } from "#lib/server/db.js"
 import getLapseDataQuery from "#lib/server/getLapseData.surql?raw"
 import { LAPSE_TIMELAPSE_SINCE } from "$app/env/private"
 import { form, getRequestEvent, query } from "$app/server"
 import createHourSubmissionQuery from "./createHourSubmission.surql?raw"
 import getLatestHourSubmissionQuery from "./getLatestHourSubmission.surql?raw"
+import getUnsubmittedBotsQuery from "./getUnsubmittedBots.surql?raw"
 
 /**
  * Fetches the calling user's timelapses from Lapse, filtered to those created since {@link LAPSE_TIMELAPSE_SINCE}. Throws on any failure (including an unlinked or expired Lapse account).
@@ -95,6 +96,7 @@ const messageTimelapseIds = makeMessage(
 	"timelapseIds",
 	"please select at least one timelapse"
 )
+const messageBotIds = makeMessage("botIds", "please select at least one bot")
 
 const schema = type({
 	image: type("Blob").as<File>(),
@@ -103,6 +105,7 @@ const schema = type({
 	codeUrl: type("string >= 1").configure(messageCodeUrl[0]),
 	"ai?": "boolean",
 	timelapseIds: type("string[] >= 1").configure(messageTimelapseIds[0]),
+	botIds: type("string[] >= 1").configure(messageBotIds[0]),
 	"howHear?": "string",
 	"howDoingWell?": "string",
 	"howImprove?": "string",
@@ -112,6 +115,7 @@ const schema = type({
 	.configure(...messageDescription)
 	.configure(...messageCodeUrl)
 	.configure(...messageTimelapseIds)
+	.configure(...messageBotIds)
 
 export const newSubmissionForm = form(
 	schema,
@@ -126,12 +130,26 @@ export const newSubmissionForm = form(
 		howImprove,
 		howLikelyRecommend,
 		timelapseIds,
+		botIds,
 	}) => {
 		const { user } = await authorise()
 
 		if (image.size === 0)
 			invalid("Please upload an image for your submission.")
 		if (image.size > 20e6) invalid("Image must be less than 20MB in size.")
+
+		// Verify the selected bots belong to the user and haven't been submitted before. Fetch fresh so the check reflects current data.
+		const [, unsubmittedBots] = await db.query<[null, { id: string }[]]>(
+			getUnsubmittedBotsQuery,
+			{ user }
+		)
+		const unsubmittedIds = new Set((unsubmittedBots ?? []).map(b => b.id))
+
+		for (const id of botIds)
+			if (!unsubmittedIds.has(id))
+				invalid(
+					"One of the selected bots is invalid or has already been submitted. Please refresh and try again."
+				)
 
 		// Verify the selected timelapses total at least one hour of recorded time. Fetch fresh from Lapse so the check reflects current data.
 		let selectedTimelapses: LapseTimelapse[]
@@ -194,6 +212,7 @@ export const newSubmissionForm = form(
 			howImprove,
 			howLikelyRecommend,
 			timelapseIds,
+			bots: botIds.map(id => Record("bot", id)),
 		}
 
 		const [, recordId] = await db.query<RecordId<"hourSubmission">[]>(
@@ -247,4 +266,22 @@ export const getTimelapses = query(async (): Promise<TimelapsesResult> => {
 
 		return { error: message, since, timelapses: [] }
 	}
+})
+
+export type SubmittableBot = {
+	id: string
+	name: string
+	description: string
+	active: string
+	created: Date
+}
+
+export const getBots = query(async (): Promise<SubmittableBot[]> => {
+	const { user } = await authorise()
+
+	const [, bots] = await db.query<[undefined, SubmittableBot[]]>(
+		getUnsubmittedBotsQuery,
+		{ user }
+	)
+	return bots ?? []
 })

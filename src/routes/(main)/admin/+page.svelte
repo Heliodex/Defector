@@ -30,6 +30,7 @@ let battles = $derived(await getBattles())
 						<th class="border-b border-neutral-200 p-3">
 							Timelapses
 						</th>
+						<th class="border-b border-neutral-200 p-3">Bots</th>
 						<th class="border-b border-neutral-200 p-3">Status</th>
 						<th class="border-b border-neutral-200 p-3">Review</th>
 					</tr>
@@ -95,6 +96,20 @@ let battles = $derived(await getBattles())
 									—
 								{/if}
 							</td>
+							<td class="border-b border-neutral-300 p-3">
+								{#if sub.bots?.length}
+									<ul class="flex flex-col gap-1">
+										{#each sub.bots as bot}
+											<li class="text-xs">
+												<a href="/bot/{bot.id}" target="_blank" rel="noreferrer">{bot.name}</a>
+											</li>
+										{/each}
+									</ul>
+								{:else}
+									—
+								{/if}
+							</td>
+
 
 							<td class="border-b border-neutral-300 p-3">
 								<span

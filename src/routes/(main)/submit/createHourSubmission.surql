@@ -8,7 +8,8 @@ LET $hourSubmission = CREATE ONLY hourSubmission CONTENT {
 	howDoingWell: $howDoingWell,
 	howImprove: $howImprove,
 	howLikelyRecommend: $howLikelyRecommend,
-	lapseTimelapses: $timelapseIds
+	lapseTimelapses: $timelapseIds,
+	bots: $bots
 } RETURN VALUE id;
 
 $hourSubmission;

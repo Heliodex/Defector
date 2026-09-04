@@ -1,15 +1,17 @@
 <script lang="ts">
 import { programmeName } from "#lib/assets/config.js"
 import Head from "#lib/components/Head.svelte"
-import { getTimelapses, newSubmissionForm } from "./submit.remote"
+import { getBots, getTimelapses, newSubmissionForm } from "./submit.remote"
 
 const timelapseData = $derived(await getTimelapses())
+const bots = $derived(await getBots())
 
 const sinceLabel = $derived(
 	timelapseData ? new Date(timelapseData.since).toLocaleDateString() : ""
 )
 
 let selected = $derived(newSubmissionForm.fields.timelapseIds.value() ?? [])
+let selectedBots = $derived(newSubmissionForm.fields.botIds.value() ?? [])
 
 function formatDuration(seconds: number) {
 	const hours = Math.floor(seconds / 3600)
@@ -84,6 +86,58 @@ function formatDuration(seconds: number) {
 			{/each}
 		</fieldset>
 	{/if}
+
+	<fieldset class="pb-8">
+		<legend class="font-bold">Your bots</legend>
+		{#if bots.length === 0}
+			<p class="pb-2 text-sm opacity-70">
+				You have no unsubmitted bots left. Bots you've already submitted
+				aren't shown here.
+				<a href="/submit-bot" class="text-blue-400 hover:underline">
+					Submit a new bot
+				</a>
+				to include it in a future hour submission.
+			</p>
+		{:else}
+			<p class="pb-2 text-sm opacity-70">
+				Select the bots you want to submit for this project. Bots you've
+				already submitted aren't shown here.
+			</p>
+
+			<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+				{#each bots as b (b.id)}
+					<label
+						class="relative flex cursor-pointer flex-col overflow-hidden rounded-lg border border-neutral-300 bg-white p-3 transition-colors hover:border-blue-600 has-checked:border-blue-400"
+					>
+						<input
+							{...newSubmissionForm.fields.botIds.as("checkbox", b.id)}
+							class="absolute top-3 left-3 size-5 accent-blue-600"
+						>
+						<span class="pl-7 line-clamp-1 text-sm font-semibold">
+							{b.name}
+						</span>
+						<span class="pl-7 line-clamp-2 text-xs opacity-70">
+							{b.description}
+						</span>
+						<span class="pl-7 pt-1 text-xs opacity-70 capitalize">
+							{b.active}
+							·
+							{new Date(b.created).toLocaleDateString()}
+						</span>
+					</label>
+				{/each}
+			</div>
+
+			<p class="pt-2 text-sm opacity-70">
+				{selectedBots.length === 0
+					? "No bots selected."
+					: `${selectedBots.length} bot${selectedBots.length === 1 ? "" : "s"} selected.`}
+			</p>
+		{/if}
+		{#each newSubmissionForm.fields.botIds.issues() ?? [] as issue}
+			<p class="pt-2 text-sm text-red-500">{issue.message}</p>
+		{/each}
+	</fieldset>
 
 	<label>
 		<span>Submission image or screenshot</span>
@@ -221,7 +275,8 @@ function formatDuration(seconds: number) {
 	{/if}
 
 	<button
-		disabled={!!timelapseData.error || newSubmissionForm.pending > 0}
+		disabled={!!timelapseData.error || bots.length === 0 ||
+			newSubmissionForm.pending > 0}
 		type="submit"
 		class="btn btn-primary {newSubmissionForm.pending > 0 ? 'bg-neutral-200 text-neutral-500 hover:bg-neutral-200 active:bg-neutral-200 opacity-60' : ''}"
 	>

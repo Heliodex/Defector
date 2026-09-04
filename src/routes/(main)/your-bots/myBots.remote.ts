@@ -17,6 +17,8 @@ type MyBot = {
 	stats: BotStats
 }
 
+export type { MyBot }
+
 export const getMyBots = query(async (): Promise<MyBot[]> => {
 	const { user } = await authorise()
 	const [results] = await db.query<MyBot[][]>(listBotsQuery, {

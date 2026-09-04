@@ -61,6 +61,7 @@ type AdminSubmission = {
 	image?: { hash: string; updated: Date }
 	status: string
 	lapseTimelapses: string[]
+	bots?: { id: string; name: string }[] | null
 	review?: { reviewer: string; notes: string } | null
 	ownerEmail: string | null
 }
