@@ -31,25 +31,12 @@ export const getBots = query(async () => {
 	}))
 })
 
-type AdminBattle = {
+type AdminSubmissionBot = {
 	id: string
-	created: Date
-	scores: [number, number]
-	errors: [string?, string?]
-	bot0: string
-	bot1: string
+	name: string
+	rank: number | null
+	multiplier: number
 }
-
-export const getBattles = query(async () => {
-	const { user } = getRequestEvent().locals
-	if (!isAdmin(user)) redirect(302, "/")
-
-	const [rows] = await db.query<AdminBattle[][]>(battlesQuery)
-	return (rows ?? []).map(battle => ({
-		...battle,
-		created: new Date(battle.created).toLocaleString(),
-	}))
-})
 
 type AdminSubmission = {
 	id: string
