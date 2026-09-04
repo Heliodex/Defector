@@ -7,7 +7,6 @@ import findOrCreateUserQuery from "#lib/server/findOrCreateUser.surql?raw"
 import getSessionAndUserQuery from "#lib/server/getSessionAndUser.surql?raw"
 import linkLapseAccountQuery from "#lib/server/linkLapseAccount.surql?raw"
 import setSessionQuery from "#lib/server/setSession.surql?raw"
-import { dev } from "$app/env"
 import {
 	HACKCLUB_CLIENT_ID,
 	HACKCLUB_CLIENT_SECRET,

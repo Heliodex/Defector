@@ -176,7 +176,7 @@ function formatDuration(seconds: number) {
 			<p class="pt-2 text-sm opacity-70">
 				{selectedBots.length === 0
 					? "No bots selected."
-					: `${selectedBots.length} bot${selectedBots.length === 1 ? "" : "s"} selected · mean reward ${meanMultiplier.toFixed(2)}x ($${(4 * meanMultiplier).toFixed(2)}/hr).`}
+					: `${selectedBots.length} bot${selectedBots.length === 1 ? "" : "s"} selected · mean reward ${meanMultiplier.toFixed(2)}x (~$${(4 * meanMultiplier).toFixed(2)}/hr).`}
 			</p>
 		{/if}
 		{#each newSubmissionForm.fields.botIds.issues() ?? [] as issue}
