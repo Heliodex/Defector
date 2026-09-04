@@ -258,14 +258,7 @@ DEFINE FUNCTION OVERWRITE fn::battleBotNames($battle: record<battle>) -> array<s
 
 # Backfill the cached stats on bot records that predate them. Each guarded UPDATE only ever runs once (the first init after its migration); from then on the events below keep the caches current - even for battles the engine inserts while the site is down, since events live in the database, not in the app. They sit before the DEFINE EVENT statements so a battle landing mid-init can never be double counted. (One guarded UPDATE rather than a FOR loop: the WASM engine used in tests errors when a FOR source subquery returns empty. The repeated botCache calls only run on bots that predate the cache fields, so this full rebuild is a once-per-bot cost.)
 IF (SELECT VALUE count() FROM bot WHERE wins = NONE GROUP ALL)[0] > 0 {
-	UPDATE bot MERGE {
-		wins: fn::botCache($this.id).wins,
-		losses: fn::botCache($this.id).losses,
-		battles: fn::botCache($this.id).battles,
-		curBattles: fn::botCache($this.id).curBattles,
-		curScoreSum: fn::botCache($this.id).curScoreSum,
-		curScores: fn::botCache($this.id).curScores
-	} WHERE wins = NONE;
+	UPDATE bot MERGE fn::botCache($this.id) WHERE wins = NONE;
 };
 
 # Keep the cached ladder stats on bot in sync as battles come and go: a battle write now pays two point-updates (which also recompute meanScore), so reads never rescan the battle table. Battles are never edited in place (scores are derived once at CREATE), so UPDATE is deliberately not handled here.
