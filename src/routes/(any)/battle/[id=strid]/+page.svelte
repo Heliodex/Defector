@@ -56,7 +56,7 @@ const name = (i: 0 | 1): string =>
 	<div class="pt-6 max-w-xl">
 		<h2 class="font-semibold">Replay ({battle.rounds.length} rounds)</h2>
 
-		<Accordion class="flex flex-col gap-4">
+		<Accordion>
 			<AccordionItem title="Show all rounds">
 				<table class="w-full">
 					<thead>
