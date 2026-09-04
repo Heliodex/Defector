@@ -14,11 +14,11 @@ import Head from "#lib/components/Head.svelte"
 	<h1 class="mt-6 text-2xl">Submission received!</h1>
 
 	<p class="max-w-md pt-4">
-		Thanks for submitting your project! It's been logged and is now in the
-		queue for review.
+		Thanks for submitting your bots! Your submission has been logged and is
+		now in the queue for review.
 	</p>
 
 	<div class="mt-8 flex gap-4">
-		<a href="/home" class="btn btn-primary"> Back to home </a>
+		<a href="/home" class="btn btn-primary">Back to home</a>
 	</div>
 </div>

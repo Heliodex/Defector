@@ -129,6 +129,7 @@ export const newSubmissionForm = form(
 	}) => {
 		const { user } = await authorise()
 
+		if (image.size === 0) invalid("Please upload an image for your submission.")
 		if (image.size > 20e6) invalid("Image must be less than 20MB in size.")
 
 		// Verify the selected timelapses total at least one hour of recorded time. Fetch fresh from Lapse so the check reflects current data.
@@ -150,7 +151,7 @@ export const newSubmissionForm = form(
 		)
 		if (totalDuration < 3600)
 			invalid(
-				"Your selected timelapses must total at least 3600 seconds (1 hour) of recorded time."
+				"Your selected timelapses must total at least 1 hour (3600 seconds) of recorded time."
 			)
 
 		// Only one submission may be made per minute, measured from the last successful insert. This check runs before image compression so we don't waste CPU on rate-limited submissions.
@@ -164,30 +165,25 @@ export const newSubmissionForm = form(
 			)
 
 		// Process the uploaded image (if any) into a fixed-size AVIF, then content-address it by its SHA-256 hash so identical uploads share a single file on disk. The hash is stored on the submission and used to serve the image later.
-		let imageHash: string | undefined
-		if (image && image.size > 0) {
-			await fs.promises.mkdir("./data/images", { recursive: true })
+		await fs.promises.mkdir("./data/images", { recursive: true })
 
-			console.log("compressing")
-			const bytes = await sharp(await image.arrayBuffer())
-				.avif()
-				.toBuffer()
-			console.log("compressed")
+		console.log("compressing")
+		const bytes = await sharp(await image.arrayBuffer())
+			.avif()
+			.toBuffer()
+		console.log("compressed")
 
-			imageHash = new Bun.CryptoHasher("sha256")
-				.update(bytes)
-				.digest("hex")
-			console.log("hashed")
+		const hash = new Bun.CryptoHasher("sha256").update(bytes).digest("hex")
+		console.log("hashed")
 
-			const filePath = `./data/images/${imageHash}.avif`
-			if (!fs.existsSync(filePath)) await Bun.write(filePath, bytes)
-			console.log("written")
-		}
+		const filePath = `./data/images/${hash}.avif`
+		if (!fs.existsSync(filePath)) await Bun.write(filePath, bytes)
+		console.log("written")
 
 		console.log("submitting")
 		const submit = {
 			user,
-			image: imageHash ? { hash: imageHash } : undefined,
+			image: { hash },
 			name,
 			description,
 			codeUrl,
