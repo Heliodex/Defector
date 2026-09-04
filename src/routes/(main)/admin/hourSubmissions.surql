@@ -30,7 +30,10 @@ SELECT
 	howDoingWell,
 	howImprove,
 	howLikelyRecommend,
-	review,
+	(SELECT
+		notes,
+		record::id(reviewer) AS reviewer
+	FROM ONLY $parent.review) AS review,
 	# (No ONLY: the WASM engine returns zero rows for FROM ONLY <traversal>; [0] already pins the single edge.)
 	(SELECT VALUE email FROM $parent<-submittedHours<-user)[0] AS ownerEmail
 FROM hourSubmission
