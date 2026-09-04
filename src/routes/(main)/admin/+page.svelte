@@ -1,11 +1,10 @@
 <script lang="ts">
 import Head from "#lib/components/Head.svelte"
 import { truncate } from "#lib/truncate.js"
-import { getBattles, getBots, getSubmissions, reviewForm } from "./admin.remote"
+import { getBots, getSubmissions, reviewForm } from "./admin.remote"
 
 let submissions = $derived(await getSubmissions())
 let bots = $derived(await getBots())
-let battles = $derived(await getBattles())
 </script>
 
 <Head title="Admin" noindex />
