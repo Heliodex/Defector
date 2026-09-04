@@ -47,12 +47,14 @@ async function fetchLapseTimelapses(user: User): Promise<LapseTimelapse[]> {
 	if (!body?.ok || !body?.data?.timelapses)
 		throw new Error(`Lapse API returned an error: ${JSON.stringify(body)}`)
 
-	const tls =  (body.data.timelapses as LapseTimelapse[])
-		.filter(t => t.createdAt >= sinceMs)
+	const tls = (body.data.timelapses as LapseTimelapse[]).filter(
+		t => t.createdAt >= sinceMs
+	)
 
 	if (tls.length === 0)
-		throw new Error(
-			`You have no timelapses created since ${since}. Please create a timelapse in Lapse and try again.`
+		error(
+			400,
+			"You have no Lapse timelapses created since the beginning of this event. Please create a timelapse, publish it (either as public or unlisted), and try again."
 		)
 
 	return tls
