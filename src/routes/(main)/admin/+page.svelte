@@ -1,4 +1,6 @@
 <script lang="ts">
+import Accordion from "#lib/components/Accordion.svelte"
+import AccordionItem from "#lib/components/AccordionItem.svelte"
 import Head from "#lib/components/Head.svelte"
 import { truncate } from "#lib/truncate.js"
 import { getBots, getSubmissions, reviewForm } from "./admin.remote"
@@ -106,33 +108,39 @@ let bots = $derived(await getBots())
 				</dl>
 
 				{#if sub.howHear ?? sub.howDoingWell ?? sub.howImprove}
-					<details class="pt-3 text-sm">
-						<summary class="cursor-pointer font-semibold">
-							Survey answers
-						</summary>
-						<div class="flex flex-col gap-2 pt-2">
-							{#if sub.howHear}
-								<p>
-									<span class="font-semibold"
-										>Heard via:</span
-									>
-									{sub.howHear}
-								</p>
-							{/if}
-							{#if sub.howDoingWell}
-								<p>
-									<span class="font-semibold">Did well:</span>
-									{sub.howDoingWell}
-								</p>
-							{/if}
-							{#if sub.howImprove}
-								<p>
-									<span class="font-semibold">Improve:</span>
-									{sub.howImprove}
-								</p>
-							{/if}
-						</div>
-					</details>
+					<Accordion class="pt-4">
+						<AccordionItem
+							title="Survey answers"
+							class="border border-neutral-400 border-t-0"
+						>
+							<div class="flex flex-col gap-2 pt-2">
+								{#if sub.howHear}
+									<p>
+										<span class="font-semibold">
+											Heard via:
+										</span>
+										{sub.howHear}
+									</p>
+								{/if}
+								{#if sub.howDoingWell}
+									<p>
+										<span class="font-semibold">
+											Did well:
+										</span>
+										{sub.howDoingWell}
+									</p>
+								{/if}
+								{#if sub.howImprove}
+									<p>
+										<span class="font-semibold">
+											Improve:
+										</span>
+										{sub.howImprove}
+									</p>
+								{/if}
+							</div>
+						</AccordionItem>
+					</Accordion>
 				{/if}
 
 				<div class="grid gap-4 pt-4 sm:grid-cols-2">
