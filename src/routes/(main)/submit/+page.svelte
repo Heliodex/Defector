@@ -1,4 +1,5 @@
 <script lang="ts">
+import { programmeName } from "#lib/assets/config.js"
 import Head from "#lib/components/Head.svelte"
 import { getTimelapses, newSubmissionForm } from "./submit.remote"
 

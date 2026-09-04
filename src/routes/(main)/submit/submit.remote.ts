@@ -129,7 +129,8 @@ export const newSubmissionForm = form(
 	}) => {
 		const { user } = await authorise()
 
-		if (image.size === 0) invalid("Please upload an image for your submission.")
+		if (image.size === 0)
+			invalid("Please upload an image for your submission.")
 		if (image.size > 20e6) invalid("Image must be less than 20MB in size.")
 
 		// Verify the selected timelapses total at least one hour of recorded time. Fetch fresh from Lapse so the check reflects current data.
