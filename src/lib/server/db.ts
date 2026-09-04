@@ -73,7 +73,9 @@ export async function reconnect() {
 			await new Promise(resolve => setTimeout(resolve, 1000))
 		}
 
+	console.log("running init query")
 	await db.query(initQuery)
+	console.log("init query complete")
 }
 
 type RecordIdTypes = {
