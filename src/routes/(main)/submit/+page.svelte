@@ -13,6 +13,17 @@ const sinceLabel = $derived(
 let selected = $derived(newSubmissionForm.fields.timelapseIds.value() ?? [])
 let selectedBots = $derived(newSubmissionForm.fields.botIds.value() ?? [])
 
+// Live preview of the reward multiplier for the current bot selection:
+// best (lowest) rank among selected bots → 2.05 - 0.05 * rank for ranks 1-20, else 1x.
+let bestMultiplier = $derived.by(() => {
+	const ranks = bots
+		.filter(b => selectedBots.includes(b.id) && b.rank != null)
+		.map(b => b.rank as number)
+	if (ranks.length === 0) return 1
+	const best = Math.min(...ranks)
+	return best >= 1 && best <= 20 ? 2.05 - 0.05 * best : 1
+})
+
 function formatDuration(seconds: number) {
 	const hours = Math.floor(seconds / 3600)
 	const minutes = Math.floor((seconds % 3600) / 60)
@@ -100,8 +111,9 @@ function formatDuration(seconds: number) {
 			</p>
 		{:else}
 			<p class="pb-2 text-sm opacity-70">
-				Select the bots you want to submit for this project. Bots you've
-				already submitted aren't shown here.
+				Select the bots you want to submit to claim hours for. Reward
+				multipliers are purely estimates. Bots you've already submitted
+				aren't shown here.
 			</p>
 
 			<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -118,6 +130,19 @@ function formatDuration(seconds: number) {
 						</span>
 						<span class="line-clamp-2 text-xs opacity-70">
 							{b.description}
+						</span>
+						<span class="pt-1 text-xs font-semibold">
+							{#if b.rank != null && b.rank <= 20}
+								<span class="text-green-700">
+									#{b.rank}
+									· {b.multiplier.toFixed(2)}x estimated
+									reward
+								</span>
+							{:else}
+								<span class="opacity-60"
+									>Unranked · 1.00x estimated reward</span
+								>
+							{/if}
 						</span>
 
 						<span class="flex items-center gap-2 pt-1">
@@ -148,7 +173,7 @@ function formatDuration(seconds: number) {
 			<p class="pt-2 text-sm opacity-70">
 				{selectedBots.length === 0
 					? "No bots selected."
-					: `${selectedBots.length} bot${selectedBots.length === 1 ? "" : "s"} selected.`}
+					: `${selectedBots.length} bot${selectedBots.length === 1 ? "" : "s"} selected · best reward ${bestMultiplier.toFixed(2)}x ($${(4 * bestMultiplier).toFixed(2)}/hr).`}
 			</p>
 		{/if}
 		{#each newSubmissionForm.fields.botIds.issues() ?? [] as issue}

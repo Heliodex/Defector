@@ -139,10 +139,12 @@ export const newSubmissionForm = form(
 		if (image.size > 20e6) invalid("Image must be less than 20MB in size.")
 
 		// Verify the selected bots belong to the user and haven't been submitted before. Fetch fresh so the check reflects current data.
-		const [, unsubmittedBots] = await db.query<[null, { id: string }[]]>(
+		// (.at(-1): the SELECT is the last statement; the preceding LETs each occupy an earlier slot.)
+		const unsubmittedRes = await db.query<[null, null, null, { id: string }[]]>(
 			getUnsubmittedBotsQuery,
 			{ user }
 		)
+		const unsubmittedBots = unsubmittedRes.at(-1)
 		const unsubmittedIds = new Set((unsubmittedBots ?? []).map(b => b.id))
 
 		for (const id of botIds)
@@ -164,6 +166,7 @@ export const newSubmissionForm = form(
 					: "Failed to fetch your timelapses. Please try again."
 			invalid(message)
 		}
+
 		const totalDuration = selectedTimelapses.reduce(
 			(sum, t) => sum + (t.duration ?? 0),
 			0
@@ -215,10 +218,12 @@ export const newSubmissionForm = form(
 			bots: botIds.map(id => Record("bot", id)),
 		}
 
-		const [, recordId] = await db.query<RecordId<"hourSubmission">[]>(
+		// The created submission id is the second-to-last statement result ($hourSubmission; before the RELATE).
+		const createRes = await db.query<RecordId<"hourSubmission">[]>(
 			createHourSubmissionQuery,
 			submit
 		)
+		const recordId = createRes.at(-2)
 
 		console.log("created", recordId)
 
@@ -274,14 +279,17 @@ export type SubmittableBot = {
 	description: string
 	active: string
 	created: Date
+	meanScore: number
+	rank: number | null
+	multiplier: number
 }
 
 export const getBots = query(async (): Promise<SubmittableBot[]> => {
 	const { user } = await authorise()
 
-	const [, bots] = await db.query<[undefined, SubmittableBot[]]>(
+	const res = await db.query<[null, null, null, SubmittableBot[]]>(
 		getUnsubmittedBotsQuery,
 		{ user }
 	)
-	return bots ?? []
+	return res.at(-1) ?? []
 })

@@ -186,6 +186,42 @@ DEFINE FUNCTION OVERWRITE fn::latestMatrix() -> record<matrix> {
 	(SELECT id, created FROM matrix ORDER BY created)[$].id;
 };
 
+# Reward multiplier for hour submissions: linear from 2x at #1 down to 1.05x at #20, 1x otherwise.
+# Rank must use the same ladder definition as leaderboardBots.surql (active bots with >= 10 battles, ordered by meanScore DESC, name ASC).
+# $rank is option<int> so NONE (unranked) is accepted.
+DEFINE FUNCTION OVERWRITE fn::hourMultiplier($rank: option<int>) -> float {
+	IF $rank == NONE {
+		RETURN 1.0;
+	} ELSE IF $rank < 1 OR $rank > 20 {
+		RETURN 1.0;
+	} ELSE {
+		# Integer arithmetic (205 - 5 * rank is a whole number of cents) avoids float dust like 2.05 - 0.05 * 1 = 1.9999999999999998.
+		RETURN (205 - 5 * $rank) / 100.0;
+	};
+};
+
+# 1-based rank of $bid within $ladderIds, or NONE if unranked (inactive, <10 battles, or not on the ladder).
+DEFINE FUNCTION OVERWRITE fn::botLadderRank($bid: record<bot>, $ladderIds: array) -> option<int> {
+	LET $idx = array::find_index($ladderIds, $bid);
+	IF $idx == NONE {
+		RETURN NONE;
+	} ELSE {
+		RETURN $idx + 1;
+	};
+};
+
+# Snapshot entry for one selected bot: rank + multiplier derived from the ladder at submission time.
+DEFINE FUNCTION OVERWRITE fn::hourBotEntry($b: object, $ladderIds: array) -> object {
+	LET $r = fn::botLadderRank($b.id, $ladderIds);
+	{
+		bot: $b.id,
+		name: $b.name,
+		meanScore: $b.meanScore,
+		rank: $r,
+		multiplier: fn::hourMultiplier($r)
+	}
+};
+
 DEFINE TABLE OVERWRITE battle SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON battle TYPE string;
 	DEFINE FIELD OVERWRITE bots ON battle TYPE array<record<bot>, 2>;
@@ -302,6 +338,7 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE description ON hourSubmission TYPE string;
 	DEFINE FIELD OVERWRITE codeUrl ON hourSubmission TYPE string;
 	-- DEFINE FIELD OVERWRITE playableUrl ON hourSubmission TYPE string;
+	REMOVE FIELD IF EXISTS playableUrl ON hourSubmission;
 	DEFINE FIELD OVERWRITE ai ON hourSubmission TYPE bool;
 	DEFINE FIELD OVERWRITE review ON hourSubmission TYPE option<{
 		reviewer: record<user>,
@@ -314,5 +351,19 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 		ASSERT 0 <= $value AND $value <= 10;
 	DEFINE FIELD OVERWRITE lapseTimelapses ON hourSubmission TYPE array<string>;
 	DEFINE FIELD OVERWRITE bots ON hourSubmission TYPE option<array<record<bot>>>;
+	# Leaderboard snapshot at submission time: best rank is over the user's SELECTED bots ($bots), using the same ladder definition as leaderboardBots.surql (active + >= 10 battles, meanScore DESC, name ASC).
+	# multiplier is fn::hourMultiplier(bestRank): 2x at #1 down to 1.05x at #20, 1x otherwise (incl. unranked).
+	DEFINE FIELD OVERWRITE leaderboard ON hourSubmission TYPE option<object>;
+		DEFINE FIELD OVERWRITE leaderboard.matrix ON hourSubmission TYPE record<matrix>;
+		DEFINE FIELD OVERWRITE leaderboard.capturedAt ON hourSubmission TYPE datetime;
+		DEFINE FIELD OVERWRITE leaderboard.rankedCount ON hourSubmission TYPE int;
+		DEFINE FIELD OVERWRITE leaderboard.bestRank ON hourSubmission TYPE option<int>;
+		DEFINE FIELD OVERWRITE leaderboard.multiplier ON hourSubmission TYPE float;
+		DEFINE FIELD OVERWRITE leaderboard.bots ON hourSubmission TYPE array<object>;
+			DEFINE FIELD OVERWRITE leaderboard.bots.*.bot ON hourSubmission TYPE record<bot>;
+			DEFINE FIELD OVERWRITE leaderboard.bots.*.name ON hourSubmission TYPE string;
+			DEFINE FIELD OVERWRITE leaderboard.bots.*.meanScore ON hourSubmission TYPE float;
+			DEFINE FIELD OVERWRITE leaderboard.bots.*.rank ON hourSubmission TYPE option<int>;
+			DEFINE FIELD OVERWRITE leaderboard.bots.*.multiplier ON hourSubmission TYPE float;
 	DEFINE FIELD OVERWRITE status ON hourSubmission TYPE string DEFAULT ALWAYS "pending"
 		ASSERT $value IN ["pending", "approved", "rejected"];
