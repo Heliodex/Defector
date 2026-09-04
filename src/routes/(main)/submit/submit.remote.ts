@@ -10,6 +10,69 @@ import { form, getRequestEvent, query } from "$app/server"
 import createHourSubmissionQuery from "./createHourSubmission.surql?raw"
 import getLatestHourSubmissionQuery from "./getLatestHourSubmission.surql?raw"
 
+/**
+ * Fetches the calling user's timelapses from Lapse, filtered to those created since {@link LAPSE_TIMELAPSE_SINCE}. Throws on any failure (including an unlinked or expired Lapse account).
+ */
+async function fetchLapseTimelapses(user: User): Promise<LapseTimelapse[]> {
+	const since = LAPSE_TIMELAPSE_SINCE
+	const sinceMs = Date.parse(since)
+
+	const [lapse] = await db.query<{ id: string; accessToken: string }[]>(
+		getLapseDataQuery,
+		{ user: user.id }
+	)
+	if (!lapse?.accessToken)
+		error(
+			401,
+			"Please link your Lapse account to submit your work! You can do this on the home page."
+		)
+
+	const response = await fetch(
+		`https://api.lapse.hackclub.com/api/timelapse/findByUser?user=${encodeURIComponent(lapse.id)}`,
+		{ headers: { Authorization: `Bearer ${lapse.accessToken}` } }
+	)
+
+	if (!response.ok) {
+		if (response.status === 401)
+			throw new Error(
+				"Your Lapse session has expired. Please re-link your Lapse account."
+			)
+
+		throw new Error(
+			`Failed to fetch timelapses from Lapse (status ${response.status}).`
+		)
+	}
+
+	const body = await response.json()
+	if (!body?.ok || !body?.data?.timelapses)
+		throw new Error(`Lapse API returned an error: ${JSON.stringify(body)}`)
+
+	return (body.data.timelapses as LapseTimelapse[])
+		.filter(t => t.createdAt >= sinceMs)
+		.sort((a, b) => b.createdAt - a.createdAt)
+		.map(
+			({
+				id,
+				name,
+				description,
+				visibility,
+				createdAt,
+				duration,
+				thumbnailUrl,
+				playbackUrl,
+			}) => ({
+				id,
+				name,
+				description,
+				visibility,
+				createdAt,
+				duration,
+				thumbnailUrl,
+				playbackUrl,
+			})
+		)
+}
+
 const messageName = makeMessage("name", "please give your submission a name")
 const messageDescription = makeMessage(
 	"description",
@@ -56,8 +119,6 @@ export const newSubmissionForm = form(
 		timelapseIds,
 	}) => {
 		const { user } = await authorise()
-
-		error(403, "The time submission form is not open yet. Come back later!")
 
 		if (image.size > 20e6) invalid("Image must be less than 20MB in size.")
 
@@ -158,69 +219,6 @@ export type TimelapsesResult = {
 	error: string | null
 	since: string
 	timelapses: LapseTimelapse[]
-}
-
-/**
- * Fetches the calling user's timelapses from Lapse, filtered to those created since {@link LAPSE_TIMELAPSE_SINCE}. Throws on any failure (including an unlinked or expired Lapse account).
- */
-async function fetchLapseTimelapses(user: User): Promise<LapseTimelapse[]> {
-	const since = LAPSE_TIMELAPSE_SINCE
-	const sinceMs = Date.parse(since)
-
-	const [lapse] = await db.query<{ id: string; accessToken: string }[]>(
-		getLapseDataQuery,
-		{ user: user.id }
-	)
-	if (!lapse?.accessToken)
-		error(
-			401,
-			"Please link your Lapse account to submit your work! You can do this on the home page."
-		)
-
-	const response = await fetch(
-		`https://api.lapse.hackclub.com/api/timelapse/findByUser?user=${encodeURIComponent(lapse.id)}`,
-		{ headers: { Authorization: `Bearer ${lapse.accessToken}` } }
-	)
-
-	if (!response.ok) {
-		if (response.status === 401)
-			throw new Error(
-				"Your Lapse session has expired. Please re-link your Lapse account."
-			)
-
-		throw new Error(
-			`Failed to fetch timelapses from Lapse (status ${response.status}).`
-		)
-	}
-
-	const body = await response.json()
-	if (!body?.ok || !body?.data?.timelapses)
-		throw new Error(`Lapse API returned an error: ${JSON.stringify(body)}`)
-
-	return (body.data.timelapses as LapseTimelapse[])
-		.filter(t => t.createdAt >= sinceMs)
-		.sort((a, b) => b.createdAt - a.createdAt)
-		.map(
-			({
-				id,
-				name,
-				description,
-				visibility,
-				createdAt,
-				duration,
-				thumbnailUrl,
-				playbackUrl,
-			}) => ({
-				id,
-				name,
-				description,
-				visibility,
-				createdAt,
-				duration,
-				thumbnailUrl,
-				playbackUrl,
-			})
-		)
 }
 
 export const getTimelapses = query(async (): Promise<TimelapsesResult> => {
