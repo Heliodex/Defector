@@ -30,13 +30,6 @@ export const getBots = query(async () => {
 	}))
 })
 
-type AdminSubmissionBot = {
-	id: string
-	name: string
-	rank: number | null
-	multiplier: number
-}
-
 type AdminSubmission = {
 	id: string
 	created: Date
@@ -48,6 +41,22 @@ type AdminSubmission = {
 	status: string
 	lapseTimelapses: string[]
 	bots?: { id: string; name: string }[] | null
+	leaderboard?: {
+		rankedCount: number
+		bestRank: number | null
+		multiplier: number
+		bots: {
+			bot: string
+			name: string
+			meanScore: number
+			rank: number | null
+			multiplier: number
+		}[]
+	} | null
+	howHear?: string | null
+	howDoingWell?: string | null
+	howImprove?: string | null
+	howLikelyRecommend?: number | null
 	review?: { reviewer: string; notes: string } | null
 	ownerEmail: string | null
 }
@@ -58,17 +67,29 @@ export const getSubmissions = query(async () => {
 
 	const [rows] = await db.query<AdminSubmission[][]>(hourSubmissionsQuery)
 
-	return (rows ?? []).map(sub => ({
-		...sub,
-		// Format dates server-side so SSR and hydrated markup match
-		created: new Date(sub.created).toLocaleString(),
-		image: sub.image
-			? {
-					hash: sub.image.hash,
-					updated: new Date(sub.image.updated).toLocaleString(),
-				}
-			: undefined,
-	}))
+	console.log(rows[0])
+
+	return (rows ?? []).map(sub => {
+		const snapById = new Map(
+			(sub.leaderboard?.bots ?? []).map(e => [e.bot, e])
+		)
+		return {
+			...sub,
+			// Format dates server-side so SSR and hydrated markup match
+			created: new Date(sub.created).toLocaleString(),
+			image: sub.image
+				? {
+						hash: sub.image.hash,
+						updated: new Date(sub.image.updated).toLocaleString(),
+					}
+				: undefined,
+			bots: (sub.bots ?? []).map(bot => ({
+				...bot,
+				rank: snapById.get(bot.id)?.rank ?? null,
+				multiplier: snapById.get(bot.id)?.multiplier ?? 1,
+			})),
+		}
+	})
 })
 
 const messageStatus = makeMessage("status", "please choose approve or reject")
