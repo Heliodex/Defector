@@ -14,14 +14,12 @@ let selected = $derived(newSubmissionForm.fields.timelapseIds.value() ?? [])
 let selectedBots = $derived(newSubmissionForm.fields.botIds.value() ?? [])
 
 // Live preview of the reward multiplier for the current bot selection:
-// best (lowest) rank among selected bots → 2.05 - 0.05 * rank for ranks 1-20, else 1x.
-let bestMultiplier = $derived.by(() => {
-	const ranks = bots
-		.filter(b => selectedBots.includes(b.id) && b.rank != null)
-		.map(b => b.rank as number)
-	if (ranks.length === 0) return 1
-	const best = Math.min(...ranks)
-	return best >= 1 && best <= 20 ? 2.05 - 0.05 * best : 1
+// mean of the selected bots' multipliers (unranked bots count as 1x), matching the snapshot in createHourSubmission.surql.
+let meanMultiplier = $derived.by(() => {
+	const selected = bots.filter(b => selectedBots.includes(b.id))
+	return selected.length === 0
+		? 1
+		: selected.reduce((sum, b) => sum + b.multiplier, 0) / selected.length
 })
 
 function formatDuration(seconds: number) {
@@ -173,7 +171,7 @@ function formatDuration(seconds: number) {
 			<p class="pt-2 text-sm opacity-70">
 				{selectedBots.length === 0
 					? "No bots selected."
-					: `${selectedBots.length} bot${selectedBots.length === 1 ? "" : "s"} selected · best reward ${bestMultiplier.toFixed(2)}x ($${(4 * bestMultiplier).toFixed(2)}/hr).`}
+					: `${selectedBots.length} bot${selectedBots.length === 1 ? "" : "s"} selected · mean reward ${meanMultiplier.toFixed(2)}x ($${(4 * meanMultiplier).toFixed(2)}/hr).`}
 			</p>
 		{/if}
 		{#each newSubmissionForm.fields.botIds.issues() ?? [] as issue}

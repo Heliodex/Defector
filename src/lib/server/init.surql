@@ -351,8 +351,9 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 		ASSERT 0 <= $value AND $value <= 10;
 	DEFINE FIELD OVERWRITE lapseTimelapses ON hourSubmission TYPE array<string>;
 	DEFINE FIELD OVERWRITE bots ON hourSubmission TYPE option<array<record<bot>>>;
-	# Leaderboard snapshot at submission time: best rank is over the user's SELECTED bots ($bots), using the same ladder definition as leaderboardBots.surql (active + >= 10 battles, meanScore DESC, name ASC).
-	# multiplier is fn::hourMultiplier(bestRank): 2x at #1 down to 1.05x at #20, 1x otherwise (incl. unranked).
+	# Leaderboard snapshot at submission time: ranks are over the user's SELECTED bots ($bots), using the same ladder definition as leaderboardBots.surql (active + >= 10 battles, meanScore DESC, name ASC).
+	# multiplier is the MEAN of the selected bots' per-bot multipliers (fn::hourMultiplier(rank): 2x at #1 down to 1.05x at #20, 1x otherwise),
+	# so bundling low-ranked bots dilutes the reward instead of free-riding on the best bot. bestRank is kept for audit only.
 	DEFINE FIELD OVERWRITE leaderboard ON hourSubmission TYPE option<object>;
 		DEFINE FIELD OVERWRITE leaderboard.matrix ON hourSubmission TYPE record<matrix>;
 		DEFINE FIELD OVERWRITE leaderboard.capturedAt ON hourSubmission TYPE datetime;

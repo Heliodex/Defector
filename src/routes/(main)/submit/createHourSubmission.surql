@@ -8,6 +8,8 @@ LET $selected = (SELECT id, name, meanScore FROM bot WHERE id IN $bots);
 LET $snapBots = $selected.map(|$b| fn::hourBotEntry($b, $ladderIds));
 LET $ranks = $snapBots.filter(|$b| $b.rank != NONE).map(|$b| $b.rank);
 LET $bestRank = IF array::len($ranks) == 0 { NONE } ELSE { math::min($ranks) };
+# Mean of the selected bots' multipliers (unranked bots contribute 1x): bundling weak bots dilutes the reward.
+LET $meanMultiplier = IF array::len($snapBots) == 0 { 1.0 } ELSE { math::sum($snapBots.map(|$b| $b.multiplier)) / <float> array::len($snapBots) };
 
 LET $hourSubmission = CREATE ONLY hourSubmission CONTENT {
 	image: $image,
@@ -26,7 +28,7 @@ LET $hourSubmission = CREATE ONLY hourSubmission CONTENT {
 		capturedAt: $now,
 		rankedCount: array::len($ladder),
 		bestRank: $bestRank,
-		multiplier: fn::hourMultiplier($bestRank),
+		multiplier: $meanMultiplier,
 		bots: $snapBots
 	}
 } RETURN VALUE id;
