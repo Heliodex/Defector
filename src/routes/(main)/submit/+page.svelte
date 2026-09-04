@@ -116,13 +116,30 @@ function formatDuration(seconds: number) {
 						<span class="pl-7 line-clamp-1 text-sm font-semibold">
 							{b.name}
 						</span>
-						<span class="pl-7 line-clamp-2 text-xs opacity-70">
+						<span class="line-clamp-2 text-xs opacity-70">
 							{b.description}
 						</span>
-						<span class="pl-7 pt-1 text-xs opacity-70 capitalize">
-							{b.active}
-							·
-							{new Date(b.created).toLocaleDateString()}
+
+						<span class="flex items-center gap-2 pt-1">
+							{#if b.active === "active"}
+								<small
+									class="rounded bg-green-600 text-white px-2 py-1 text-xs font-bold"
+									>Active</small
+								>
+							{:else if b.active === "archived"}
+								<small
+									class="rounded bg-amber-500 text-white px-2 py-1 text-xs font-bold"
+									>Archived</small
+								>
+							{:else}
+								<small
+									class="rounded bg-zinc-300 px-2 py-1 text-xs font-bold"
+									>Inactive</small
+								>
+							{/if}
+							<span class="text-xs opacity-70 pt-2">
+								{new Date(b.created).toLocaleDateString()}
+							</span>
 						</span>
 					</label>
 				{/each}
