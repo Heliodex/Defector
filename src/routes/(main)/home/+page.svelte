@@ -39,14 +39,14 @@ const lapseData = $derived(await getLapseData())
 	<div
 		class="bg-amber-200 border-2 border-amber-500 px-6 py-4 rounded-xl text-amber-900"
 	>
-		<small>NOTICE </small>
+		<small class="font-bold">NOTICE </small>
 		<p class="py-2">
 			Creating a Lapse timelapse may show a warning saying
 			<span class="font-light">"Do not use Lapse for code!"</span>
 			or
 			<span class="font-light">
 				"If you're writing code, track it with Hackatime instead!"
-			</span>
+			</span>.
 		</p>
 
 		<p>
