@@ -91,8 +91,7 @@ function formatDuration(seconds: number) {
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
 		<p class="pt-2 text-sm text-neutral-600">
-			To clarify, a screenshot of the working output or a demo page made
-			with your tool/framework would be great!
+			To clarify, a screenshot of your bot's battle page would be great!
 			<br>
 			We don't need to see the code, you can link it in the
 			<b>Code URL</b>
@@ -106,6 +105,9 @@ function formatDuration(seconds: number) {
 		{#each newSubmissionForm.fields.name.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
+		<p class="pt-2 text-sm text-neutral-600">
+			The name of the bots (or team of bots) which you are submitting.
+		</p>
 	</label>
 
 	<label>
@@ -130,7 +132,7 @@ function formatDuration(seconds: number) {
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
 		<p class="pt-2 text-sm text-neutral-600">
-			A link to your project's code repository on GitHub or similar.
+			A link to your project's code repository on GitHub or similar. It's recommended to create a repository and place your bot's scripts in it.
 		</p>
 	</label>
 
