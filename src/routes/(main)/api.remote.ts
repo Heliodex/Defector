@@ -3,10 +3,10 @@
 import { redirect } from "@sveltejs/kit"
 import {
 	authorise,
-	sessionCookieName,
 	generatePkcePair,
 	getLapseAuthUrl,
 	invalidateSession,
+	sessionCookieName,
 } from "#lib/server/auth.js"
 import { db } from "#lib/server/db.js"
 import { dev } from "$app/env"
