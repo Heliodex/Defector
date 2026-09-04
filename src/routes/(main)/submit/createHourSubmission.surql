@@ -1,6 +1,7 @@
 # Snapshot the leaderboard position of the SELECTED bots ($bots) at submission time.
-# Uses the same ladder definition as leaderboardBots.surql (active + >= 10 battles, ORDER BY meanScore DESC, name ASC) so the stored rank matches what the leaderboard page shows. Inactive / <10-battle bots are naturally unranked (NONE → 1x).
-LET $ladder = (SELECT id, meanScore, name FROM bot WHERE (battles ?? 0) >= 10 AND active = "active" ORDER BY meanScore DESC, name ASC);
+# Bonus rewards need >= 30 battles (stricter than the leaderboard page's >= 10 in leaderboardBots.surql),
+# but otherwise the ladder matches the page (active bots, ORDER BY meanScore DESC, name ASC). Inactive / <30-battle bots are naturally unranked (NONE → 1x).
+LET $ladder = (SELECT id, meanScore, name FROM bot WHERE (battles ?? 0) >= 30 AND active = "active" ORDER BY meanScore DESC, name ASC);
 LET $ladderIds = $ladder.map(|$b| $b.id);
 LET $matrix = fn::latestMatrix();
 LET $now = time::now();

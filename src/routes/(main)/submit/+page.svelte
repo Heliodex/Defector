@@ -111,7 +111,12 @@ function formatDuration(seconds: number) {
 			<p class="pb-2 text-sm opacity-70">
 				Select the bots you want to submit to claim hours for. Reward
 				multipliers are purely estimates. Bots you've already submitted
-				aren't shown here.
+				aren't shown here. Your bots need at least 30 battles to earn bonus
+				rewards.
+			</p>
+
+			<p class="pb-2 text-sm font-bold opacity-70">
+				Please make sure that the bots you select are the same ones that were worked on in the timelapses you selected above!
 			</p>
 
 			<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">

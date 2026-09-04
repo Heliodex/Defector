@@ -187,7 +187,7 @@ DEFINE FUNCTION OVERWRITE fn::latestMatrix() -> record<matrix> {
 };
 
 # Reward multiplier for hour submissions: linear from 2x at #1 down to 1.05x at #20, 1x otherwise.
-# Rank must use the same ladder definition as leaderboardBots.surql (active bots with >= 10 battles, ordered by meanScore DESC, name ASC).
+# Rank comes from the bonus ladder (same ordering as leaderboardBots.surql, but with a stricter >= 30 battle minimum instead of the page's >= 10).
 # $rank is option<int> so NONE (unranked) is accepted.
 DEFINE FUNCTION OVERWRITE fn::hourMultiplier($rank: option<int>) -> float {
 	IF $rank == NONE {
@@ -351,9 +351,8 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 		ASSERT 0 <= $value AND $value <= 10;
 	DEFINE FIELD OVERWRITE lapseTimelapses ON hourSubmission TYPE array<string>;
 	DEFINE FIELD OVERWRITE bots ON hourSubmission TYPE option<array<record<bot>>>;
-	# Leaderboard snapshot at submission time: ranks are over the user's SELECTED bots ($bots), using the same ladder definition as leaderboardBots.surql (active + >= 10 battles, meanScore DESC, name ASC).
-	# multiplier is the MEAN of the selected bots' per-bot multipliers (fn::hourMultiplier(rank): 2x at #1 down to 1.05x at #20, 1x otherwise),
-	# so bundling low-ranked bots dilutes the reward instead of free-riding on the best bot. bestRank is kept for audit only.
+	# Leaderboard snapshot at submission time: ranks are over the user's SELECTED bots ($bots), ordered like leaderboardBots.surql (active bots, meanScore DESC, name ASC) but with a stricter >= 30 battle minimum for bonus eligibility (page shows >= 10).
+	# multiplier is the MEAN of the selected bots' per-bot multipliers (fn::hourMultiplier(rank): 2x at #1 down to 1.05x at #20, 1x otherwise), so bundling low-ranked bots dilutes the reward instead of free-riding on the best bot. bestRank is kept for audit only.
 	DEFINE FIELD OVERWRITE leaderboard ON hourSubmission TYPE option<object>;
 		DEFINE FIELD OVERWRITE leaderboard.matrix ON hourSubmission TYPE record<matrix>;
 		DEFINE FIELD OVERWRITE leaderboard.capturedAt ON hourSubmission TYPE datetime;
