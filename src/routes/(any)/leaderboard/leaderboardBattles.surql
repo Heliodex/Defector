@@ -11,4 +11,4 @@ FROM battle
 ORDER BY created DESC
 LIMIT 50;
 
-(SELECT count() FROM battle GROUP ALL)[0].count;
+(SELECT VALUE count() FROM battle GROUP ALL)[0];
