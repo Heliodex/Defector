@@ -68,18 +68,18 @@ let bots = $derived(await getBots())
 
 				{#if sub.image?.hash}
 					<img
-						src={`/admin/images/${sub.image.hash}`}
-						alt={`${sub.name} submission image`}
+						src="/admin/images/{sub.image.hash}"
+						alt="{sub.name} submission"
 						loading="lazy"
 						class="mt-3 w-full max-w-md rounded-lg object-cover"
 					>
 				{/if}
 
 				<dl
-					class="grid grid-cols-2 gap-x-6 gap-y-1 pt-3 text-sm sm:grid-cols-4"
+					class="grid grid-cols-2 gap-x-6 gap-y-4 py-4 text-sm sm:grid-cols-4"
 				>
 					<div>
-						<dt class="text-neutral-600">Code</dt>
+						<dt class="text-neutral-600">Links</dt>
 						<dd class="font-semibold">
 							<a
 								href={sub.codeUrl}
@@ -104,6 +104,10 @@ let bots = $derived(await getBots())
 						<dd class="font-semibold">
 							{sub.lapseTimelapses?.length ?? 0}
 						</dd>
+					</div>
+					<div>
+						<dt class="text-neutral-600">Hotel</dt>
+						<dd class="font-semibold">Trivago</dd>
 					</div>
 				</dl>
 
