@@ -103,21 +103,33 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 	</main>
 
 	<footer class="bg-neutral-200 px-8 py-4 text-center">
-		<p class="pb-4">
+		<p>
 			A programme by
 			<a
 				href="https://hackclub.enterprise.slack.com/team/U07JH9LU1NC"
 				target="_blank"
 				rel="noreferrer"
-				>@Heliodex</a
 			>
+				@Heliodex
+			</a>
 			at
-			<a href="https://hackclub.com/" target="_blank" rel="noreferrer"
-				>Hack Club</a
-			>!
+			<a href="https://hackclub.com/" target="_blank" rel="noreferrer">
+				Hack Club
+			</a>!
 		</p>
 
-		<p>
+		<small>
+			Orpheus and Heidi battling by
+			<a
+				href="https://hackclub.enterprise.slack.com/team/U0BV20XJ9FX"
+				target="_blank"
+				rel="noreferrer"
+			>
+				@Yonderliesthewild
+			</a>
+		</small>
+
+		<p class="pt-4">
 			<a
 				href="https://hackclub.com/privacy-and-terms"
 				target="_blank"
