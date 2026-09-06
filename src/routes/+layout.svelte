@@ -118,17 +118,6 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 			</a>!
 		</p>
 
-		<small>
-			Orpheus and Heidi battling by
-			<a
-				href="https://hackclub.enterprise.slack.com/team/U0BV20XJ9FX"
-				target="_blank"
-				rel="noreferrer"
-			>
-				@Yonderliesthewild
-			</a>
-		</small>
-
 		<p class="pt-4">
 			<a
 				href="https://hackclub.com/privacy-and-terms"

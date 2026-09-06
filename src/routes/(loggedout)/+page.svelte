@@ -246,10 +246,21 @@ const P = $derived(matrix?.[1][1])
 <div
 	id="chessboard"
 	role="img"
-	aria-label="Chessboard"
-	class="-mb-20"
+	aria-label="Orpheus and Heidi battling on blue and white tiles"
+	class="-mb-20 text-center flex flex-col items-center justify-end"
 	style="--chessboard-bg: url({chessboard})"
-></div>
+>
+	<small class="bg-white/75 px-2 py-0.5 rounded-t-lg">
+		Orpheus and Heidi battling by
+		<a
+			href="https://hackclub.enterprise.slack.com/team/U0BV20XJ9FX"
+			target="_blank"
+			rel="noreferrer"
+		>
+			@Yonderliesthewild
+		</a>
+	</small>
+</div>
 
 <style>
 #hc:hover {
