@@ -9,7 +9,7 @@ await checkLapseAccount()
 
 <h1 class="text-2xl">Submit a bot</h1>
 
-<p class="pt-2 pb-4 text-sm text-neutral-600">
+<p class="pt-2 pb-4 text-neutral-600">
 	Write a bot that plays the Iterated Prisoner's Dilemma against other bots
 	and fight to the top of the ladder. You can have up to 3 active bots at
 	once.<br>
