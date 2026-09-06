@@ -37,6 +37,14 @@ function formatDuration(seconds: number) {
 
 <h1 class="text-2xl">Submit your work</h1>
 
+<p class="pt-2 pb-4 text-neutral-600">
+	Once you have completed some work on your bots, you can submit your
+	timelapses and bots here to claim hours and prizes (video game grants) for
+	your work.<br>
+	You may submit multiple times, though each submission must have different
+	timelapses and bots.
+</p>
+
 <form {...newSubmissionForm} enctype="multipart/form-data" class="pt-8">
 	{#if timelapseData.error}
 		<p class="pb-4 text-red-500">{timelapseData.error}</p>
@@ -111,12 +119,13 @@ function formatDuration(seconds: number) {
 			<p class="pb-2 text-sm opacity-70">
 				Select the bots you want to submit to claim hours for. Reward
 				multipliers are purely estimates. Bots you've already submitted
-				aren't shown here. Your bots need at least 30 battles to earn bonus
-				rewards.
+				aren't shown here. Your bots need at least 30 battles to earn
+				bonus rewards.
 			</p>
 
 			<p class="pb-2 text-sm font-bold opacity-70">
-				Please make sure that the bots you select are the same ones that were worked on in the timelapses you selected above!
+				Please make sure that the bots you select are the same ones that
+				were worked on in the timelapses you selected above!
 			</p>
 
 			<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -191,7 +200,10 @@ function formatDuration(seconds: number) {
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
 		<p class="pt-2 text-sm text-neutral-600">
-			To clarify, a screenshot of your bot's battle page would be great!
+			A screenshot of your bots in action in some way. To clarify, a
+			screenshot of the
+			<a target="_blank" href="/your-bots">Your bots</a>
+			page or the page for that specific bot would be great!
 			<br>
 			We don't need to see the code, you can link it in the
 			<b>Code URL</b>
