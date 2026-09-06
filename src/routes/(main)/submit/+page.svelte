@@ -42,7 +42,8 @@ function formatDuration(seconds: number) {
 	timelapses and bots here to claim hours and prizes (video game grants) for
 	your work.<br>
 	You may submit multiple times, though each submission must have different
-	timelapses and bots.
+	timelapses and bots. For maximum rewards, submit when your bots are highest
+	on the leaderboard!
 </p>
 
 <form {...newSubmissionForm} enctype="multipart/form-data" class="pt-8">
