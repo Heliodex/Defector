@@ -9,6 +9,7 @@ import { LAPSE_TIMELAPSE_SINCE } from "$app/env/private"
 import { form, getRequestEvent, query } from "$app/server"
 import createHourSubmissionQuery from "./createHourSubmission.surql?raw"
 import getLatestHourSubmissionQuery from "./getLatestHourSubmission.surql?raw"
+import getSubmittedTimelapsesQuery from "./getSubmittedTimelapses.surql?raw"
 import getUnsubmittedBotsQuery from "./getUnsubmittedBots.surql?raw"
 
 /**
@@ -153,6 +154,19 @@ export const newSubmissionForm = form(
 					"One of the selected bots is invalid or has already been submitted. Please refresh and try again."
 				)
 
+		// Verify none of the selected timelapses have been submitted before. Mirrors the bot check above.
+		const [submittedTimelapseIds] = await db.query<string[][]>(
+			getSubmittedTimelapsesQuery,
+			{ user }
+		)
+		const submittedTimelapseSet = new Set(submittedTimelapseIds ?? [])
+
+		for (const id of timelapseIds)
+			if (submittedTimelapseSet.has(id))
+				invalid(
+					"One of the selected timelapses has already been submitted. Please refresh and try again."
+				)
+
 		// Verify the selected timelapses total at least one hour of recorded time. Fetch fresh from Lapse so the check reflects current data.
 		let selectedTimelapses: LapseTimelapse[]
 		try {
@@ -258,7 +272,19 @@ export const getTimelapses = query(async (): Promise<TimelapsesResult> => {
 
 	try {
 		const timelapses = await fetchLapseTimelapses(user)
-		return { error: null, since, timelapses }
+
+		// Hide timelapses the user has already submitted, mirroring getBots() which only returns unsubmitted bots.
+		const [submittedIds] = await db.query<string[][]>(
+			getSubmittedTimelapsesQuery,
+			{ user: user.id }
+		)
+		const submittedSet = new Set(submittedIds ?? [])
+
+		return {
+			error: null,
+			since,
+			timelapses: timelapses.filter(t => !submittedSet.has(t.id)),
+		}
 	} catch (e) {
 		// An unlinked account throws an HttpError; let it surface as a 401.
 		if (isHttpError(e)) throw e

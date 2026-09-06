@@ -49,7 +49,10 @@ function formatDuration(seconds: number) {
 	{#if timelapseData.error}
 		<p class="pb-4 text-red-500">{timelapseData.error}</p>
 	{:else if timelapseData.timelapses.length === 0}
-		<p class="pb-4">No timelapses found since {sinceLabel}.</p>
+		<p class="pb-4">
+			No unsubmitted timelapses found since {sinceLabel}. Timelapses
+			you've already submitted aren't shown here.
+		</p>
 	{:else}
 		<fieldset class="pb-8">
 			<legend class="font-bold">
@@ -57,6 +60,7 @@ function formatDuration(seconds: number) {
 			</legend>
 			<p class="pb-2 text-sm opacity-70">
 				Select the timelapses you want to submit for this project.
+				Timelapses you've already submitted aren't shown here.
 			</p>
 
 			<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -332,7 +336,9 @@ function formatDuration(seconds: number) {
 	{/if}
 
 	<button
-		disabled={!!timelapseData.error || bots.length === 0 ||
+		disabled={!!timelapseData.error ||
+			timelapseData.timelapses.length === 0 ||
+			bots.length === 0 ||
 			newSubmissionForm.pending > 0}
 		type="submit"
 		class="btn btn-primary {newSubmissionForm.pending > 0 ? 'bg-neutral-200 text-neutral-500 hover:bg-neutral-200 active:bg-neutral-200 opacity-60' : ''}"
