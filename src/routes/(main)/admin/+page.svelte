@@ -39,8 +39,9 @@ let bots = $derived(await getBots())
 					</div>
 					<span
 						class="rounded-full px-3 py-1 text-xs font-bold {sub.status === "approved" ? "bg-green-100 text-green-800" : sub.status === "rejected" ? "bg-red-100 text-red-600" : "bg-blue-100 text-blue-700"}"
-						>{sub.status}</span
 					>
+						{sub.status}
+					</span>
 				</div>
 
 				{#if sub.leaderboard}
@@ -85,8 +86,9 @@ let bots = $derived(await getBots())
 								href={sub.codeUrl}
 								target="_blank"
 								rel="noreferrer"
-								>Code</a
 							>
+								Code
+							</a>
 						</dd>
 					</div>
 					<div>
@@ -159,8 +161,9 @@ let bots = $derived(await getBots())
 											target="_blank"
 											rel="noreferrer"
 											class="font-semibold"
-											>{bot.name}</a
 										>
+											{bot.name}
+										</a>
 										{#if bot.rank != null}
 											<span class="text-green-700">
 												#{bot.rank}
@@ -190,8 +193,9 @@ let bots = $derived(await getBots())
 											href="https://lapse.hackclub.com/timelapse/{id}"
 											target="_blank"
 											rel="noreferrer"
-											>{id}</a
 										>
+											{id}
+										</a>
 									</li>
 								{/each}
 							</ul>
