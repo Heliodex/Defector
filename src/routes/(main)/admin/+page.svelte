@@ -203,17 +203,18 @@ let bots = $derived(await getBots())
 
 				<div class="mt-4 border-t border-neutral-200 pt-4">
 					{#if sub.status === "pending"}
+						{let thisReviewForm = reviewForm.for(sub.id)}
 						<form
-							{...reviewForm}
+							{...thisReviewForm}
 							class="flex flex-wrap items-end gap-3"
 						>
 							<input
-								{...reviewForm.fields.id.as("hidden", sub.id)}
+								{...thisReviewForm.fields.id.as("hidden", sub.id)}
 							>
 							<label class="pb-1!">
 								<span class="pb-1! text-xs">Status</span>
 								<select
-									{...reviewForm.fields.status.as("select")}
+									{...thisReviewForm.fields.status.as("select")}
 									class="w-32! text-sm"
 								>
 									<option value="approved">Approve</option>
@@ -223,7 +224,7 @@ let bots = $derived(await getBots())
 							<label class="min-w-52 flex-1 pb-1!">
 								<span class="pb-1! text-xs">Notes</span>
 								<textarea
-									{...reviewForm.fields.notes.as("text")}
+									{...thisReviewForm.fields.notes.as("text")}
 									class="w-full text-sm"
 									rows="2"
 									placeholder="Optional"
