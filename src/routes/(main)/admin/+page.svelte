@@ -87,7 +87,7 @@ let bots = $derived(await getBots())
 					{/if}
 				{/snippet}
 				{#snippet footer()}
-					{#if sub.review?.notes ?? sub.review?.privateNotes}
+					{#if sub.review?.notes || sub.review?.privateNotes}
 						<div
 							class="flex flex-col gap-1 text-sm text-neutral-600 pb-6"
 						>
