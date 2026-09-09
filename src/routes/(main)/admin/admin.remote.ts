@@ -103,8 +103,8 @@ const reviewSchema = type({
 	status: type("'pending' | 'approved' | 'rejected'").configure(
 		messageStatus[0]
 	),
-	notes: "string",
-	privateNotes: "string",
+	"notes?": "string",
+	"privateNotes?": "string",
 }).configure(...messageStatus)
 
 export const reviewForm = form(

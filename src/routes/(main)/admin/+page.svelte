@@ -138,7 +138,6 @@ let bots = $derived(await getBots())
 								{...thisReviewForm.fields.notes.as("text")}
 								class="w-full text-sm"
 								rows="2"
-								required
 							></textarea>
 						</label>
 						<label class="min-w-52 flex-1 pb-1!">
@@ -149,7 +148,6 @@ let bots = $derived(await getBots())
 								{...thisReviewForm.fields.privateNotes.as("text")}
 								class="w-full text-sm"
 								rows="2"
-								required
 							></textarea>
 						</label>
 						<button
