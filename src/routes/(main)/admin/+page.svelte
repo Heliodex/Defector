@@ -125,6 +125,7 @@ let bots = $derived(await getBots())
 								class="w-32! text-sm"
 								required
 							>
+								<option value="pending">Pend</option>
 								<option value="approved">Approve</option>
 								<option value="rejected">Reject</option>
 							</select>
