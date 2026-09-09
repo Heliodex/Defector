@@ -1,6 +1,9 @@
 import quickjsVariant from "@jitl/quickjs-ng-wasmfile-release-sync"
 import { loadQuickJs } from "@sebastianwessel/quickjs"
-import { shouldInterruptAfterDeadline } from "quickjs-emscripten-core"
+import {
+	type QuickJSContext,
+	shouldInterruptAfterDeadline,
+} from "quickjs-emscripten-core"
 import type { RecordId } from "surrealdb"
 import type { Memory, Move, State } from "./bots/bot"
 
@@ -8,7 +11,7 @@ export const timeout = 10 // ms per move
 export const memoryLimitMb = 1
 export const stackLimitMb = 1
 
-const { module } = await loadQuickJs(quickjsVariant)
+let { module } = await loadQuickJs(quickjsVariant)
 
 type DBBot = { id: RecordId<"bot">; name: string; latestCode: string }
 
@@ -44,11 +47,27 @@ function mapSandboxError(error: unknown): Error {
 	return new Error(`bot error: ${error.message}`)
 }
 
+function createContext(): QuickJSContext | undefined {
+	try {
+		return module.newContext()
+	} catch (e) {
+		console.error("Failed to create QuickJS context:", e)
+	}
+}
+
 /**
  * Loads a bot into a fresh sandboxed QuickJS VM, enforcing the memory and stack limits. The per-move execution timeout is re-armed on every call.
  */
 export async function createSandboxedBot(bot: DBBot): Promise<SandboxedBot> {
-	const ctx = module.newContext()
+	let ctx = createContext()
+
+	if (!ctx) {
+		module = (await loadQuickJs(quickjsVariant)).module
+		ctx = createContext()
+	}
+
+	if (!ctx) throw new Error("failed to recreate QuickJS context")
+
 	ctx.runtime.setMaxStackSize(stackLimitMb * 1e6)
 	ctx.runtime.setMemoryLimit(memoryLimitMb * 1e6)
 
