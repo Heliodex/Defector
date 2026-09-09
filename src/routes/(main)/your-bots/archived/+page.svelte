@@ -1,7 +1,7 @@
 <script lang="ts">
 import BotCard from "#lib/components/BotCard.svelte"
 import Head from "#lib/components/Head.svelte"
-import { getArchivedBots } from "../myBots.remote"
+import { getArchivedBots } from "../yourBots.remote"
 
 const bots = $derived(await getArchivedBots())
 </script>

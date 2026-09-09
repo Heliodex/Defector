@@ -2,11 +2,11 @@
 import { botStatuses } from "#lib/botStatus.js"
 import { truncate } from "#lib/truncate.js"
 import {
-	type MyBot,
 	setStatusForm,
-} from "../../routes/(main)/your-bots/myBots.remote"
+	type YourBot,
+} from "../../routes/(main)/your-bots/yourBots.remote"
 
-const { bot }: { bot: MyBot } = $props()
+const { bot }: { bot: YourBot } = $props()
 
 const botForm = $derived(setStatusForm.for(bot.id))
 </script>

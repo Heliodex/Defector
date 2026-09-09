@@ -7,7 +7,7 @@ import { db } from "#lib/server/db.js"
 import setBotActive from "#lib/server/setBotActive.js"
 import { form, query } from "$app/server"
 
-type MyBot = {
+export type YourBot = {
 	id: string
 	name: string
 	description: string
@@ -17,19 +17,17 @@ type MyBot = {
 	stats: BotStats
 }
 
-export type { MyBot }
-
-export const getMyBots = query(async (): Promise<MyBot[]> => {
+export const getYourBots = query(async (): Promise<YourBot[]> => {
 	const { user } = await authorise()
-	const [results] = await db.query<MyBot[][]>(listBotsQuery, {
+	const [results] = await db.query<YourBot[][]>(listBotsQuery, {
 		user: user.id,
 	})
 	return results
 })
 
-export const getArchivedBots = query(async (): Promise<MyBot[]> => {
+export const getArchivedBots = query(async (): Promise<YourBot[]> => {
 	const { user } = await authorise()
-	const [results] = await db.query<MyBot[][]>(listArchivedBotsQuery, {
+	const [results] = await db.query<YourBot[][]>(listArchivedBotsQuery, {
 		user: user.id,
 	})
 	return results

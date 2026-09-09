@@ -1,9 +1,9 @@
 <script lang="ts">
 import BotCard from "#lib/components/BotCard.svelte"
 import Head from "#lib/components/Head.svelte"
-import { getMyBots } from "./myBots.remote"
+import { getYourBots } from "./yourBots.remote"
 
-const bots = $derived(await getMyBots())
+const bots = $derived(await getYourBots())
 
 const activeCount = $derived(
 	bots?.filter(b => b.active === "active").length ?? 0
