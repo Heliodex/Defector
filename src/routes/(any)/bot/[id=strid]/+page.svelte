@@ -16,7 +16,7 @@ const botForm = $derived(setStatusForm.for(page.params.id ?? ""))
 <Head
 	title={`Bot: ${truncate(bot.name)}`}
 	description={bot.description ||
-		`${truncate(bot.name)} is a Defector bot${bot.ownerName ? ` by ${bot.ownerName}` : ""}, rated Elo ${bot.elo} in the live Iterated Prisoner's Dilemma tournament.`}
+		`${truncate(bot.name)} is a Defector bot${bot.ownerName ? ` by ${bot.ownerName}` : ""}, rated with score ${bot.meanScore.toFixed(3)} in the live Iterated Prisoner's Dilemma tournament.`}
 	type="article"
 />
 
