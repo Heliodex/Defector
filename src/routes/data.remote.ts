@@ -7,6 +7,17 @@ export const getLoggedIn = query(() => getRequestEvent().locals.user != null)
 
 export const getIsAdmin = query(() => isAdmin(getRequestEvent().locals.user))
 
+export const getHasSubmissions = query(async () => {
+	const { user } = getRequestEvent().locals
+	if (!user) return false
+
+	const [rows] = await db.query<unknown[][]>(
+		"SELECT VALUE id FROM $user->submittedHours->hourSubmission LIMIT 1",
+		{ user: user.id }
+	)
+	return (rows ?? []).length > 0
+})
+
 export const login = form(startHackClubAuth)
 
 // payoff = [[R, S], [T, P]] where 0 = cooperate, 1 = defect:

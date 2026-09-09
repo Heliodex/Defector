@@ -1,5 +1,14 @@
-<script>
+<script lang="ts">
+import { onMount } from "svelte"
 import Head from "#lib/components/Head.svelte"
+import { getHasSubmissions } from "../../data.remote"
+
+// A first submission flips hasSubmissions false → true, but the layout's
+// cached query wouldn't reflect that until a hard reload. Refresh it here so
+// the "Your submissions" sidebar link appears immediately.
+onMount(() => {
+	getHasSubmissions().refresh()
+})
 </script>
 
 <Head title="Submission received!" noindex />
