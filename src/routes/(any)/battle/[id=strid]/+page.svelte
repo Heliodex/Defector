@@ -37,12 +37,12 @@ const name = (i: 0 | 1): string =>
 		<div class="flex flex-col gap-4 pt-2">
 			{#each battle.errors as err, i (i)}
 				{#if err}
-					<div class="shadowcard  border-red-300 text-sm">
+					<div class="shadowcard  border-red-300! text-sm">
 						<p class="font-medium">
 							{name(i as 0 | 1)}
 							crashed:
 						</p>
-						<p class="text-red-600 whitespace-pre-wrap">
+						<p class="text-red-600 wrap-break-word">
 							{err}
 						</p>
 					</div>
