@@ -57,7 +57,11 @@ type AdminSubmission = {
 	howDoingWell?: string | null
 	howImprove?: string | null
 	howLikelyRecommend?: number | null
-	review?: { reviewer: string; notes: string; privateNotes?: string | null } | null
+	review?: {
+		reviewer: string
+		notes: string
+		privateNotes: string
+	} | null
 	ownerEmail: string | null
 }
 
@@ -92,26 +96,31 @@ export const getSubmissions = query(async () => {
 	})
 })
 
-const messageStatus = makeMessage("status", "please choose approve or reject")
+const messageStatus = makeMessage("status", "please choose a valid status")
 
 const reviewSchema = type({
 	id: "string",
-	status: type("'approved' | 'rejected'").configure(messageStatus[0]),
-	"notes?": "string",
-	"privateNotes?": "string",
+	status: type("'pending' | 'approved' | 'rejected'").configure(
+		messageStatus[0]
+	),
+	notes: "string",
+	privateNotes: "string",
 }).configure(...messageStatus)
 
-export const reviewForm = form(reviewSchema, async ({ id, status, notes, privateNotes }) => {
-	const { user } = await authorise()
-	if (!isAdmin(user)) redirect(302, "/")
+export const reviewForm = form(
+	reviewSchema,
+	async ({ id, status, notes, privateNotes }) => {
+		const { user } = await authorise()
+		if (!isAdmin(user)) redirect(302, "/")
 
-	await db.query(reviewHourSubmissionQuery, {
-		id: Record("hourSubmission", id),
-		status,
-		notes,
-		privateNotes,
-		admin: user.id,
-	})
+		await db.query(reviewHourSubmissionQuery, {
+			id: Record("hourSubmission", id),
+			status,
+			notes,
+			privateNotes,
+			admin: user.id,
+		})
 
-	return { id, status }
-})
+		return { id, status }
+	}
+)
