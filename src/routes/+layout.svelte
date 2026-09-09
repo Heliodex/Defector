@@ -50,6 +50,7 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 			{@render navlink("your-bots", "Your bots")}
 			{@render navlink("submit-bot", "Submit bot")}
 			{@render navlink("submit", "Submit hours")}
+			{@render navlink("submissions", "Your submissions")}
 			{#if await isAdmin}
 				{@render navlink("admin", "Admin")}
 			{/if}
@@ -79,6 +80,7 @@ const isAdmin = $derived(user.then(u => (u ? getIsAdmin() : false)))
 				{@render navlink("your-bots", "Your bots")}
 				{@render navlink("submit-bot", "Submit bot")}
 				{@render navlink("submit", "Submit hours")}
+				{@render navlink("submissions", "Your submissions")}
 				{#if await isAdmin}
 					{@render navlink("admin", "Admin")}
 				{/if}
