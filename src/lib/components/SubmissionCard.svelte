@@ -17,9 +17,7 @@ const {
 } = $props()
 </script>
 
-<article
-	class="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm"
->
+<article class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
 	<div class="flex flex-wrap items-start justify-between gap-3">
 		<div class="min-w-0">
 			<h3 class="text-xl font-semibold wrap-break-word">
@@ -55,7 +53,7 @@ const {
 		</p>
 	{/if}
 
-	<p class="pt-3 whitespace-pre-wrap wrap-break-word">
+	<p class="py-3 whitespace-pre-wrap wrap-break-word">
 		{sub.description}
 	</p>
 
@@ -64,21 +62,15 @@ const {
 			src={imageSrc}
 			alt="{sub.name} submission"
 			loading="lazy"
-			class="mt-3 w-full max-w-md rounded-lg object-cover"
+			class="w-full max-w-md rounded-lg object-cover"
 		>
 	{/if}
 
-	<dl
-		class="grid grid-cols-2 gap-x-6 gap-y-4 py-4 text-sm sm:grid-cols-4"
-	>
+	<dl class="grid grid-cols-2 gap-x-6 gap-y-4 py-4 text-sm sm:grid-cols-4">
 		<div>
 			<dt class="text-neutral-600">Links</dt>
 			<dd class="font-semibold">
-				<a
-					href={sub.codeUrl}
-					target="_blank"
-					rel="noreferrer"
-				>
+				<a href={sub.codeUrl} target="_blank" rel="noreferrer">
 					Code
 				</a>
 			</dd>
@@ -89,9 +81,7 @@ const {
 		</div>
 		<div>
 			<dt class="text-neutral-600">Recommend</dt>
-			<dd class="font-semibold">
-				{sub.howLikelyRecommend ?? "—"}/10
-			</dd>
+			<dd class="font-semibold">{sub.howLikelyRecommend ?? "—"}/10</dd>
 		</div>
 		<div>
 			<dt class="text-neutral-600">Timelapses</dt>
@@ -160,7 +150,8 @@ const {
 	</div>
 
 	{#if footer}
-		<div class="mt-4 border-t border-neutral-200 pt-4">
+		<div class="pt-6">
+			<hr class="pb-4">
 			{@render footer()}
 		</div>
 	{/if}

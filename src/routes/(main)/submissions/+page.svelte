@@ -11,8 +11,8 @@ let submissions = $derived(await getYourSubmissions())
 <h1>Your submissions</h1>
 
 {#if submissions.length === 0}
-	<p class="pt-4">You haven't submitted any projects yet.</p>
-	<a href="/submit" class="btn btn-primary mt-4 inline-block">
+	<p class="py-4">You haven't submitted any projects yet.</p>
+	<a href="/submit" class="btn btn-primary inline-block">
 		Submit your first project
 	</a>
 {:else}
