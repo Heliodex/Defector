@@ -124,3 +124,90 @@ export const reviewForm = form(
 		return { id, status }
 	}
 )
+
+export type SubmissionHoursResult = {
+	totalSeconds: number
+	found: number
+	missing: string[]
+	timelapses: { id: string; name: string; duration: number }[]
+	error: string | null
+}
+
+const emptyHours = (error: string | null): SubmissionHoursResult => ({
+	totalSeconds: 0,
+	found: 0,
+	missing: [],
+	timelapses: [],
+	error,
+})
+
+/**
+ * Sums the Lapse timelapse durations attached to one hour submission.
+ * Looks up the *submitter's* Lapse credentials (admins review other users' submissions, so the viewer's own token is useless here) and queries the Lapse API with them. Failures are returned as `error` so one slow or broken lookup doesn't break the rest of the admin page — call this per-submission inside a `<svelte:boundary>` so cards load independently.
+ */
+export const getSubmissionHours = query(
+	type.string,
+	async (id: string): Promise<SubmissionHoursResult> => {
+		const { user } = await authorise()
+		if (!isAdmin(user)) redirect(302, "/")
+
+		const sub = Record("hourSubmission", id)
+
+		const wanted = await db.select<string[]>(sub).value("lapseTimelapses")
+
+		if (wanted == null) return emptyHours("Submission not found.")
+		if (wanted.length === 0) return emptyHours(null)
+
+		const [owners] = await db.query<
+			({ id: string; accessToken: string } | null)[][]
+		>("SELECT VALUE lapseData FROM $sub<-submittedHours<-user", { sub })
+		const lapse = owners?.[0]
+		if (!lapse?.id || !lapse?.accessToken)
+			return emptyHours("Submitter's Lapse account is not linked.")
+
+		let all: { id: string; name: string; duration?: number }[]
+		try {
+			const response = await fetch(
+				`https://api.lapse.hackclub.com/api/timelapse/findByUser?user=${encodeURIComponent(lapse.id)}`,
+				{ headers: { Authorization: `Bearer ${lapse.accessToken}` } }
+			)
+			if (!response.ok)
+				return emptyHours(
+					response.status === 401
+						? "Submitter's Lapse session has expired."
+						: `Lapse API error (status ${response.status}).`
+				)
+
+			const body = await response.json()
+			if (!body?.ok || !body?.data?.timelapses)
+				return emptyHours("Lapse API returned an error.")
+			all = body.data.timelapses
+		} catch (e) {
+			return emptyHours(
+				e instanceof Error ? e.message : "Failed to fetch timelapses."
+			)
+		}
+
+		const byId = new Map(all.map(t => [t.id, t]))
+		const timelapses: SubmissionHoursResult["timelapses"] = []
+		const missing: string[] = []
+		for (const tid of wanted) {
+			const t = byId.get(tid)
+			if (t)
+				timelapses.push({
+					id: t.id,
+					name: t.name,
+					duration: t.duration ?? 0,
+				})
+			else missing.push(tid)
+		}
+
+		return {
+			totalSeconds: timelapses.reduce((sum, t) => sum + t.duration, 0),
+			found: timelapses.length,
+			missing,
+			timelapses,
+			error: null,
+		}
+	}
+)

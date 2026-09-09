@@ -5,6 +5,7 @@ import Head from "#lib/components/Head.svelte"
 import SubmissionCard from "#lib/components/SubmissionCard.svelte"
 import { truncate } from "#lib/truncate.js"
 import { getBots, getSubmissions, reviewForm } from "./admin.remote"
+import SubmissionHours from "./SubmissionHours.svelte"
 
 let submissions = $derived(await getSubmissions())
 let bots = $derived(await getBots())
@@ -33,6 +34,22 @@ let bots = $derived(await getBots())
 					: null}
 			>
 				{#snippet middle()}
+					<svelte:boundary>
+						<SubmissionHours
+							submissionId={sub.id}
+							multiplier={sub.leaderboard?.multiplier ?? 1}
+						/>
+						{#snippet pending()}
+							<p class="pt-2 text-sm text-neutral-500">
+								Loading hours…
+							</p>
+						{/snippet}
+						{#snippet failed()}
+							<p class="pt-2 text-sm text-red-500">
+								Could not load hours.
+							</p>
+						{/snippet}
+					</svelte:boundary>
 					{#if sub.howHear ?? sub.howDoingWell ?? sub.howImprove}
 						<Accordion class="pt-4">
 							<AccordionItem
