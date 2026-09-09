@@ -70,47 +70,77 @@ let bots = $derived(await getBots())
 					{/if}
 				{/snippet}
 				{#snippet footer()}
-					{#if sub.status === "pending"}
-						{let thisReviewForm = reviewForm.for(sub.id)}
-						<form
-							{...thisReviewForm}
-							class="flex flex-wrap items-end gap-3"
+					{#if sub.review?.notes ?? sub.review?.privateNotes}
+						<div
+							class="flex flex-col gap-1 text-sm text-neutral-600 pb-6"
 						>
-							<input
-								{...thisReviewForm.fields.id.as("hidden", sub.id)}
-							>
-							<label class="pb-1!">
-								<span class="pb-1! text-xs">Status</span>
-								<select
-									{...thisReviewForm.fields.status.as("select")}
-									class="w-32! text-sm"
-								>
-									<option value="approved">Approve</option>
-									<option value="rejected">Reject</option>
-								</select>
-							</label>
-							<label class="min-w-52 flex-1 pb-1!">
-								<span class="pb-1! text-xs">Notes</span>
-								<textarea
-									{...thisReviewForm.fields.notes.as("text")}
-									class="w-full text-sm"
-									rows="2"
-									placeholder="Optional"
-								></textarea>
-							</label>
-							<button
-								class="btn btn-primary px-3 py-1 text-sm"
-								type="submit"
-							>
-								Save
-							</button>
-						</form>
-					{:else if sub.review?.notes}
-						<p class="text-sm text-neutral-600">
-							<span class="font-semibold">Review notes:</span>
-							{sub.review.notes}
-						</p>
+							{#if sub.review?.notes}
+								<p>
+									<span class="font-semibold">
+										Public notes:
+									</span>
+									{sub.review.notes}
+								</p>
+							{/if}
+							{#if sub.review?.privateNotes}
+								<p>
+									<span class="font-semibold">
+										Private notes:
+									</span>
+									{sub.review.privateNotes}
+								</p>
+							{/if}
+						</div>
 					{/if}
+
+					{let thisReviewForm = reviewForm.for(sub.id)}
+					<form
+						{...thisReviewForm}
+						class="flex flex-wrap items-end gap-3"
+					>
+						<input
+							{...thisReviewForm.fields.id.as("hidden", sub.id)}
+						>
+						<label class="pb-1!">
+							<span class="pb-1! text-xs">Status</span>
+							<select
+								{...thisReviewForm.fields.status.as("select")}
+								class="w-32! text-sm"
+								required
+							>
+								<option value="approved">Approve</option>
+								<option value="rejected">Reject</option>
+							</select>
+						</label>
+						<label class="min-w-52 flex-1 pb-1!">
+							<span class="pb-1! text-xs">
+								Public notes (visible to submitter)
+							</span>
+							<textarea
+								{...thisReviewForm.fields.notes.as("text")}
+								class="w-full text-sm"
+								rows="2"
+								required
+							></textarea>
+						</label>
+						<label class="min-w-52 flex-1 pb-1!">
+							<span class="pb-1! text-xs">
+								Private notes (admin only)
+							</span>
+							<textarea
+								{...thisReviewForm.fields.privateNotes.as("text")}
+								class="w-full text-sm"
+								rows="2"
+								required
+							></textarea>
+						</label>
+						<button
+							class="btn btn-primary px-3 py-1 text-sm"
+							type="submit"
+						>
+							Save
+						</button>
+					</form>
 				{/snippet}
 			</SubmissionCard>
 		{/each}

@@ -22,5 +22,5 @@ export type SubmissionCardSubmission = {
 		multiplier: number
 	} | null
 	howLikelyRecommend?: number | null
-	review?: { notes?: string | null } | null
+	review?: { notes?: string | null; privateNotes?: string | null } | null
 }

@@ -340,6 +340,7 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE review ON hourSubmission TYPE option<{
 		reviewer: record<user>,
 		notes: string,
+		privateNotes: string,
 	}>;
 	DEFINE FIELD OVERWRITE howHear ON hourSubmission TYPE option<string>;
 	DEFINE FIELD OVERWRITE howDoingWell ON hourSubmission TYPE option<string>;

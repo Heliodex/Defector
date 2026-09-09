@@ -32,6 +32,7 @@ SELECT
 	howLikelyRecommend,
 	(SELECT
 		notes,
+		privateNotes,
 		record::id(reviewer) AS reviewer
 	FROM ONLY $parent.review) AS review,
 	# (No ONLY: the WASM engine returns zero rows for FROM ONLY <traversal>; [0] already pins the single edge.)
