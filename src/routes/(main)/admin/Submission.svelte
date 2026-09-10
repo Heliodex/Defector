@@ -1,12 +1,25 @@
 <script lang="ts">
+import { untrack } from "svelte"
 import Accordion from "#lib/components/Accordion.svelte"
 import AccordionItem from "#lib/components/AccordionItem.svelte"
 import SubmissionCard from "#lib/components/SubmissionCard.svelte"
 import { getSubmissions, reviewForm } from "./admin.remote"
 import SubmissionHours from "./SubmissionHours.svelte"
 
-let { sub }: { sub: Awaited<ReturnType<typeof getSubmissions>>[number] } =
+const { sub }: { sub: Awaited<ReturnType<typeof getSubmissions>>[number] } =
 	$props()
+
+const thisReviewForm = $derived(reviewForm.for(sub.id))
+
+$effect(() => {
+	if (!sub.review) return
+	const { notes, privateNotes } = sub.review
+
+	untrack(() => {
+		thisReviewForm.fields.notes.set(notes)
+		thisReviewForm.fields.privateNotes.set(privateNotes)
+	})
+})
 </script>
 
 <SubmissionCard
@@ -75,7 +88,6 @@ let { sub }: { sub: Awaited<ReturnType<typeof getSubmissions>>[number] } =
 			</div>
 		{/if}
 
-		{let thisReviewForm = reviewForm.for(sub.id)}
 		<form {...thisReviewForm} class="flex flex-wrap items-end gap-3">
 			<input {...thisReviewForm.fields.id.as("hidden", sub.id)}>
 			<label class="pb-1!">
