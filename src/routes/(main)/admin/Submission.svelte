@@ -72,57 +72,67 @@ $effect(() => {
 	{/snippet}
 	{#snippet footer()}
 		{#if sub.review?.notes || sub.review?.privateNotes}
-			<div class="flex flex-col gap-1 text-sm text-neutral-600 pb-6">
+			<div
+				class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-600 pb-6 wrap-break-word"
+			>
 				{#if sub.review?.notes}
-					<p>
-						<span class="font-semibold"> Public notes: </span>
-						{sub.review.notes}
-					</p>
+					<div>
+						<span class="font-semibold">Public notes:</span>
+						<p class="whitespace-pre-wrap pl-4">
+							{sub.review.notes}
+						</p>
+					</div>
 				{/if}
 				{#if sub.review?.privateNotes}
-					<p>
-						<span class="font-semibold"> Private notes: </span>
-						{sub.review.privateNotes}
-					</p>
+					<div>
+						<span class="font-semibold">Private notes:</span>
+						<p class="whitespace-pre-wrap pl-4">
+							{sub.review.privateNotes}
+						</p>
+					</div>
 				{/if}
 			</div>
 		{/if}
 
-		<form {...thisReviewForm} class="flex flex-wrap items-end gap-3">
+		<form {...thisReviewForm} class="flex flex-col gap-3">
 			<input {...thisReviewForm.fields.id.as("hidden", sub.id)}>
-			<label class="pb-1!">
-				<span class="pb-1! text-xs">Status</span>
-				<select
-					{...thisReviewForm.fields.status.as("select")}
-					class="w-32! text-sm"
-					required
-				>
-					<option value="pending">Pend</option>
-					<option value="approved">Approve</option>
-					<option value="rejected">Reject</option>
-				</select>
-			</label>
-			<label class="min-w-52 flex-1 pb-1!">
-				<span class="pb-1! text-xs">
-					Public notes (visible to submitter)
-				</span>
-				<textarea
-					{...thisReviewForm.fields.notes.as("text")}
-					class="w-full text-sm"
-					rows="2"
-				></textarea>
-			</label>
-			<label class="min-w-52 flex-1 pb-1!">
-				<span class="pb-1! text-xs"> Private notes (admin only) </span>
-				<textarea
-					{...thisReviewForm.fields.privateNotes.as("text")}
-					class="w-full text-sm"
-					rows="2"
-				></textarea>
-			</label>
-			<button class="btn btn-primary px-3 py-1 text-sm" type="submit">
-				Save
-			</button>
+			<div class="flex flex-wrap items-end gap-3">
+				<label class="min-w-52 flex-1 pb-1!">
+					<span class="pb-1! text-xs">
+						Public notes (visible to submitter)
+					</span>
+					<textarea
+						{...thisReviewForm.fields.notes.as("text")}
+						class="w-full text-sm min-h-30"
+					></textarea>
+				</label>
+				<label class="min-w-52 flex-1 pb-1!">
+					<span class="pb-1! text-xs">
+						Private notes (admin only)
+					</span>
+					<textarea
+						{...thisReviewForm.fields.privateNotes.as("text")}
+						class="w-full text-sm min-h-30"
+					></textarea>
+				</label>
+			</div>
+			<div class="flex flex-wrap items-end gap-3">
+				<label class="pb-0!">
+					<span class="pb-1! text-xs">Status</span>
+					<select
+						{...thisReviewForm.fields.status.as("select")}
+						class="w-32! text-sm"
+						required
+					>
+						<option value="pending">Pend</option>
+						<option value="approved">Approve</option>
+						<option value="rejected">Reject</option>
+					</select>
+				</label>
+				<button class="btn btn-primary px-3 py-1 text-sm" type="submit">
+					Save
+				</button>
+			</div>
 		</form>
 	{/snippet}
 </SubmissionCard>
