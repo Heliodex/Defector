@@ -75,22 +75,18 @@ $effect(() => {
 			<div
 				class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-600 pb-6 wrap-break-word"
 			>
-				{#if sub.review?.notes}
-					<div>
-						<span class="font-semibold">Public notes:</span>
-						<p class="whitespace-pre-wrap pl-4">
-							{sub.review.notes}
-						</p>
-					</div>
-				{/if}
-				{#if sub.review?.privateNotes}
-					<div>
-						<span class="font-semibold">Private notes:</span>
-						<p class="whitespace-pre-wrap pl-4">
-							{sub.review.privateNotes}
-						</p>
-					</div>
-				{/if}
+				<div>
+					<span class="font-semibold">Public notes:</span>
+					<p class="whitespace-pre-wrap pl-4">
+						{sub.review?.notes ?? ""}
+					</p>
+				</div>
+				<div>
+					<span class="font-semibold">Private notes:</span>
+					<p class="whitespace-pre-wrap pl-4">
+						{sub.review?.privateNotes ?? ""}
+					</p>
+				</div>
 			</div>
 		{/if}
 
