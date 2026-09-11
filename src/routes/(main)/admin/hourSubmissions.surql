@@ -41,7 +41,6 @@ SELECT
 	(SELECT VALUE {
 		givenName: extraInfo.givenName,
 		familyName: extraInfo.familyName,
-		phoneNumber: extraInfo.phoneNumber,
 		birthdate: extraInfo.birthdate,
 		address: extraInfo.address
 	} FROM $parent<-submittedHours<-user)[0] AS ownerInfo

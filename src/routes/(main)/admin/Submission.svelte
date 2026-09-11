@@ -25,10 +25,39 @@ $effect(() => {
 // The public page only shows approved submissions, so this link is only meaningful once approved.
 const playableUrl = $derived(`${siteUrl}/submission/${sub.id}`)
 
+// If the code URL points at GitHub, surface the account name for easy copying.
+const githubUsername = $derived.by(() => {
+	try {
+		const url = new URL(sub.codeUrl)
+		if (url.hostname !== "github.com" && url.hostname !== "www.github.com")
+			return null
+
+		return url.pathname.split("/").filter(Boolean)[0] ?? null
+	} catch {
+		return null
+	}
+})
+
+const address = $derived(sub.ownerInfo?.address ?? null)
+
 const submissionData = $derived([
 	{ key: "codeUrl", label: "Code URL", value: sub.codeUrl },
 	{ key: "playableUrl", label: "Playable URL", value: playableUrl },
-	{ key: "email", label: "Email address", value: sub.ownerEmail ?? "" },
+	{
+		key: "howHear",
+		label: "How did you hear about this?",
+		value: sub.howHear ?? "",
+	},
+	{
+		key: "howDoingWell",
+		label: "What are we doing well?",
+		value: sub.howDoingWell ?? "",
+	},
+	{
+		key: "howImprove",
+		label: "How can we improve?",
+		value: sub.howImprove ?? "",
+	},
 	{
 		key: "givenName",
 		label: "First name",
@@ -39,18 +68,35 @@ const submissionData = $derived([
 		label: "Last name",
 		value: sub.ownerInfo?.familyName ?? "",
 	},
-	{ key: "address", label: "Address", value: sub.ownerInfo?.address ?? "" },
+	{ key: "email", label: "Email", value: sub.ownerEmail ?? "" },
+	{ key: "description", label: "Description", value: sub.description },
+	...(githubUsername
+		? [
+				{
+					key: "github",
+					label: "GitHub username",
+					value: githubUsername,
+				},
+			]
+		: []),
 	{
-		key: "phoneNumber",
-		label: "Phone number",
-		value: sub.ownerInfo?.phoneNumber ?? "",
+		key: "streetAddress",
+		label: "Street address",
+		value: address?.streetAddress ?? "",
 	},
+	{ key: "locality", label: "City", value: address?.locality ?? "" },
+	{ key: "region", label: "Region", value: address?.region ?? "" },
+	{
+		key: "postalCode",
+		label: "Postal code",
+		value: address?.postalCode ?? "",
+	},
+	{ key: "country", label: "Country", value: address?.country ?? "" },
 	{
 		key: "birthdate",
 		label: "Birthday",
 		value: sub.ownerInfo?.birthdate ?? "",
 	},
-	{ key: "description", label: "Description", value: sub.description },
 ])
 
 let copied = $state<string | null>(null)

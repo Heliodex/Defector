@@ -41,7 +41,6 @@ type AdminOwnerAddress = {
 type AdminOwnerInfo = {
 	givenName?: string | null
 	familyName?: string | null
-	phoneNumber?: string | null
 	birthdate?: string | null
 	address?: AdminOwnerAddress
 } | null
@@ -82,21 +81,6 @@ type AdminSubmission = {
 	ownerInfo?: AdminOwnerInfo
 }
 
-// Flatten the optional address object into a single copy-friendly line.
-const formatAddress = (address: AdminOwnerAddress): string => {
-	if (!address) return ""
-
-	return [
-		address.streetAddress?.replace(/\s+/g, " "),
-		address.locality,
-		address.region,
-		address.postalCode,
-		address.country,
-	]
-		.filter(Boolean)
-		.join(", ")
-}
-
 export const getSubmissions = query(async () => {
 	const { user } = await authorise()
 	if (!isAdmin(user)) redirect(302, "/")
@@ -122,15 +106,6 @@ export const getSubmissions = query(async () => {
 				rank: snapById.get(bot.id)?.rank ?? null,
 				multiplier: snapById.get(bot.id)?.multiplier ?? 1,
 			})),
-			ownerInfo: sub.ownerInfo
-				? {
-						givenName: sub.ownerInfo.givenName ?? "",
-						familyName: sub.ownerInfo.familyName ?? "",
-						phoneNumber: sub.ownerInfo.phoneNumber ?? "",
-						birthdate: sub.ownerInfo.birthdate ?? "",
-						address: formatAddress(sub.ownerInfo.address ?? null),
-					}
-				: null,
 		}
 	})
 })
