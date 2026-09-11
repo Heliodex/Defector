@@ -24,8 +24,7 @@ export type EditableSubmission = {
 }
 
 /**
- * Loads one of the calling user's own submissions, provided it is marked "needschanges".
- * Throws 404 for unknown/foreign submissions and 403 for ones that aren't open for editing.
+ * Loads one of the calling user's own submissions, provided it is still open for editing (i.e. "pending" or "needschanges"). Throws 404 for unknown/foreign submissions and 403 for ones that aren't open for editing.
  */
 export const getEditableSubmission = query(
 	type.string,
@@ -39,7 +38,7 @@ export const getEditableSubmission = query(
 
 		const sub = rows?.[0]
 		if (!sub) error(404, "Submission not found")
-		if (sub.status !== "needschanges")
+		if (sub.status !== "pending" && sub.status !== "needschanges")
 			error(403, "This submission can't be edited right now.")
 
 		return sub
@@ -97,7 +96,7 @@ export const updateSubmissionForm = form(
 		)
 		const existing = rows?.[0]
 		if (!existing) invalid("Submission not found.")
-		if (existing.status !== "needschanges")
+		if (existing.status !== "pending" && existing.status !== "needschanges")
 			invalid("This submission can't be edited right now.")
 
 		// Keep the current image unless a new one was uploaded (file inputs can't be prefilled,

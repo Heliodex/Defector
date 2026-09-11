@@ -32,9 +32,15 @@ let submissions = $derived(await getYourSubmissions())
 			>
 				{#snippet footer()}
 					{#if sub.status === "pending"}
-						<p class="text-sm text-neutral-600">
+						<p class="text-sm text-neutral-600 pb-3">
 							Your submission is waiting for review.
 						</p>
+						<a
+							href="/submissions/{sub.id}/edit"
+							class="btn btn-secondary inline-block"
+						>
+							Edit submission
+						</a>
 					{:else if sub.status === "needschanges"}
 						{#if sub.review?.notes}
 							<p class="text-sm text-neutral-600">
