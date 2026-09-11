@@ -14,7 +14,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.5.12",
+		"@biomejs/biome": "^2.5.13",
 		"@surrealdb/wasm": "^3.0.3",
 		"@types/bun": "^1.4.2",
 		"@typescript/native": "npm:typescript@^7.0.2",
@@ -31,7 +31,7 @@
 		"surrealdb": "^2.0.8",
 		"svelte": "^5.57.0",
 		"tailwindcss": "^4.3.3",
-		"vite": "^8.2.2"
+		"vite": "^8.3.0"
 	},
 	"imports": {
 		"#lib/*": "./src/lib/*",
