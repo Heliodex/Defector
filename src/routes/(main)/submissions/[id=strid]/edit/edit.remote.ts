@@ -20,7 +20,7 @@ export type EditableSubmission = {
 	howDoingWell?: string | null
 	howImprove?: string | null
 	howLikelyRecommend: number
-	review?: { notes: string } | null
+	reviewNotes?: string | null
 }
 
 /**

@@ -19,11 +19,11 @@ const imageSrc = $derived(
 
 <h1 class="pt-4 text-2xl">Update your submission</h1>
 
-{#if sub.review?.notes}
+{#if sub.reviewNotes}
 	<div class="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-4">
 		<p class="font-semibold text-amber-800">Changes requested</p>
 		<p class="pt-1 text-sm whitespace-pre-wrap text-amber-900">
-			{sub.review.notes}
+			{sub.reviewNotes}
 		</p>
 	</div>
 {/if}

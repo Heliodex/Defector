@@ -12,8 +12,7 @@ SELECT
 	howDoingWell,
 	howImprove,
 	howLikelyRecommend,
-	(SELECT
-		notes
-	FROM ONLY $parent.review) AS review
+	(SELECT VALUE notes
+	FROM ONLY $parent.review) AS reviewNotes
 FROM $user->submittedHours->hourSubmission
 WHERE id = $sub;
