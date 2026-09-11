@@ -79,6 +79,11 @@ const imageSrc = $derived(
 		{#each updateSubmissionForm.fields.description.issues() ?? [] as issue}
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
+		{#if updateSubmissionForm.fields.ai.value()}
+			<p class="pt-2 text-sm text-neutral-600">
+				Include any declarations on how AI was used in your project in this field.
+			</p>
+		{/if}
 	</label>
 
 	<label>
