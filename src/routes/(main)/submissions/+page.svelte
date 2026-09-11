@@ -25,6 +25,7 @@ let submissions = $derived(await getYourSubmissions())
 			<SubmissionCard
 				{sub}
 				subtitle={sub.created}
+				href="/submission/{sub.id}"
 				imageSrc={sub.image?.hash
 					? `/submissions/images/${sub.image.hash}`
 					: null}

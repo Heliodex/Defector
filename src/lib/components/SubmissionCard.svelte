@@ -6,12 +6,14 @@ const {
 	sub,
 	imageSrc,
 	subtitle,
+	href,
 	middle,
 	footer,
 }: {
 	sub: SubmissionCardSubmission
 	imageSrc: string | null
 	subtitle: string
+	href?: string
 	middle?: Snippet
 	footer?: Snippet
 } = $props()
@@ -37,7 +39,11 @@ const statusClasses = (status: string) => {
 	<div class="flex flex-wrap items-start justify-between gap-3">
 		<div class="min-w-0">
 			<h3 class="text-xl font-semibold wrap-break-word">
-				{sub.name}
+				{#if href}
+					<a {href} class="hover:underline">{sub.name}</a>
+				{:else}
+					{sub.name}
+				{/if}
 			</h3>
 			<p class="pt-1 text-sm text-neutral-600">
 				{subtitle}
