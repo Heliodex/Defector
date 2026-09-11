@@ -101,6 +101,11 @@ const submissionData = $derived([
 		label: "Birthday",
 		value: sub.ownerInfo?.birthdate ?? "",
 	},
+	{
+		key: "lapseIds",
+		label: "Lapse IDs",
+		value: sub.lapseTimelapses.join(", "),
+	},
 ])
 
 let copied = $state<string | null>(null)
