@@ -34,6 +34,23 @@ let submissions = $derived(await getYourSubmissions())
 						<p class="text-sm text-neutral-600">
 							Your submission is waiting for review.
 						</p>
+					{:else if sub.status === "needschanges"}
+						{#if sub.review?.notes}
+							<p class="text-sm text-neutral-600">
+								<span class="font-semibold">Review notes:</span>
+								{sub.review.notes}
+							</p>
+						{/if}
+						<p class="pt-2 text-sm text-amber-700">
+							Changes have been requested for this submission.
+							Update it and resubmit it for review.
+						</p>
+						<a
+							href="/submissions/{sub.id}/edit"
+							class="btn btn-primary mt-3 inline-block"
+						>
+							Update submission
+						</a>
 					{:else if sub.review?.notes}
 						<p class="text-sm text-neutral-600">
 							<span class="font-semibold">Review notes:</span>

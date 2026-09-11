@@ -122,6 +122,7 @@ $effect(() => {
 					>
 						<option value="pending">Pend</option>
 						<option value="approved">Approve</option>
+						<option value="needschanges">Needs changes</option>
 						<option value="rejected">Reject</option>
 					</select>
 				</label>

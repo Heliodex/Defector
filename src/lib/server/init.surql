@@ -364,4 +364,4 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 			DEFINE FIELD OVERWRITE leaderboard.bots.*.rank ON hourSubmission TYPE option<int>;
 			DEFINE FIELD OVERWRITE leaderboard.bots.*.multiplier ON hourSubmission TYPE float;
 	DEFINE FIELD OVERWRITE status ON hourSubmission TYPE string DEFAULT ALWAYS "pending"
-		ASSERT $value IN ["pending", "approved", "rejected"];
+		ASSERT $value IN ["pending", "approved", "rejected", "needschanges"];

@@ -15,6 +15,22 @@ const {
 	middle?: Snippet
 	footer?: Snippet
 } = $props()
+
+// "needschanges" is a single word in the database but reads better as two.
+const statusLabel = (status: string) =>
+	status === "needschanges" ? "needs changes" : status
+
+const statusClasses = (status: string) => {
+	switch (status) {
+		case "approved":
+			return "bg-green-100 text-green-800"
+		case "rejected":
+			return "bg-red-100 text-red-600"
+		case "needschanges":
+			return "bg-amber-100 text-amber-800"
+	}
+	return "bg-blue-100 text-blue-700"
+}
 </script>
 
 <article class="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
@@ -28,9 +44,11 @@ const {
 			</p>
 		</div>
 		<span
-			class="rounded-full px-3 py-1 text-xs font-bold {sub.status === "approved" ? "bg-green-100 text-green-800" : sub.status === "rejected" ? "bg-red-100 text-red-600" : "bg-blue-100 text-blue-700"}"
+			class={["rounded-full px-3 py-1 text-xs font-bold", statusClasses(
+				sub.status
+			)]}
 		>
-			{sub.status}
+			{statusLabel(sub.status)}
 		</span>
 	</div>
 
