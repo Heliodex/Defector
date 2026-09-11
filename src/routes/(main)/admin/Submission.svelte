@@ -1,5 +1,6 @@
 <script lang="ts">
 import { untrack } from "svelte"
+import { siteUrl } from "#lib/assets/config.js"
 import Accordion from "#lib/components/Accordion.svelte"
 import AccordionItem from "#lib/components/AccordionItem.svelte"
 import SubmissionCard from "#lib/components/SubmissionCard.svelte"
@@ -20,6 +21,32 @@ $effect(() => {
 		thisReviewForm.fields.privateNotes.set(privateNotes)
 	})
 })
+
+// The public page only shows approved submissions, so this link is only meaningful once approved.
+const playableUrl = $derived(`${siteUrl}/submission/${sub.id}`)
+
+const submissionData = $derived([
+	{ key: "codeUrl", label: "Code URL", value: sub.codeUrl },
+	{ key: "playableUrl", label: "Playable URL", value: playableUrl },
+	{ key: "email", label: "Email address", value: sub.ownerEmail ?? "" },
+	{ key: "description", label: "Description", value: sub.description },
+])
+
+let copied = $state<string | null>(null)
+let copiedTimer: ReturnType<typeof setTimeout> | undefined
+
+async function copy(key: string, value: string) {
+	if (!value) return
+
+	try {
+		await navigator.clipboard.writeText(value)
+		copied = key
+		clearTimeout(copiedTimer)
+		copiedTimer = setTimeout(() => (copied = null), 1500)
+	} catch {
+		// Clipboard API unavailable (e.g. an insecure context); nothing to do.
+	}
+}
 </script>
 
 <SubmissionCard
@@ -40,8 +67,8 @@ $effect(() => {
 				<p class="pt-2 text-sm text-red-500">Could not load hours.</p>
 			{/snippet}
 		</svelte:boundary>
-		{#if sub.howHear ?? sub.howDoingWell ?? sub.howImprove}
-			<Accordion class="pt-4">
+		<Accordion class="pt-4">
+			{#if sub.howHear ?? sub.howDoingWell ?? sub.howImprove}
 				<AccordionItem
 					title="Survey answers"
 					class="border border-neutral-400 border-t-0"
@@ -67,8 +94,36 @@ $effect(() => {
 						{/if}
 					</div>
 				</AccordionItem>
-			</Accordion>
-		{/if}
+			{/if}
+			<AccordionItem
+				title="Submission data"
+				class="border border-neutral-400 border-t-0"
+			>
+				<ul class="noul flex flex-col gap-2 pt-2">
+					{#each submissionData as field (field.key)}
+						<li class="flex items-center gap-3 text-sm">
+							<span class="w-32 shrink-0 font-semibold">
+								{field.label}
+							</span>
+							<span
+								class="min-w-0 flex-1 truncate font-mono text-xs text-neutral-600"
+								title={field.value}
+							>
+								{field.value || "—"}
+							</span>
+							<button
+								type="button"
+								class="btn btn-secondary shrink-0 px-3 py-1 text-xs"
+								disabled={!field.value}
+								onclick={() => copy(field.key, field.value)}
+							>
+								{copied === field.key ? "Copied!" : "Copy"}
+							</button>
+						</li>
+					{/each}
+				</ul>
+			</AccordionItem>
+		</Accordion>
 	{/snippet}
 	{#snippet footer()}
 		{#if sub.review?.notes || sub.review?.privateNotes}
