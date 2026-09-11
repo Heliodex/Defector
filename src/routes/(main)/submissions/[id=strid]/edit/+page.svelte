@@ -81,7 +81,8 @@ const imageSrc = $derived(
 		{/each}
 		{#if updateSubmissionForm.fields.ai.value()}
 			<p class="pt-2 text-sm text-neutral-600">
-				Include any declarations on how AI was used in your project in this field.
+				Include any declarations on how AI was used in your project in
+				this field.
 			</p>
 		{/if}
 	</label>
@@ -97,8 +98,14 @@ const imageSrc = $derived(
 			<span class="pt-2 text-sm text-red-500">{issue.message}</span>
 		{/each}
 		<p class="pt-2 text-sm text-neutral-600">
-			A link to your project's code repository on GitHub or similar.
+			A link to your project's code repository on GitHub or similar. Your repository
+			should include:
 		</p>
+		<ul class="text-sm text-neutral-600">
+			<li>The code for all the bots you've attached</li>
+			<li>Preferably a commit history, showing how your bots were built over time</li>
+			<li>A <b>README.md</b> file, explaining that your code is for Defector bots, with a link to your bots or submission on the Defector website</li>
+		</ul>
 	</label>
 
 	<label>
