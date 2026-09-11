@@ -36,6 +36,14 @@ SELECT
 		record::id(reviewer) AS reviewer
 	FROM ONLY $parent.review) AS review,
 	# (No ONLY: the WASM engine returns zero rows for FROM ONLY <traversal>; [0] already pins the single edge.)
-	(SELECT VALUE email FROM $parent<-submittedHours<-user)[0] AS ownerEmail
+	(SELECT VALUE email FROM $parent<-submittedHours<-user)[0] AS ownerEmail,
+	# Submitter PII from their Hack Club profile. Only ever exposed on the admin panel.
+	(SELECT VALUE {
+		givenName: extraInfo.givenName,
+		familyName: extraInfo.familyName,
+		phoneNumber: extraInfo.phoneNumber,
+		birthdate: extraInfo.birthdate,
+		address: extraInfo.address
+	} FROM $parent<-submittedHours<-user)[0] AS ownerInfo
 FROM hourSubmission
 ORDER BY created DESC;

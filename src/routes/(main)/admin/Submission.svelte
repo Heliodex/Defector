@@ -29,6 +29,27 @@ const submissionData = $derived([
 	{ key: "codeUrl", label: "Code URL", value: sub.codeUrl },
 	{ key: "playableUrl", label: "Playable URL", value: playableUrl },
 	{ key: "email", label: "Email address", value: sub.ownerEmail ?? "" },
+	{
+		key: "givenName",
+		label: "First name",
+		value: sub.ownerInfo?.givenName ?? "",
+	},
+	{
+		key: "familyName",
+		label: "Last name",
+		value: sub.ownerInfo?.familyName ?? "",
+	},
+	{ key: "address", label: "Address", value: sub.ownerInfo?.address ?? "" },
+	{
+		key: "phoneNumber",
+		label: "Phone number",
+		value: sub.ownerInfo?.phoneNumber ?? "",
+	},
+	{
+		key: "birthdate",
+		label: "Birthday",
+		value: sub.ownerInfo?.birthdate ?? "",
+	},
 	{ key: "description", label: "Description", value: sub.description },
 ])
 

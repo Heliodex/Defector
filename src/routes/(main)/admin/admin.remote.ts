@@ -30,6 +30,22 @@ export const getBots = query(async () => {
 	}))
 })
 
+type AdminOwnerAddress = {
+	streetAddress?: string | null
+	locality?: string | null
+	region?: string | null
+	postalCode?: string | null
+	country?: string | null
+} | null
+
+type AdminOwnerInfo = {
+	givenName?: string | null
+	familyName?: string | null
+	phoneNumber?: string | null
+	birthdate?: string | null
+	address?: AdminOwnerAddress
+} | null
+
 type AdminSubmission = {
 	id: string
 	created: Date
@@ -63,6 +79,22 @@ type AdminSubmission = {
 		privateNotes: string
 	} | null
 	ownerEmail: string | null
+	ownerInfo?: AdminOwnerInfo
+}
+
+// Flatten the optional address object into a single copy-friendly line.
+const formatAddress = (address: AdminOwnerAddress): string => {
+	if (!address) return ""
+
+	return [
+		address.streetAddress?.replace(/\s+/g, " "),
+		address.locality,
+		address.region,
+		address.postalCode,
+		address.country,
+	]
+		.filter(Boolean)
+		.join(", ")
 }
 
 export const getSubmissions = query(async () => {
@@ -70,8 +102,6 @@ export const getSubmissions = query(async () => {
 	if (!isAdmin(user)) redirect(302, "/")
 
 	const [rows] = await db.query<AdminSubmission[][]>(hourSubmissionsQuery)
-
-	console.log(rows[0])
 
 	return (rows ?? []).map(sub => {
 		const snapById = new Map(
@@ -92,6 +122,15 @@ export const getSubmissions = query(async () => {
 				rank: snapById.get(bot.id)?.rank ?? null,
 				multiplier: snapById.get(bot.id)?.multiplier ?? 1,
 			})),
+			ownerInfo: sub.ownerInfo
+				? {
+						givenName: sub.ownerInfo.givenName ?? "",
+						familyName: sub.ownerInfo.familyName ?? "",
+						phoneNumber: sub.ownerInfo.phoneNumber ?? "",
+						birthdate: sub.ownerInfo.birthdate ?? "",
+						address: formatAddress(sub.ownerInfo.address ?? null),
+					}
+				: null,
 		}
 	})
 })
