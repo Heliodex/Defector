@@ -123,6 +123,7 @@ async function copy(key: string, value: string) {
 <SubmissionCard
 	{sub}
 	subtitle="{sub.ownerEmail ?? "—"} · {sub.created}"
+	href="/submission/{sub.id}"
 	imageSrc={sub.image?.hash ? `/admin/images/${sub.image.hash}` : null}
 >
 	{#snippet middle()}
