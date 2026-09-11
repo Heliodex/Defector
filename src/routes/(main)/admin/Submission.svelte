@@ -67,7 +67,7 @@ async function copy(key: string, value: string) {
 				<p class="pt-2 text-sm text-red-500">Could not load hours.</p>
 			{/snippet}
 		</svelte:boundary>
-		<Accordion class="pt-4">
+		<Accordion class="pt-4 flex flex-col gap-4">
 			{#if sub.howHear ?? sub.howDoingWell ?? sub.howImprove}
 				<AccordionItem
 					title="Survey answers"
