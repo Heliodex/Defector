@@ -14,11 +14,15 @@ const thisReviewForm = $derived(reviewForm.for(sub.id))
 
 $effect(() => {
 	if (!sub.review) return
-	const { notes, privateNotes } = sub.review
+	const { notes, privateNotes, hoursSpent, technicalFeatures, deflation } =
+		sub.review
 
 	untrack(() => {
 		thisReviewForm.fields.notes.set(notes)
 		thisReviewForm.fields.privateNotes.set(privateNotes)
+		thisReviewForm.fields.hoursSpent.set(hoursSpent ?? "")
+		thisReviewForm.fields.technicalFeatures.set(technicalFeatures ?? "")
+		thisReviewForm.fields.deflation.set(deflation ?? "")
 	})
 })
 
@@ -193,20 +197,38 @@ async function copy(key: string, value: string) {
 		</Accordion>
 	{/snippet}
 	{#snippet footer()}
-		{#if sub.review?.notes || sub.review?.privateNotes}
+		{#if sub.review}
 			<div
 				class="grid sm:grid-cols-2 gap-3 text-sm text-neutral-600 pb-6 wrap-break-word"
 			>
 				<div>
 					<span class="font-semibold">Public notes:</span>
 					<p class="whitespace-pre-wrap pl-4">
-						{sub.review?.notes ?? ""}
+						{sub.review.notes || "—"}
 					</p>
 				</div>
 				<div>
-					<span class="font-semibold">Private notes:</span>
+					<span class="font-semibold">Hours spent:</span>
 					<p class="whitespace-pre-wrap pl-4">
-						{sub.review?.privateNotes ?? ""}
+						{sub.review.hoursSpent || "—"}
+					</p>
+				</div>
+				<div>
+					<span class="font-semibold">Technical features:</span>
+					<p class="whitespace-pre-wrap pl-4">
+						{sub.review.technicalFeatures || "—"}
+					</p>
+				</div>
+				<div>
+					<span class="font-semibold">Deflation:</span>
+					<p class="whitespace-pre-wrap pl-4">
+						{sub.review.deflation || "—"}
+					</p>
+				</div>
+				<div>
+					<span class="font-semibold">Additional information:</span>
+					<p class="whitespace-pre-wrap pl-4">
+						{sub.review.privateNotes || "—"}
 					</p>
 				</div>
 			</div>
@@ -214,26 +236,58 @@ async function copy(key: string, value: string) {
 
 		<form {...thisReviewForm} class="flex flex-col gap-3">
 			<input {...thisReviewForm.fields.id.as("hidden", sub.id)}>
-			<div class="flex flex-wrap items-end gap-3">
-				<label class="min-w-52 flex-1 pb-1!">
-					<span class="pb-1! text-xs">
-						Public notes (visible to submitter)
-					</span>
-					<textarea
-						{...thisReviewForm.fields.notes.as("text")}
-						class="w-full text-sm min-h-30"
-					></textarea>
-				</label>
-				<label class="min-w-52 flex-1 pb-1!">
-					<span class="pb-1! text-xs">
-						Private notes (admin only)
-					</span>
-					<textarea
-						{...thisReviewForm.fields.privateNotes.as("text")}
-						class="w-full text-sm min-h-30"
-					></textarea>
-				</label>
-			</div>
+			<label class="pb-1!">
+				<span class="pb-1! text-xs">
+					Public notes (visible to submitter)
+				</span>
+				<textarea
+					{...thisReviewForm.fields.notes.as("text")}
+					class="w-full text-sm min-h-30"
+				></textarea>
+			</label>
+			<fieldset
+				class="flex flex-col gap-3 rounded-lg border border-neutral-200 p-3"
+			>
+				<legend class="px-1 text-xs font-semibold text-neutral-600">
+					Admin notes
+				</legend>
+				<div class="flex flex-wrap items-end gap-3">
+					<label class="min-w-52 flex-1 pb-1!">
+						<span class="pb-1! text-xs">Hours spent</span>
+						<textarea
+							{...thisReviewForm.fields.hoursSpent.as("text")}
+							class="w-full text-sm min-h-30"
+						></textarea>
+					</label>
+					<label class="min-w-52 flex-1 pb-1!">
+						<span class="pb-1! text-xs">Technical features</span>
+						<textarea
+							{...thisReviewForm.fields.technicalFeatures.as(
+								"text"
+							)}
+							class="w-full text-sm min-h-30"
+						></textarea>
+					</label>
+				</div>
+				<div class="flex flex-wrap items-end gap-3">
+					<label class="min-w-52 flex-1 pb-1!">
+						<span class="pb-1! text-xs">Deflation</span>
+						<textarea
+							{...thisReviewForm.fields.deflation.as("text")}
+							class="w-full text-sm min-h-30"
+						></textarea>
+					</label>
+					<label class="min-w-52 flex-1 pb-1!">
+						<span class="pb-1! text-xs">
+							Additional information (admin only)
+						</span>
+						<textarea
+							{...thisReviewForm.fields.privateNotes.as("text")}
+							class="w-full text-sm min-h-30"
+						></textarea>
+					</label>
+				</div>
+			</fieldset>
 			<div class="flex flex-wrap items-end gap-3">
 				<label class="pb-0!">
 					<span class="pb-1! text-xs">Status</span>

@@ -341,6 +341,9 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 		reviewer: record<user>,
 		notes: string,
 		privateNotes: string,
+		hoursSpent: string,
+		technicalFeatures: string,
+		deflation: string,
 	}>;
 	DEFINE FIELD OVERWRITE howHear ON hourSubmission TYPE option<string>;
 	DEFINE FIELD OVERWRITE howDoingWell ON hourSubmission TYPE option<string>;
@@ -365,3 +368,16 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 			DEFINE FIELD OVERWRITE leaderboard.bots.*.multiplier ON hourSubmission TYPE float;
 	DEFINE FIELD OVERWRITE status ON hourSubmission TYPE string DEFAULT ALWAYS "pending"
 		ASSERT $value IN ["pending", "approved", "rejected", "needschanges"];
+
+# Backfill the review sections added after launch so pre-existing review objects
+# (which only had notes/privateNotes) satisfy the required fields above.
+UPDATE hourSubmission SET
+	review.hoursSpent = "",
+	review.technicalFeatures = "",
+	review.deflation = ""
+WHERE review != NONE
+	AND (
+		review.hoursSpent = NONE
+		OR review.technicalFeatures = NONE
+		OR review.deflation = NONE
+	);

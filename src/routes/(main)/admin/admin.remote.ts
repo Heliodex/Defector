@@ -87,6 +87,9 @@ type AdminSubmission = {
 		reviewer: string
 		notes: string
 		privateNotes: string
+		hoursSpent: string
+		technicalFeatures: string
+		deflation: string
 	} | null
 	ownerEmail: string | null
 	ownerInfo?: AdminOwnerInfo
@@ -130,11 +133,22 @@ const reviewSchema = type({
 	).configure(messageStatus[0]),
 	"notes?": "string",
 	"privateNotes?": "string",
+	"hoursSpent?": "string",
+	"technicalFeatures?": "string",
+	"deflation?": "string",
 }).configure(...messageStatus)
 
 export const reviewForm = form(
 	reviewSchema,
-	async ({ id, status, notes, privateNotes }) => {
+	async ({
+		id,
+		status,
+		notes,
+		privateNotes,
+		hoursSpent,
+		technicalFeatures,
+		deflation,
+	}) => {
 		const { user } = await authorise()
 		if (!isAdmin(user)) redirect(302, "/")
 
@@ -143,6 +157,9 @@ export const reviewForm = form(
 			status,
 			notes,
 			privateNotes,
+			hoursSpent,
+			technicalFeatures,
+			deflation,
 			admin: user.id,
 		})
 
