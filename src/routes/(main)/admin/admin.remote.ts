@@ -7,6 +7,7 @@ import { db, Record } from "#lib/server/db.js"
 import { form, getRequestEvent, query } from "$app/server"
 import botsQuery from "./bots.surql?raw"
 import hourSubmissionsQuery from "./hourSubmissions.surql?raw"
+import npsQuery from "./nps.surql?raw"
 import reviewHourSubmissionQuery from "./reviewHourSubmission.surql?raw"
 
 type AdminBot = {
@@ -28,6 +29,16 @@ export const getBots = query(async () => {
 		...bot,
 		created: new Date(bot.created).toLocaleString(),
 	}))
+})
+
+// Net Promoter Score from the "how likely to recommend" survey answers, as a fraction in [-1, 1].
+// Returns null when there are no responses yet (the division yields NONE).
+export const getNps = query(async (): Promise<number | null> => {
+	const { user } = await authorise()
+	if (!isAdmin(user)) redirect(302, "/")
+
+	const [score] = await db.query<(number | null)[]>(npsQuery)
+	return Number.isFinite(score) ? score : null
 })
 
 type AdminOwnerAddress = {

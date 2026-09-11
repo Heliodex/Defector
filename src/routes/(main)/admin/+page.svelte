@@ -1,16 +1,39 @@
 <script lang="ts">
 import Head from "#lib/components/Head.svelte"
 import { truncate } from "#lib/truncate.js"
-import { getBots, getSubmissions } from "./admin.remote"
+import { getBots, getNps, getSubmissions } from "./admin.remote"
 import Submission from "./Submission.svelte"
 
 let submissions = $derived(await getSubmissions())
 let bots = $derived(await getBots())
+let nps = $derived(await getNps())
 </script>
 
 <Head title="Admin" noindex />
 
 <h1>Admin dashboard</h1>
+
+<div
+	class="mt-4 inline-flex flex-col rounded-xl border border-neutral-200 bg-white px-8 py-6 shadow-sm"
+>
+	<p class="text-sm font-bold tracking-wide text-neutral-600 uppercase">
+		Net Promoter Score
+	</p>
+	<p
+		class="text-7xl font-bold {nps == null
+			? 'text-neutral-400'
+			: nps >= 0
+				? 'text-green-700'
+				: 'text-red-600'}"
+	>
+		{nps == null ? "—" : Math.round(nps * 100)}
+	</p>
+	<p class="pt-1 text-sm text-neutral-500">
+		{nps == null
+			? "No survey responses yet."
+			: "From the “how likely to recommend” answers."}
+	</p>
+</div>
 
 <h2 class="pt-8 text-2xl">Submissions</h2>
 
