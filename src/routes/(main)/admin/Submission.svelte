@@ -90,12 +90,12 @@ const submissionData = $derived([
 	},
 	{ key: "locality", label: "City", value: address?.locality ?? "" },
 	{ key: "region", label: "Region", value: address?.region ?? "" },
+	{ key: "country", label: "Country", value: address?.country ?? "" },
 	{
 		key: "postalCode",
 		label: "Postal code",
 		value: address?.postalCode ?? "",
 	},
-	{ key: "country", label: "Country", value: address?.country ?? "" },
 	{
 		key: "birthdate",
 		label: "Birthday",
