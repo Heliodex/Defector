@@ -13,10 +13,10 @@ export async function GET({ params }: RequestEvent) {
 		"SELECT VALUE image.hash FROM $user->submittedHours->hourSubmission WHERE image.hash = $hash",
 		{ user: user.id, hash: id }
 	)
-	if (!rows?.[0]) error(404, "No image found for this project")
+	if (!rows?.[0]) error(404, "No image found for this submission")
 
 	const file = Bun.file(`./data/images/${id}.avif`)
-	if (!file.exists()) error(404, "No image found for this project")
+	if (!file.exists()) error(404, "No image found for this submission")
 
 	return new Response(file, {
 		headers: {

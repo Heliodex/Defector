@@ -9,7 +9,7 @@ export function GET({ locals, params }: RequestEvent) {
 	if (!id) error(400, "Missing image hash")
 
 	const file = Bun.file(`./data/images/${id}.avif`)
-	if (!file.exists()) error(404, "No image found for this project")
+	if (!file.exists()) error(404, "No image found for this submission")
 
 	return new Response(file, {
 		headers: {
