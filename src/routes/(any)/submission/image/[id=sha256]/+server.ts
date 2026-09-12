@@ -7,7 +7,7 @@ export async function GET({ params }: RequestEvent) {
 	if (!id) error(400, "Missing image hash")
 
 	const [rows] = await db.query<string[][]>(
-		'SELECT VALUE image.hash FROM hourSubmission WHERE image.hash = $hash AND status = "approved" LIMIT 1',
+		'SELECT VALUE image.hash FROM hourSubmission WHERE image.hash = $hash LIMIT 1',
 		{ hash: id }
 	)
 	if (!rows?.[0]) error(404, "No image found for this submission")
