@@ -48,4 +48,4 @@ SELECT
 		address: extraInfo.address
 	} FROM $parent<-submittedHours<-user)[0] AS ownerInfo
 FROM hourSubmission
-ORDER BY created DESC;
+ORDER BY created ASC;
