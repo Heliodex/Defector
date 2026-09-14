@@ -1,6 +1,8 @@
 <script lang="ts">
 import Head from "#lib/components/Head.svelte"
 import { truncate } from "#lib/truncate.js"
+import { goto } from "$app/navigation"
+import { page } from "$app/state"
 import { getBots, getNps, getSubmissions } from "./admin.remote"
 import Submission from "./Submission.svelte"
 
@@ -8,7 +10,33 @@ let submissions = $derived(await getSubmissions())
 let bots = $derived(await getBots())
 let nps = $derived(await getNps())
 
-let statusFilter = $state("all")
+const statuses = [
+	"pending",
+	"processing",
+	"approved",
+	"needschanges",
+	"rejected",
+] as const
+
+type StatusFilter = "all" | (typeof statuses)[number]
+
+const initialStatus = page.url.searchParams.get("status")
+let statusFilter = $state<StatusFilter>(
+	initialStatus && (statuses as readonly string[]).includes(initialStatus)
+		? (initialStatus as StatusFilter)
+		: "all"
+)
+
+// Keep the active filter in the URL (?status=...) so it survives reloads.
+function updateStatusFilter(value: StatusFilter) {
+	statusFilter = value
+
+	const url = new URL(page.url.href)
+	if (value === "all") url.searchParams.delete("status")
+	else url.searchParams.set("status", value)
+	goto(url, { state: page.state, shallow: true, replace: true })
+}
+
 let filteredSubmissions = $derived(
 	statusFilter === "all"
 		? submissions
@@ -83,7 +111,7 @@ const hourStats = $derived.by(() => {
 				</p>
 				<p class="pt-2 text-4xl font-bold">
 					<span class={stat.colour}>
-					{stat.hours.toFixed(2)}
+						{stat.hours.toFixed(2)}
 					</span>
 					<span class="text-base font-normal text-neutral-500">
 						hrs
@@ -103,7 +131,12 @@ const hourStats = $derived.by(() => {
 
 	<label class="flex items-center gap-2 text-sm text-neutral-600">
 		Filter by status
-		<select bind:value={statusFilter} class="w-auto! text-sm">
+		<select
+			value={statusFilter}
+			onchange={e =>
+				updateStatusFilter(e.currentTarget.value as StatusFilter)}
+			class="w-auto! text-sm"
+		>
 			<option value="all">All</option>
 			<option value="pending">Pending</option>
 			<option value="processing">Processing</option>
