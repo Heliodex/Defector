@@ -87,7 +87,7 @@ type AdminSubmission = {
 		reviewer: string
 		notes: string
 		privateNotes: string
-		hoursSpent: string
+		hoursSpent: number
 		technicalFeatures: string
 		deflation: string
 	} | null
@@ -133,7 +133,7 @@ const reviewSchema = type({
 	).configure(messageStatus[0]),
 	"notes?": "string",
 	"privateNotes?": "string",
-	"hoursSpent?": "string",
+	"hoursSpent?": "number >= 0",
 	"technicalFeatures?": "string",
 	"deflation?": "string",
 }).configure(...messageStatus)

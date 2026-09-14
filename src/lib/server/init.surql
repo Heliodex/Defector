@@ -341,7 +341,7 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 		reviewer: record<user>,
 		notes: string,
 		privateNotes: string,
-		hoursSpent: string,
+		hoursSpent: float,
 		technicalFeatures: string,
 		deflation: string,
 	}>;
@@ -370,14 +370,18 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 		ASSERT $value IN ["pending", "processing", "approved", "rejected", "needschanges"];
 
 # Backfill the review sections added after launch so pre-existing review objects
-# (which only had notes/privateNotes) satisfy the required fields above.
+# (which only had notes/privateNotes) satisfy the required fields above. "Hours spent"
+# used to be an unused free-text note; it's now a numeric hour value, so any leftover
+# string (or missing) value is reset to 0. The other fields are only defaulted when
+# missing, so existing notes are preserved when a row is migrated for its hours.
 UPDATE hourSubmission SET
-	review.hoursSpent = "",
-	review.technicalFeatures = "",
-	review.deflation = ""
+	review.hoursSpent = 0,
+	review.technicalFeatures = review.technicalFeatures ?? "",
+	review.deflation = review.deflation ?? ""
 WHERE review != NONE
 	AND (
-		review.hoursSpent = NONE
+		type::is_string(review.hoursSpent)
+		OR review.hoursSpent = NONE
 		OR review.technicalFeatures = NONE
 		OR review.deflation = NONE
 	);

@@ -7,7 +7,7 @@ UPDATE $id MERGE {
 		reviewer: $admin,
 		notes: $notes ?? "",
 		privateNotes: $privateNotes ?? "",
-		hoursSpent: $hoursSpent ?? "",
+		hoursSpent: $hoursSpent ?? 0,
 		technicalFeatures: $technicalFeatures ?? "",
 		deflation: $deflation ?? ""
 	}

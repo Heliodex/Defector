@@ -20,7 +20,7 @@ $effect(() => {
 	untrack(() => {
 		thisReviewForm.fields.notes.set(notes)
 		thisReviewForm.fields.privateNotes.set(privateNotes)
-		thisReviewForm.fields.hoursSpent.set(hoursSpent ?? "")
+		thisReviewForm.fields.hoursSpent.set(hoursSpent ?? 0)
 		thisReviewForm.fields.technicalFeatures.set(technicalFeatures ?? "")
 		thisReviewForm.fields.deflation.set(deflation ?? "")
 	})
@@ -216,7 +216,7 @@ async function copy(key: string, value: string) {
 				<div>
 					<span class="font-semibold">Hours spent:</span>
 					<p class="whitespace-pre-wrap pl-4">
-						{sub.review.hoursSpent || "—"}
+						{sub.review.hoursSpent ?? "—"}
 					</p>
 				</div>
 				<div>
@@ -260,10 +260,13 @@ async function copy(key: string, value: string) {
 				<div class="flex flex-wrap items-end gap-3">
 					<label class="min-w-52 flex-1 pb-1!">
 						<span class="pb-1! text-xs">Hours spent</span>
-						<textarea
-							{...thisReviewForm.fields.hoursSpent.as("text")}
-							class="w-full text-sm min-h-30"
-						></textarea>
+						<input
+							{...thisReviewForm.fields.hoursSpent.as("number")}
+							class="w-full text-sm"
+							min="0"
+							step="0.01"
+							required
+						>
 					</label>
 					<label class="min-w-52 flex-1 pb-1!">
 						<span class="pb-1! text-xs">Technical features</span>
