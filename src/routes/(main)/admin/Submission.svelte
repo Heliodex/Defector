@@ -108,6 +108,25 @@ const submissionData = $derived([
 	},
 ])
 
+// Review justifications, shown in the summary with the same copy affordance as the submission data.
+const reviewJustifications = $derived([
+	{
+		key: "technicalFeatures",
+		label: "Technical features",
+		value: sub.review?.technicalFeatures ?? "",
+	},
+	{
+		key: "deflation",
+		label: "Deflation",
+		value: sub.review?.deflation ?? "",
+	},
+	{
+		key: "privateNotes",
+		label: "Additional information",
+		value: sub.review?.privateNotes ?? "",
+	},
+])
+
 let copied = $state<string | null>(null)
 let copiedTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -219,24 +238,24 @@ async function copy(key: string, value: string) {
 						{sub.review.hoursSpent ?? "—"}
 					</p>
 				</div>
-				<div>
-					<span class="font-semibold">Technical features:</span>
-					<p class="whitespace-pre-wrap pl-4">
-						{sub.review.technicalFeatures || "—"}
-					</p>
-				</div>
-				<div>
-					<span class="font-semibold">Deflation:</span>
-					<p class="whitespace-pre-wrap pl-4">
-						{sub.review.deflation || "—"}
-					</p>
-				</div>
-				<div>
-					<span class="font-semibold">Additional information:</span>
-					<p class="whitespace-pre-wrap pl-4">
-						{sub.review.privateNotes || "—"}
-					</p>
-				</div>
+				{#each reviewJustifications as field (field.key)}
+					<div>
+						<div class="flex flex-wrap items-center gap-2">
+							<span class="font-semibold">{field.label}:</span>
+							<button
+								type="button"
+								class="btn btn-secondary shrink-0 px-3 py-1 text-xs"
+								disabled={!field.value}
+								onclick={() => copy(field.key, field.value)}
+							>
+								{copied === field.key ? "Copied!" : "Copy"}
+							</button>
+						</div>
+						<p class="whitespace-pre-wrap pl-4">
+							{field.value || "—"}
+						</p>
+					</div>
+				{/each}
 			</div>
 		{/if}
 
