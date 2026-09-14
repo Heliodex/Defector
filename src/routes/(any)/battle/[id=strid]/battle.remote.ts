@@ -10,9 +10,13 @@ type BattleRow = {
 	scores: number[]
 	errors: (string | null)[]
 	rounds: number[][]
+	payoff: PayoffMatrix | null
 	botNames: (string | null)[]
 	botIds: (string | null)[]
 }
+
+// [[R, S], [T, P]] where 0 = cooperate, 1 = defect (same shape as getLatestMatrix).
+export type PayoffMatrix = [[number, number], [number, number]]
 
 export type Battle = {
 	id: string
@@ -20,6 +24,7 @@ export type Battle = {
 	scores: number[]
 	errors: (string | null)[]
 	rounds: [string, string][]
+	payoff: PayoffMatrix | null
 	botNames: (string | null)[]
 	botIds: (string | null)[]
 	winnerIndex: 0 | 1 | null
@@ -52,6 +57,7 @@ export const getBattle = query(
 			scores: row.scores.map(Number),
 			errors: row.errors,
 			rounds,
+			payoff: row.payoff,
 			botNames: row.botNames,
 			botIds: row.botIds,
 			winnerIndex,

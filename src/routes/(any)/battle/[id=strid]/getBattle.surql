@@ -5,6 +5,7 @@ SELECT
 	errors,
 	rounds,
 	bots,
+	matrix.payoff AS payoff,
     fn::battleBotNames(id) AS botNames,
     bots.map(|$bot| record::id($bot)) AS botIds
 FROM ONLY $battle
