@@ -3,6 +3,7 @@ import Accordion from "#lib/components/Accordion.svelte"
 import AccordionItem from "#lib/components/AccordionItem.svelte"
 import BattleCard from "#lib/components/BattleCard.svelte"
 import Head from "#lib/components/Head.svelte"
+import PayoffMatrix from "#lib/components/PayoffMatrix.svelte"
 import { truncate } from "#lib/truncate.js"
 import { page } from "$app/state"
 import { getBattle } from "./battle.remote"
@@ -11,10 +12,6 @@ const battle = $derived(await getBattle(page.params.id ?? ""))
 
 // Payoff matrix the battle was scored with: [[R, S], [T, P]].
 const matrix = $derived(battle.payoff)
-const R = $derived(matrix?.[0][0])
-const S = $derived(matrix?.[0][1])
-const T = $derived(matrix?.[1][0])
-const P = $derived(matrix?.[1][1])
 
 const name = (i: 0 | 1): string =>
 	battle
@@ -38,29 +35,7 @@ const name = (i: 0 | 1): string =>
 	<div class="pt-6 max-w-xl">
 		<h2 class="font-semibold">Payoff matrix</h2>
 
-		<div class="py-4">
-			<table class="mx-auto shadowcard">
-				<thead>
-					<tr>
-						<th class="font-normal">You →<br>Opponent ↓</th>
-						<th>Cooperate</th>
-						<th>Defect</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td class="font-bold">Cooperate</td>
-						<td>{R}, {R}</td>
-						<td>{S}, {T}</td>
-					</tr>
-					<tr>
-						<td class="font-bold">Defect</td>
-						<td>{T}, {S}</td>
-						<td>{P}, {P}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		<PayoffMatrix {matrix} />
 	</div>
 {/if}
 

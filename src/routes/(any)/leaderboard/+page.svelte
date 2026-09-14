@@ -4,15 +4,12 @@ import { flip } from "svelte/animate"
 import { fly } from "svelte/transition"
 import BattleRow from "#lib/components/BattleRow.svelte"
 import Head from "#lib/components/Head.svelte"
+import PayoffMatrix from "#lib/components/PayoffMatrix.svelte"
 import { truncate } from "#lib/truncate.js"
 import { getLatestMatrix } from "../../data.remote"
 import { type LeaderboardData, leaderboardData } from "./leaderboard.remote"
 
 const matrix = $derived(await getLatestMatrix())
-const R = $derived(matrix?.[0][0])
-const S = $derived(matrix?.[0][1])
-const T = $derived(matrix?.[1][0])
-const P = $derived(matrix?.[1][1])
 
 const dataResult = leaderboardData()
 const data = $state<LeaderboardData>({
@@ -129,29 +126,7 @@ const connected = $derived(dataResult.connected)
 	{#if matrix}
 		<h2 class="pt-10 text-2xl">Current score matrix</h2>
 
-		<div class="py-4">
-			<table class="shadowcard">
-				<thead>
-					<tr>
-						<th class="font-normal">You →<br>Opponent ↓</th>
-						<th>Cooperate</th>
-						<th>Defect</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td class="font-bold">Cooperate</td>
-						<td>{R}, {R}</td>
-						<td>{S}, {T}</td>
-					</tr>
-					<tr>
-						<td class="font-bold">Defect</td>
-						<td>{T}, {S}</td>
-						<td>{P}, {P}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		<PayoffMatrix {matrix} />
 	{/if}
 
 	<h2 class="pt-10 text-2xl">Recent battles</h2>

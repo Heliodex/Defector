@@ -2,6 +2,7 @@
 import Accordion from "#components/Accordion.svelte"
 import AccordionItem from "#components/AccordionItem.svelte"
 import Head from "#components/Head.svelte"
+import PayoffMatrix from "#components/PayoffMatrix.svelte"
 import chessboard from "#lib/assets/chessboard.png"
 import { programmeName, siteDescription, siteUrl } from "#lib/assets/config.js"
 import logo from "#lib/assets/logo.svg"
@@ -123,29 +124,7 @@ const P = $derived(matrix?.[1][1])
 		look like this:
 	</p>
 
-	<div class="py-4">
-		<table class="mx-auto shadowcard">
-			<thead>
-				<tr>
-					<th class="font-normal">You →<br>Opponent ↓</th>
-					<th>Cooperate</th>
-					<th>Defect</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td class="font-bold">Cooperate</td>
-					<td>{R}, {R}</td>
-					<td>{S}, {T}</td>
-				</tr>
-				<tr>
-					<td class="font-bold">Defect</td>
-					<td>{T}, {S}</td>
-					<td>{P}, {P}</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+	<PayoffMatrix {matrix} class="mx-auto" />
 {/if}
 
 <p>
