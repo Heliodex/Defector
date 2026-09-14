@@ -367,7 +367,7 @@ DEFINE TABLE OVERWRITE hourSubmission SCHEMAFULL TYPE NORMAL;
 			DEFINE FIELD OVERWRITE leaderboard.bots.*.rank ON hourSubmission TYPE option<int>;
 			DEFINE FIELD OVERWRITE leaderboard.bots.*.multiplier ON hourSubmission TYPE float;
 	DEFINE FIELD OVERWRITE status ON hourSubmission TYPE string DEFAULT ALWAYS "pending"
-		ASSERT $value IN ["pending", "approved", "rejected", "needschanges"];
+		ASSERT $value IN ["pending", "processing", "approved", "rejected", "needschanges"];
 
 # Backfill the review sections added after launch so pre-existing review objects
 # (which only had notes/privateNotes) satisfy the required fields above.

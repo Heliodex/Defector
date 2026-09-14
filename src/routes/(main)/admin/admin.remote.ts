@@ -129,7 +129,7 @@ const messageStatus = makeMessage("status", "please choose a valid status")
 const reviewSchema = type({
 	id: "string",
 	status: type(
-		"'pending' | 'approved' | 'rejected' | 'needschanges'"
+		"'pending' | 'processing' | 'approved' | 'rejected' | 'needschanges'"
 	).configure(messageStatus[0]),
 	"notes?": "string",
 	"privateNotes?": "string",

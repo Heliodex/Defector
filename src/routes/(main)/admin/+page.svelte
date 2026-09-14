@@ -7,6 +7,13 @@ import Submission from "./Submission.svelte"
 let submissions = $derived(await getSubmissions())
 let bots = $derived(await getBots())
 let nps = $derived(await getNps())
+
+let statusFilter = $state("all")
+let filteredSubmissions = $derived(
+	statusFilter === "all"
+		? submissions
+		: submissions.filter(sub => sub.status === statusFilter)
+)
 </script>
 
 <Head title="Admin" noindex />
@@ -35,7 +42,21 @@ let nps = $derived(await getNps())
 	</p>
 </div>
 
-<h2 class="pt-8 text-2xl">Submissions</h2>
+<div class="flex flex-wrap items-center justify-between gap-4 pt-8">
+	<h2 class="pb-0! text-2xl">Submissions</h2>
+
+	<label class="flex items-center gap-2 text-sm text-neutral-600">
+		Filter by status
+		<select bind:value={statusFilter} class="w-auto! text-sm">
+			<option value="all">All</option>
+			<option value="pending">Pending</option>
+			<option value="processing">Processing</option>
+			<option value="approved">Approved</option>
+			<option value="needschanges">Needs changes</option>
+			<option value="rejected">Rejected</option>
+		</select>
+	</label>
+</div>
 
 {#if submissions.length === 0}
 	<p class="pt-4">No submissions yet.</p>
@@ -44,11 +65,17 @@ let nps = $derived(await getNps())
 		{submissions.filter(s => s.status === "pending").length}
 		pending review.
 	</p>
-	<div class="flex flex-col gap-6 pt-4">
-		{#each submissions as sub (sub.id)}
-			<Submission {sub} />
-		{/each}
-	</div>
+	{#if filteredSubmissions.length === 0}
+		<p class="pt-4 text-neutral-600">
+			No submissions with this status.
+		</p>
+	{:else}
+		<div class="flex flex-col gap-6 pt-4">
+			{#each filteredSubmissions as sub (sub.id)}
+				<Submission {sub} />
+			{/each}
+		</div>
+	{/if}
 {/if}
 
 <h2 class="pt-10 text-2xl">Bots</h2>

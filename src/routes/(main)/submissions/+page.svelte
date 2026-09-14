@@ -58,6 +58,18 @@ let submissions = $derived(await getYourSubmissions())
 						>
 							Update submission
 						</a>
+					{:else if sub.status === "processing"}
+						{#if sub.review?.notes}
+							<p class="text-sm text-neutral-600">
+								<span class="font-semibold">Review notes:</span>
+								{sub.review.notes}
+							</p>
+						{/if}
+						<p class="pt-2 text-sm text-sky-700">
+							Your submission has been approved and is awaiting
+							submission to our projects database. We'll let you
+							know if any changes are needed.
+						</p>
 					{:else if sub.review?.notes}
 						<p class="text-sm text-neutral-600">
 							<span class="font-semibold">Review notes:</span>

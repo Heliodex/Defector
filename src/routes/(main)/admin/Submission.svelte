@@ -303,6 +303,7 @@ async function copy(key: string, value: string) {
 						required
 					>
 						<option value="pending">Pend</option>
+						<option value="processing">Processing</option>
 						<option value="approved">Approve</option>
 						<option value="needschanges">Needs changes</option>
 						<option value="rejected">Reject</option>
