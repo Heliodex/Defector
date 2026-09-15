@@ -102,9 +102,11 @@ const submissionData = $derived([
 		value: sub.ownerInfo?.birthdate ?? "",
 	},
 	{
-		key: "lapseIds",
-		label: "Lapse IDs",
-		value: sub.lapseTimelapses.join(", "),
+		key: "lapseLinks",
+		label: "Lapse links",
+		value: sub.lapseTimelapses
+			.map(id => `https://lapse.hackclub.com/timelapse/${id}`)
+			.join(", "),
 	},
 	{
 		key: "technicalFeatures",
