@@ -3,7 +3,12 @@ import Head from "#lib/components/Head.svelte"
 import { truncate } from "#lib/truncate.js"
 import { goto } from "$app/navigation"
 import { page } from "$app/state"
-import { getBots, getNps, getSubmissions } from "./admin.remote"
+import {
+	getBots,
+	getNps,
+	getSubmissionHours,
+	getSubmissions,
+} from "./admin.remote"
 import Submission from "./Submission.svelte"
 
 let submissions = $derived(await getSubmissions())
@@ -43,7 +48,29 @@ let filteredSubmissions = $derived(
 		: submissions.filter(sub => sub.status === statusFilter)
 )
 
-// Total admin-recorded hours per review state, for the dashboard stat cards.
+// Timelapse durations per submission, used by the stat cards as a fallback when
+// a reviewer hasn't recorded an "Hours spent" value (stored as 0 when left empty).
+// `getSubmissionHours` is the same cached query the per-submission cards use, so
+// these don't cause any extra Lapse API calls.
+const timelapseHours = $derived(
+	new Map(
+		await Promise.all(
+			submissions.map(async sub => {
+				if (sub.review?.hoursSpent) return [sub.id, 0] as const
+				try {
+					const { totalSeconds } = await getSubmissionHours(sub.id)
+					return [sub.id, totalSeconds / 3600] as const
+				} catch {
+					// A failed lookup just falls back to 0 hours.
+					return [sub.id, 0] as const
+				}
+			})
+		)
+	)
+)
+
+// Total hours per review state, for the dashboard stat cards. Admin-recorded
+// "Hours spent" wins; otherwise we fall back to the submitted timelapse duration.
 const hourStats = $derived.by(() => {
 	const states = [
 		{ status: "pending", label: "Pending review", colour: "text-blue-800" },
@@ -63,7 +90,9 @@ const hourStats = $derived.by(() => {
 			label,
 			colour,
 			hours: matching.reduce(
-				(total, sub) => total + (sub.review?.hoursSpent ?? 0),
+				(total, sub) =>
+					total +
+					(sub.review?.hoursSpent || timelapseHours.get(sub.id) || 0),
 				0
 			),
 			count: matching.length,
