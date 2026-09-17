@@ -1,0 +1,2 @@
+email,amount_cents,purpose,instructions,one_time_use,pre_authorization_required,invite_message,merchant_lock,category_lock,keyword_lock,banned_merchants,banned_categories
+recipient@example.com,1000,Defector – Video game grant,Please use to purchase a video game\, online game\, products/DLC for a game, or credits/currency for an game.,false,false,Thanks for participating in Defector!,"","","","",""

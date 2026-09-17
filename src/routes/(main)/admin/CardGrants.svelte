@@ -74,6 +74,9 @@ function download() {
 	{:else}
 		<p class="pt-4 text-sm text-neutral-600">
 			{grants.rows.length}
+			recipient{grants.rows.length === 1 ? "" : "s"}
+			from
+			{grants.submissionCount}
 			of
 			{processingCount}
 			processing submission{processingCount === 1 ? "" : "s"}

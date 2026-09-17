@@ -2,6 +2,8 @@
 //
 // A submission's grant is based on the admin-recorded hours (`review.hoursSpent`)
 // and the submission's overall leaderboard multiplier, paid at $4/hr per 1x.
+// Recipients with several processing submissions get a single card whose value
+// is the sum of all of them.
 
 /** Dollars paid per hour at a 1x multiplier. */
 export const GRANT_RATE_PER_HOUR = 4
@@ -22,19 +24,22 @@ export type CardGrantSubmission = {
 }
 
 export type CardGrantRow = {
-	name: string
 	email: string
+	/** Names of the submissions rolled into this recipient's card. */
+	names: string[]
 	hours: number
-	multiplier: number
 	cents: number
 }
 
 export type CardGrantSummary = {
 	/** The full CSV contents, including the header row. */
 	csv: string
+	/** One row per recipient. */
 	rows: CardGrantRow[]
 	/** Processing submissions left out because they had no email or no hours. */
 	skipped: { name: string; reason: string }[]
+	/** Number of submissions rolled into `rows`. */
+	submissionCount: number
 	totalCents: number
 }
 
@@ -53,7 +58,8 @@ function field(value: string | number): string {
 /**
  * Builds the grant card CSV from all admin submissions, keeping only those
  * whose status is "processing". Processing submissions with no email on file or
- * no recorded hours are skipped (and reported) rather than granted 0.
+ * no recorded hours are skipped (and reported) rather than granted 0. All of a
+ * recipient's processing submissions are combined into a single card.
  */
 export function buildCardGrants(
 	submissions: CardGrantSubmission[]
@@ -73,8 +79,9 @@ export function buildCardGrants(
 		"banned_categories",
 	]
 
-	const rows: CardGrantRow[] = []
+	const rowsByEmail = new Map<string, CardGrantRow>()
 	const skipped: CardGrantSummary["skipped"] = []
+	let submissionCount = 0
 
 	for (const sub of submissions) {
 		if (sub.status !== "processing") continue
@@ -93,15 +100,24 @@ export function buildCardGrants(
 		const multiplier = sub.leaderboard?.multiplier ?? 1
 		const cents = Math.round(hours * multiplier * GRANT_RATE_PER_HOUR * 100)
 
-		rows.push({
-			name: sub.name,
-			email: sub.ownerEmail,
-			hours,
-			multiplier,
-			cents,
-		})
+		// One card per recipient: add this submission's value to theirs.
+		const existing = rowsByEmail.get(sub.ownerEmail)
+		if (existing) {
+			existing.names.push(sub.name)
+			existing.hours += hours
+			existing.cents += cents
+		} else {
+			rowsByEmail.set(sub.ownerEmail, {
+				email: sub.ownerEmail,
+				names: [sub.name],
+				hours,
+				cents,
+			})
+		}
+		submissionCount++
 	}
 
+	const rows = [...rowsByEmail.values()]
 	const lines = [header.map(field).join(",")]
 	for (const row of rows) {
 		lines.push(
@@ -128,6 +144,7 @@ export function buildCardGrants(
 		csv: `${lines.join("\n")}\n`,
 		rows,
 		skipped,
+		submissionCount,
 		totalCents: rows.reduce((sum, row) => sum + row.cents, 0),
 	}
 }
