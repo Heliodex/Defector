@@ -9,6 +9,7 @@ import {
 	getSubmissionHours,
 	getSubmissions,
 } from "./admin.remote"
+import CardGrants from "./CardGrants.svelte"
 import Submission from "./Submission.svelte"
 
 let submissions = $derived(await getSubmissions())
@@ -193,6 +194,8 @@ const hourStats = $derived.by(() => {
 		</div>
 	{/if}
 {/if}
+
+<CardGrants {submissions} />
 
 <h2 class="pt-10 text-2xl">Bots</h2>
 
