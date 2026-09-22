@@ -47,7 +47,8 @@ SELECT
 		givenName: extraInfo.givenName,
 		familyName: extraInfo.familyName,
 		birthdate: extraInfo.birthdate,
-		address: extraInfo.address
+		address: extraInfo.address,
+		yswsEligible: extraInfo.yswsEligible
 	} FROM $parent<-submittedHours<-user)[0] AS ownerInfo
 FROM hourSubmission
 ORDER BY created ASC;

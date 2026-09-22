@@ -189,7 +189,16 @@ const hourStats = $derived.by(() => {
 	{:else}
 		<div class="flex flex-col gap-6 pt-4">
 			{#each filteredSubmissions as sub (sub.id)}
-				<Submission {sub} />
+				<div class="flex flex-col gap-2">
+					{#if !sub.ownerInfo?.yswsEligible}
+						<p
+							class="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700"
+						>
+							⚠ This submitter is not YSWS eligible.
+						</p>
+					{/if}
+					<Submission {sub} />
+				</div>
 			{/each}
 		</div>
 	{/if}

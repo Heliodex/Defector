@@ -54,6 +54,7 @@ type AdminOwnerInfo = {
 	familyName?: string | null
 	birthdate?: string | null
 	address?: AdminOwnerAddress
+	yswsEligible?: boolean | null
 } | null
 
 type AdminSubmission = {
