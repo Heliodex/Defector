@@ -97,7 +97,7 @@ const botForm = $derived(setStatusForm.for(page.params.id ?? ""))
 		<a
 			href={bot.codeUrl}
 			target="_blank"
-			rel="noopener noreferrer"
+			rel="noreferrer"
 			class="text-sm underline"
 			>View code</a
 		>
