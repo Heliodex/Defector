@@ -40,6 +40,8 @@ SELECT
 	FROM ONLY $parent.review) AS review,
 	# (No ONLY: the WASM engine returns zero rows for FROM ONLY <traversal>; [0] already pins the single edge.)
 	(SELECT VALUE email FROM $parent<-submittedHours<-user)[0] AS ownerEmail,
+	# Submitter's Slack ID (admin-only, for DMing them about the review).
+	(SELECT VALUE extraInfo.slackId FROM $parent<-submittedHours<-user)[0] AS slackId,
 	# Submitter PII from their Hack Club profile. Only ever exposed on the admin panel.
 	(SELECT VALUE {
 		givenName: extraInfo.givenName,

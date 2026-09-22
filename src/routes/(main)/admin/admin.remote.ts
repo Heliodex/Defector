@@ -92,6 +92,7 @@ type AdminSubmission = {
 		deflation: string
 	} | null
 	ownerEmail: string | null
+	slackId?: string | null
 	ownerInfo?: AdminOwnerInfo
 }
 

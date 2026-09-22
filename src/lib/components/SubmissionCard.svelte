@@ -12,7 +12,7 @@ const {
 }: {
 	sub: SubmissionCardSubmission
 	imageSrc: string | null
-	subtitle: string
+	subtitle: string | Snippet
 	href?: string
 	middle?: Snippet
 	footer?: Snippet
@@ -48,7 +48,11 @@ const statusClasses = (status: string) => {
 				{/if}
 			</h3>
 			<p class="pt-1 text-sm text-neutral-600">
-				{subtitle}
+				{#if typeof subtitle === "string"}
+					{subtitle}
+				{:else}
+					{@render subtitle()}
+				{/if}
 			</p>
 		</div>
 		<span

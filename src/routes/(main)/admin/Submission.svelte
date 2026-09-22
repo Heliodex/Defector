@@ -142,9 +142,25 @@ async function copy(key: string, value: string) {
 }
 </script>
 
+{#snippet subtitle()}
+	{sub.ownerEmail ?? "—"}
+	{#if sub.slackId}
+		·
+		<a
+			href="https://hackclub.enterprise.slack.com/team/{sub.slackId}"
+			target="_blank"
+			rel="noreferrer"
+			class="font-semibold"
+		>
+			{sub.slackId}
+		</a>
+	{/if}
+	· {sub.created}
+{/snippet}
+
 <SubmissionCard
 	{sub}
-	subtitle="{sub.ownerEmail ?? "—"} · {sub.created}"
+	{subtitle}
 	href="/submission/{sub.id}"
 	imageSrc={sub.image?.hash ? `/admin/images/${sub.image.hash}` : null}
 >
