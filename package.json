@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+		"build:leaderboard": "bun scripts/build-leaderboard.ts",
 		"prod": "bun i -p && vite build",
 		"preview": "vite preview",
 		"buildview": "vite build && vite preview",

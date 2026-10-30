@@ -1,0 +1,510 @@
+{
+	"activeBots": 210,
+	"allBattles": 2173354,
+	"battles": [
+		{
+			"botNames": ["fightAggression", "3Blue1Brown"],
+			"created": "2026-09-25T04:45:07.071810532Z",
+			"id": "x3dc4nzhsj1qjsi92qpz",
+			"scores": [10.0, 10.0]
+		},
+		{
+			"botNames": ["Always Cooperate", "BIUN!!!"],
+			"created": "2026-09-25T04:45:03.777961474Z",
+			"id": "x8pazmpvqpz66zsssl42",
+			"scores": [10.0, 10.0]
+		},
+		{
+			"botNames": ["EYKEYKEYKEYKEYKEYK", "test(1.2)"],
+			"created": "2026-09-25T04:45:02.956283742Z",
+			"id": "dyazj2bycqrihboavss2",
+			"scores": [9.969696969696969, 9.863636363636363]
+		},
+		{
+			"botNames": ["Defender varient", "detective"],
+			"created": "2026-09-25T04:45:02.216065835Z",
+			"id": "nhb6rjtozwq02uhkxze5",
+			"scores": [9.534653465346535, 8.287128712871286]
+		},
+		{
+			"botNames": ["detective_test", "i copied srihan"],
+			"created": "2026-09-25T04:45:01.520356912Z",
+			"id": "8rr4yglb3hhx58a2yrg1",
+			"scores": [1.8712871287128714, 8.108910891089108]
+		},
+		{
+			"botNames": ["NexBot V", "Slim Jeans"],
+			"created": "2026-09-25T04:45:00.451426296Z",
+			"id": "d23x4p9aqequncq9f7g3",
+			"scores": [10.0, 10.0]
+		},
+		{
+			"botNames": ["DR MUNDO v0.3", "jingolfika"],
+			"created": "2026-09-25T04:44:59.736060693Z",
+			"id": "wemlqveb0d9hsx77e7x3",
+			"scores": [9.905172413793103, 9.905172413793103]
+		},
+		{
+			"botNames": ["cop", "tie II"],
+			"created": "2026-09-25T04:44:59.042316459Z",
+			"id": "qeiwa4s8dzejp6jgcryo",
+			"scores": [5.263636363636364, 5.263636363636364]
+		},
+		{
+			"botNames": ["AaravC Bot 1", "Agnes-distill-Tachyon-v2"],
+			"created": "2026-09-25T04:44:57.724648058Z",
+			"id": "oarrbmj1sg4upa76rfqi",
+			"scores": [9.89622641509434, 9.89622641509434]
+		},
+		{
+			"botNames": ["Sigma Bot v2", "Test2"],
+			"created": "2026-09-25T04:44:56.982231621Z",
+			"id": "i2hqchiu52dbiri2xy8y",
+			"scores": [4.850267379679145, 5.112299465240642]
+		},
+		{
+			"botNames": ["One Last Win v0.1", "DR MUNDO v0.3"],
+			"created": "2026-09-25T04:44:56.126573589Z",
+			"id": "857cz5ajw6soqp0irakf",
+			"scores": [10.0, 10.0]
+		},
+		{
+			"botNames": ["EYKEYKEYKEYKEYKEYK", "Wikipedia"],
+			"created": "2026-09-25T04:44:55.476006039Z",
+			"id": "jmw4ziv3wpx73m68roqk",
+			"scores": [9.541284403669724, 9.541284403669724]
+		},
+		{
+			"botNames": ["Columbus", "The Generous"],
+			"created": "2026-09-25T04:44:54.244134471Z",
+			"id": "xrbnzw95yse7qco48fru",
+			"scores": [9.820512820512821, 9.820512820512821]
+		},
+		{
+			"botNames": ["Oliver 2", "Sigma Bot v1"],
+			"created": "2026-09-25T04:44:53.555461295Z",
+			"id": "9u1tavutwuysccwiu1ee",
+			"scores": [9.418604651162791, 9.418604651162791]
+		},
+		{
+			"botNames": ["Gridger", "OmegaTFT"],
+			"created": "2026-09-25T04:44:52.747326403Z",
+			"id": "r20celq23w0pnvfxson5",
+			"scores": [10.0, 10.0]
+		},
+		{
+			"botNames": ["Always Defect", "Always cooperates"],
+			"created": "2026-09-25T04:44:52.077995944Z",
+			"id": "gw2p8uxlxwuqa03d4y8v",
+			"scores": [8.0, 1.0]
+		},
+		{
+			"botNames": ["Firstborn v3.2", "Veritasium"],
+			"created": "2026-09-25T04:44:51.409793518Z",
+			"id": "l8btr2vspsaqhj8ll7c2",
+			"scores": [5.03, 4.96]
+		},
+		{
+			"botNames": ["Tit for Two Tats", "2 Tit for Tat (4)"],
+			"created": "2026-09-25T04:44:50.740928530Z",
+			"id": "njlt2drliuxanjury8np",
+			"scores": [10.0, 10.0]
+		},
+		{
+			"botNames": ["WILLIAM SMITH", "tie"],
+			"created": "2026-09-25T04:44:50.024741162Z",
+			"id": "7rl8fn3zus3ama9sksnx",
+			"scores": [9.91970802919708, 9.91970802919708]
+		},
+		{
+			"botNames": ["Always cooperates", "Firstborn v2"],
+			"created": "2026-09-25T04:44:49.153543501Z",
+			"id": "upqpcbfne75aj6qqg1ex",
+			"scores": [9.697478991596638, 9.932773109243698]
+		},
+		{
+			"botNames": ["big grim guy", "better"],
+			"created": "2026-09-25T04:44:48.466209719Z",
+			"id": "614aaxux3jpp62xqvdm8",
+			"scores": [10.0, 10.0]
+		},
+		{
+			"botNames": ["jingolfika", "JustDefunct"],
+			"created": "2026-09-25T04:44:47.777815781Z",
+			"id": "77uvmy7aefix9intyb2b",
+			"scores": [4.803921568627451, 5.147058823529412]
+		},
+		{
+			"botNames": ["JustBeatIt V5", "the thinker v2"],
+			"created": "2026-09-25T04:44:47.123148110Z",
+			"id": "kvoxynfe1cfz0bhf95qd",
+			"scores": [9.891089108910892, 9.891089108910892]
+		},
+		{
+			"botNames": ["cop until 2 defect", "NexBot V"],
+			"created": "2026-09-25T04:44:46.448162297Z",
+			"id": "65n9j0gsdujskha63l9m",
+			"scores": [10.0, 10.0]
+		},
+		{
+			"botNames": ["ApexUltimate v8", "Castifier 2.0v"],
+			"created": "2026-09-25T04:44:45.763534457Z",
+			"id": "nidl6u1lumn7ckp9d1b4",
+			"scores": [8.5, 8.5]
+		},
+		{
+			"botNames": ["mahoraga v2", "adaptive bot"],
+			"created": "2026-09-25T04:44:45.063678285Z",
+			"id": "cj9en9hmia5ypcnilw7v",
+			"scores": [6.032786885245901, 3.622950819672131]
+		},
+		{
+			"botNames": ["bigger memory", "GradualAdaptive"],
+			"created": "2026-09-25T04:44:44.299117830Z",
+			"id": "70wwjiqg5nz9bzvyzc0s",
+			"scores": [9.943548387096774, 9.887096774193548]
+		},
+		{
+			"botNames": ["test 1e", "tie"],
+			"created": "2026-09-25T04:44:43.600776697Z",
+			"id": "mxjl5fsxnm9zce5pku4m",
+			"scores": [4.696, 4.64]
+		},
+		{
+			"botNames": ["big ULTIMATE guy", "adaptive bot"],
+			"created": "2026-09-25T04:44:42.726934191Z",
+			"id": "is7dkolp2eqwru0u1b04",
+			"scores": [6.674603174603175, 4.619047619047619]
+		},
+		{
+			"botNames": ["Tuff9", "neuralAdapter V1"],
+			"created": "2026-09-25T04:44:41.846551057Z",
+			"id": "86d0zy6ms9rhymomiz0x",
+			"scores": [10.0, 10.0]
+		},
+		{
+			"botNames": ["Miyagi-do", "Mabey"],
+			"created": "2026-09-25T04:44:41.009675002Z",
+			"id": "phsmrtgdg82cqmm8gqs2",
+			"scores": [4.964285714285714, 5.026785714285714]
+		},
+		{
+			"botNames": ["evil meow", "evil meow v2"],
+			"created": "2026-09-25T04:44:40.330040922Z",
+			"id": "9rsvtbcxr902mwskohuw",
+			"scores": [7.5210084033613445, 7.5210084033613445]
+		},
+		{
+			"botNames": ["tie II", "Ultimate Bot"],
+			"created": "2026-09-25T04:44:39.653362215Z",
+			"id": "oen7yxjdaqvnofl76ixi",
+			"scores": [5.3, 5.3]
+		},
+		{
+			"botNames": ["Pls work!", "Defected_Boy111"],
+			"created": "2026-09-25T04:44:38.995110111Z",
+			"id": "ghnzvr2pbhhmk5cwqvys",
+			"scores": [10.0, 10.0]
+		},
+		{
+			"botNames": ["Defected_Boy111", "cop until 2 defect"],
+			"created": "2026-09-25T04:44:38.332412965Z",
+			"id": "9ndhbfhgzdpayk7352dw",
+			"scores": [10.0, 10.0]
+		},
+		{
+			"botNames": ["Harvest V2 MAX", "something"],
+			"created": "2026-09-25T04:44:37.651972560Z",
+			"id": "dargqqd3twd632yw2gvd",
+			"scores": [5.333333333333333, 5.45945945945946]
+		},
+		{
+			"botNames": ["Always Defect", "Smarty Pants V1"],
+			"created": "2026-09-25T04:44:36.988563506Z",
+			"id": "ben8ilxq39pusv9qpnrw",
+			"scores": [5.0212765957446805, 4.971631205673759]
+		},
+		{
+			"botNames": ["raju", "OmegaTFT"],
+			"created": "2026-09-25T04:44:36.294211943Z",
+			"id": "7rh42y1vx5pvw1fn52tk",
+			"scores": [4.96, 7.27]
+		},
+		{
+			"botNames": ["Bumwinnah2", "Miyagi-do"],
+			"created": "2026-09-25T04:44:35.632187820Z",
+			"id": "spkpjpkqum5p2qlkrt6l",
+			"scores": [8.46, 8.39]
+		},
+		{
+			"botNames": ["Christopher", "JBot-2"],
+			"created": "2026-09-25T04:44:34.993845256Z",
+			"id": "76vn71ebl6dxxw1ebn86",
+			"scores": [5.134328358208955, 5.082089552238806]
+		},
+		{
+			"botNames": ["٠new X", "Grudger"],
+			"created": "2026-09-25T04:44:34.282724717Z",
+			"id": "7h2zjmm2sarlmhektbyy",
+			"scores": [10.0, 10.0]
+		},
+		{
+			"botNames": ["always defect", "NexBot VI"],
+			"created": "2026-09-25T04:44:33.574989645Z",
+			"id": "zzdoojtwcaqcxiox0otl",
+			"scores": [5.02112676056338, 4.971830985915493]
+		},
+		{
+			"botNames": ["ApexUltimate v4", "Veritasium"],
+			"created": "2026-09-25T04:44:32.848418846Z",
+			"id": "8elznkrhsjrehapkn5xq",
+			"scores": [9.89, 9.89]
+		},
+		{
+			"botNames": ["SuperBASIC", "i copied srihan"],
+			"created": "2026-09-25T04:44:32.167957070Z",
+			"id": "5uxb1lo3touekbsu2bc1",
+			"scores": [1.5051020408163265, 8.112244897959183]
+		},
+		{
+			"botNames": ["hershey bot mentos v3", "Test123"],
+			"created": "2026-09-25T04:44:30.812812324Z",
+			"id": "lqnam7ko5cjjn6zh2124",
+			"scores": [4.965811965811966, 5.0256410256410255]
+		},
+		{
+			"botNames": ["better", "SuperBASIC"],
+			"created": "2026-09-25T04:44:30.160287380Z",
+			"id": "bxaua7fvbhk5ffjt03sm",
+			"scores": [10.0, 10.0]
+		},
+		{
+			"botNames": ["Swimmingbot3", "JBot-2"],
+			"created": "2026-09-25T04:44:29.482753434Z",
+			"id": "ufzv2wm69qepl9951b1x",
+			"scores": [2.509259259259259, 7.5]
+		},
+		{
+			"botNames": ["Tachyon-v1", "ApexUltimate v4"],
+			"created": "2026-09-25T04:44:28.825911308Z",
+			"id": "w1uydha4nud7dptd0y4j",
+			"scores": [5.181818181818182, 5.586776859504132]
+		},
+		{
+			"botNames": ["Bot 1", "FlippityFloppity v3"],
+			"created": "2026-09-25T04:44:28.073553206Z",
+			"id": "skprmd9jb3hyoksxsj33",
+			"scores": [6.166666666666667, 3.710526315789474]
+		},
+		{
+			"botNames": ["the tuff copier", "Tachyon-v1"],
+			"created": "2026-09-25T04:44:26.829550590Z",
+			"id": "crs8e8d1o4v9d4pfzgbo",
+			"scores": [9.91970802919708, 9.91970802919708]
+		}
+	],
+	"bots": [
+		{
+			"id": "jltj5f2qqrsz1qfz3f26",
+			"meanScore": 9.166522040899597,
+			"name": "crownbotv2",
+			"stats": {
+				"battles": 25229,
+				"losses": 8723,
+				"wins": 2307
+			}
+		},
+		{
+			"id": "tz7euovhpr2uvsmz6n09",
+			"meanScore": 9.00630579853882,
+			"name": "crownbotv3",
+			"stats": {
+				"battles": 25282,
+				"losses": 8780,
+				"wins": 2262
+			}
+		},
+		{
+			"id": "hyc22mv73kel77zfhi7u",
+			"meanScore": 8.951455900945126,
+			"name": "glitch v2.2 for stag hunt",
+			"stats": {
+				"battles": 5460,
+				"losses": 1836,
+				"wins": 436
+			}
+		},
+		{
+			"id": "buzfsth8uqqwbnkxpbm9",
+			"meanScore": 8.920544896175095,
+			"name": "evil meow limited edition",
+			"stats": {
+				"battles": 8639,
+				"losses": 3004,
+				"wins": 165
+			}
+		},
+		{
+			"id": "50hldmrw6oeerh03pvuv",
+			"meanScore": 8.87737629760219,
+			"name": "GradualAdaptive",
+			"stats": {
+				"battles": 8311,
+				"losses": 2192,
+				"wins": 896
+			}
+		},
+		{
+			"id": "41jeee4fbtvi8g02ek03",
+			"meanScore": 8.8179307750238,
+			"name": "BIUN!!!",
+			"stats": {
+				"battles": 27594,
+				"losses": 10500,
+				"wins": 2778
+			}
+		},
+		{
+			"id": "cbeq0uwt24kvck3kt2gy",
+			"meanScore": 8.817103531108367,
+			"name": "BestBot TFT Safe",
+			"stats": {
+				"battles": 10105,
+				"losses": 3725,
+				"wins": 47
+			}
+		},
+		{
+			"id": "7oye468819ekltod6udv",
+			"meanScore": 8.785767853073919,
+			"name": "apex predator v4",
+			"stats": {
+				"battles": 27063,
+				"losses": 10999,
+				"wins": 2806
+			}
+		},
+		{
+			"id": "co980n9yth67gpdtr7dw",
+			"meanScore": 8.776154208646004,
+			"name": "goatbotv4.1",
+			"stats": {
+				"battles": 24815,
+				"losses": 10056,
+				"wins": 2605
+			}
+		},
+		{
+			"id": "zjam7ea5lx6kyimozblh",
+			"meanScore": 8.76163454459425,
+			"name": "Veritasium",
+			"stats": {
+				"battles": 26745,
+				"losses": 8149,
+				"wins": 210
+			}
+		},
+		{
+			"id": "r1434ctgc1w81vh0mvz5",
+			"meanScore": 8.749011300872377,
+			"name": "playing.to.win",
+			"stats": {
+				"battles": 28025,
+				"losses": 7470,
+				"wins": 4828
+			}
+		},
+		{
+			"id": "yz0rrwfwaj1vhcl84cmt",
+			"meanScore": 8.741786508075368,
+			"name": "Pls work!",
+			"stats": {
+				"battles": 18112,
+				"losses": 10301,
+				"wins": 117
+			}
+		},
+		{
+			"id": "wigwvyuei6gw2ucw4erp",
+			"meanScore": 8.740202109467996,
+			"name": "eyk6",
+			"stats": {
+				"battles": 14649,
+				"losses": 3911,
+				"wins": 85
+			}
+		},
+		{
+			"id": "amqbqcunnypkyns3bsjy",
+			"meanScore": 8.725441447921712,
+			"name": "Tuff8",
+			"stats": {
+				"battles": 24236,
+				"losses": 7069,
+				"wins": 176
+			}
+		},
+		{
+			"id": "mlj93z0t3mpmo1rafub6",
+			"meanScore": 8.725269057510289,
+			"name": "DR MUNDO v0.3",
+			"stats": {
+				"battles": 11408,
+				"losses": 3746,
+				"wins": 890
+			}
+		},
+		{
+			"id": "gn66dhad6osgbedjdeb5",
+			"meanScore": 8.714516506571426,
+			"name": "the thinker v2",
+			"stats": {
+				"battles": 31298,
+				"losses": 14243,
+				"wins": 305
+			}
+		},
+		{
+			"id": "8bqnhm4u0v2zyhzx5ywd",
+			"meanScore": 8.711818177753793,
+			"name": "tic tacs",
+			"stats": {
+				"battles": 11418,
+				"losses": 2917,
+				"wins": 58
+			}
+		},
+		{
+			"id": "tdttx3g8e10olm3b40yj",
+			"meanScore": 8.694859262782908,
+			"name": "tft bot",
+			"stats": {
+				"battles": 9085,
+				"losses": 2348,
+				"wins": 47
+			}
+		},
+		{
+			"id": "cdlrlgfqnjrmqc6mr6v1",
+			"meanScore": 8.690206699003308,
+			"name": "slash",
+			"stats": {
+				"battles": 16793,
+				"losses": 4616,
+				"wins": 107
+			}
+		},
+		{
+			"id": "9tpvne1fl5nvxefxqhgf",
+			"meanScore": 8.677163991542113,
+			"name": "GenerousTitForTat",
+			"stats": {
+				"battles": 12076,
+				"losses": 4918,
+				"wins": 59
+			}
+		}
+	],
+	"generatedAt": "2026-10-30T14:00:55.826662119Z",
+	"matrix": [[10.0, 1.0], [8.0, 5.0]]
+}
